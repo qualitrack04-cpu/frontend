@@ -282,3 +282,179 @@ code {
   margin-top: 20px;
   font-size: 14px;
 }
+
+.page-container {
+  max-width: 900px;
+}
+
+.page-subtitle {
+  color: #64748b;
+  margin-bottom: 24px;
+}
+
+.spc-form {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  max-width: 500px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.spc-form input,
+.spc-form textarea {
+  padding: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.spc-form button {
+  background: #0f2c52;
+  color: white;
+  padding: 10px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.spc-form select {
+  padding: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+}
+
+.spc-result {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  margin-top: 24px;
+  max-width: 600px;
+}
+
+.spc-product-name {
+  color: #64748b;
+  margin-bottom: 16px;
+}
+
+.spc-metric-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.status-capable {
+  color: #16a34a;
+}
+
+.spc-chart {
+  margin-top: 24px;
+}
+
+.spc-chart h4 {
+  margin-bottom: 12px;
+}
+
+.filter-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.filter-row .form-group select {
+  padding: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  min-width: 180px;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.history-card {
+  background: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.history-card:hover {
+  border-color: #94a3b8;
+}
+
+.history-date {
+  color: #64748b;
+  font-size: 14px;
+  margin: 4px 0 8px;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  border: 1px solid;
+}
+
+.status-badge-green {
+  color: #16a34a;
+  border-color: #16a34a;
+  background: #f0fdf4;
+}
+
+.status-badge-red {
+  color: #dc2626;
+  border-color: #dc2626;
+  background: #fef2f2;
+}
+
+.status-badge-yellow {
+  color: #ca8a04;
+  border-color: #ca8a04;
+  background: #fefce8;
+}
+
+.status-badge-brown {
+  color: #92400e;
+  border-color: #92400e;
+  background: #fffbeb;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: #0f2c52;
+  cursor: pointer;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.spc-date {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
