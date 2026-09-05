@@ -43,15 +43,6 @@ export default function SpcAnalysisForm() {
       return;
     }
 
-    // Validasi tambahan: LSL harus lebih kecil dari USL
-    const lslNum = parseFloat(formData.lsl);
-    const uslNum = parseFloat(formData.usl);
-    if (!isNaN(lslNum) && !isNaN(uslNum) && lslNum >= uslNum) {
-      alert('LSL harus lebih kecil dari USL.');
-      return;
-    }
-
-    // Sementara: tampilkan di console dulu, belum kirim ke API (menyusul di langkah berikutnya)
     console.log('Data siap dikirim:', formData);
   };
 
