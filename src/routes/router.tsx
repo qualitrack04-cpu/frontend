@@ -17,6 +17,9 @@ import SpcAnalysisPage from '../features/spc_analysis/components/spc_analysis_pa
 import SpcHistoryPage from '../features/spc_analysis/components/spc_history_page';
 import SpcResultDetailPage from '../features/spc_analysis/components/spc_result_detail_page';
 
+import ProfilePage from '../features/profile/components/profile_page';
+import EditProfilePage from '../features/profile/components/edit_profile_page';
+
 const router = createBrowserRouter([
   // Halaman publik — tidak butuh login
   { path: '/login', element: <SignInPage /> },
@@ -40,6 +43,8 @@ const router = createBrowserRouter([
           { path: 'spc-analysis', element: <SpcAnalysisPage /> },
           { path: 'spc-analysis/history', element: <SpcHistoryPage /> }, 
           { path: 'spc-analysis/history/:id', element: <SpcResultDetailPage /> },
+          { path: 'profile', element: <ProfilePage /> },
+          { path: 'profile/edit', element: <EditProfilePage /> },
         ],
       },
     ],

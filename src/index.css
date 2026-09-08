@@ -1,3 +1,6 @@
+/* ============================================================
+   1. THEME / ROOT VARIABLES
+   ============================================================ */
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -50,12 +53,13 @@
   }
 }
 
+/* ============================================================
+   2. BASE / RESET
+   ============================================================ */
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   text-align: center;
-  border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
@@ -63,9 +67,19 @@
 }
 
 body {
+  display: flex;
+  place-items: center;
+  min-width: 320px;
   margin: 0;
 }
 
+p {
+  margin: 0;
+}
+
+/* ============================================================
+   3. TYPOGRAPHY
+   ============================================================ */
 h1,
 h2 {
   font-family: var(--heading);
@@ -82,6 +96,7 @@ h1 {
     margin: 20px 0;
   }
 }
+
 h2 {
   font-size: 24px;
   line-height: 118%;
@@ -91,8 +106,13 @@ h2 {
     font-size: 20px;
   }
 }
-p {
-  margin: 0;
+
+h3 {
+  font-family: var(--heading);
+  font-weight: 600;
+  color: var(--text-h);
+  font-size: 18px;
+  margin: 0 0 12px;
 }
 
 code,
@@ -110,6 +130,9 @@ code {
   background: var(--code-bg);
 }
 
+/* ============================================================
+   4. APP SHELL (header / sidebar / content)
+   ============================================================ */
 .app-container {
   display: flex;
   flex-direction: column;
@@ -125,7 +148,7 @@ code {
   border-bottom: 1px solid #e5e7eb;
 }
 
-.logo{
+.logo {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -201,6 +224,9 @@ code {
   background: #f8fafc;
 }
 
+/* ============================================================
+   5. AUTH PAGES (login/register)
+   ============================================================ */
 .auth-page {
   display: flex;
   min-height: 100vh;
@@ -222,7 +248,7 @@ code {
   padding: 40px;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
 }
 
 .auth-card h2 {
@@ -283,8 +309,18 @@ code {
   font-size: 14px;
 }
 
+/* ============================================================
+   6. GENERIC PAGE / FORM ELEMENTS
+   ============================================================ */
 .page-container {
   max-width: 900px;
+  margin: 0 auto;
+  text-align: left; /* override text-align:center dari #root */
+}
+
+.page-container > h1 {
+  color: #0f2c52;
+  font-weight: 700;
 }
 
 .page-subtitle {
@@ -323,6 +359,13 @@ code {
   border-radius: 8px;
 }
 
+.spc-form select {
+  padding: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: white;
+}
+
 .spc-form button {
   background: #0f2c52;
   color: white;
@@ -332,13 +375,9 @@ code {
   cursor: pointer;
 }
 
-.spc-form select {
-  padding: 10px;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  background: white;
-}
-
+/* ============================================================
+   7. SPC RESULT
+   ============================================================ */
 .spc-result {
   background: white;
   padding: 24px;
@@ -372,6 +411,15 @@ code {
   margin-bottom: 12px;
 }
 
+.spc-date {
+  color: #64748b;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+/* ============================================================
+   8. HISTORY LIST & STATUS BADGES
+   ============================================================ */
 .filter-row {
   display: flex;
   gap: 16px;
@@ -453,8 +501,526 @@ code {
   font-size: 14px;
 }
 
-.spc-date {
-  color: #64748b;
-  font-size: 14px;
+/* ============================================================
+   9. PROFILE PAGE
+   ============================================================ */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 16px;
   margin-bottom: 16px;
+}
+
+.profile-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+}
+
+.profile-card.center {
+  text-align: center;
+}
+
+.profile-card.dark {
+  background: #0f2c52;
+  color: white;
+}
+
+.profile-avatar img,
+.avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  background: #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: bold;
+  color: #475569;
+}
+
+.avatar-placeholder.large {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: bold;
+  color: #475569;
+  margin: 0 auto 12px;
+}
+
+/* Avatar besar khusus di dalam kartu profil (tengah) */
+.profile-card.center .avatar-placeholder.large {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+}
+
+.profile-card.center .profile-avatar img {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 16px;
+  display: block;
+}
+
+.profile-card.center h3.profile-name {
+  font-size: 20px;
+  margin: 12px 0 4px;
+  color: #0f2c52;
+}
+
+.role-badge {
+  background: #dbeafe;
+  color: #1e40af;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.card-label {
+  font-size: 12px;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.score-circle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 8px solid #f59e0b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 8px auto;
+}
+
+.score-tag {
+  background: #fef3c7;
+  color: #92400e;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+.progress-bar {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  height: 8px;
+  margin: 12px 0 4px;
+}
+
+.progress-fill {
+  background: #f59e0b;
+  height: 100%;
+  border-radius: 999px;
+}
+
+.profile-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stat-box {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.stat-big-number {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 8px 0;
+  color: #ffffff; /* kartu .profile-card.dark backgroundnya gelap */
+  line-height: 1.2;
+}
+
+.stat-big-number small {
+  font-size: 15px;
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.stat-number {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0f2c52;
+  margin: 0 0 4px;
+}
+
+.detail-row {
+  margin-bottom: 12px;
+}
+
+.detail-row label {
+  display: block;
+  font-size: 13px;
+  color: #64748b;
+  margin-bottom: 4px;
+}
+
+.detail-value {
+  background: #f1f5f9;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.btn-edit-profile {
+  display: block;
+  text-align: center;
+  border: 1px solid #0f2c52;
+  color: #0f2c52;
+  padding: 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  margin-top: 12px;
+}
+
+/* ============================================================
+   10. EDIT PROFILE FORM
+   ============================================================ */
+.edit-profile-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.form-section-title {
+  color: #0f2c52;
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.form-section-divider {
+  border: none;
+  border-top: 1px solid #e5e7eb;
+  margin: 0 0 20px;
+}
+
+.edit-profile-grid input,
+.profile-edit-form input {
+  background: #eef1fb;
+  border: 1px solid #d6dcf5;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 15px;
+  color: #1f2937;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.edit-profile-grid input::placeholder,
+.profile-edit-form input::placeholder {
+  color: #94a3b8;
+}
+
+.edit-profile-grid input:focus,
+.profile-edit-form input:focus {
+  border-color: #94a3f0;
+  box-shadow: 0 0 0 3px rgba(148, 163, 240, 0.25);
+}
+
+/* Wrapper input dengan icon (lock/key/eye) */
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-icon .input-icon-left {
+  position: absolute;
+  left: 14px;
+  color: #64748b;
+  font-size: 16px;
+  pointer-events: none;
+}
+
+.input-with-icon input {
+  padding-left: 44px;
+}
+
+.input-with-icon .input-icon-right {
+  position: absolute;
+  right: 14px;
+  color: #64748b;
+  font-size: 16px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.avatar-edit-btn {
+  position: relative;
+  display: inline-block;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.avatar-edit-btn .edit-icon {
+  width: 28px;
+  height: 28px;
+  background: #0f2c52;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 8px;
+  right: 0;
+  font-size: 13px;
+  border: 2px solid #ffffff;
+}
+
+.link-danger {
+  background: none;
+  border: none;
+  color: #dc2626;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  font-weight: 500;
+}
+
+.link-danger:hover {
+  text-decoration: underline;
+}
+
+/* Tombol aksi bawah form */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-secondary {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #1f2937;
+  padding: 12px 24px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-secondary:hover {
+  background: #f8fafc;
+}
+
+/* Tombol primary global (dipakai di modal, form lain, dst) */
+.btn-primary {
+  background: #0f2c52;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* Override khusus: di halaman Edit Profile tombol primary hijau,
+   TIDAK memengaruhi .btn-primary di halaman/komponen lain */
+.edit-profile-grid .btn-primary {
+  background: #0f5132;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(15, 81, 50, 0.25);
+}
+
+.edit-profile-grid .btn-primary:hover {
+  background: #0c4128;
+}
+
+/* ============================================================
+   11. MODALS (konfirmasi)
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-box {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  width: 360px;
+  text-align: center;
+}
+
+.btn-confirm-save {
+  background: #16a34a;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  width: 100%;
+  margin-top: 16px;
+  cursor: pointer;
+}
+
+.btn-cancel-text {
+  background: none;
+  border: none;
+  color: #475569;
+  margin-top: 12px;
+  cursor: pointer;
+}
+
+/* ============================================================
+   12. PHOTO MODAL
+   ============================================================ */
+.photo-modal-box {
+  background: white;
+  padding: 24px;
+  border-radius: 16px;
+  width: 480px;
+  max-width: 90vw;
+}
+
+.photo-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.modal-close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.photo-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.text-muted {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.text-muted.small {
+  font-size: 12px;
+}
+
+.photo-source-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+/* explicit color di-set supaya teks tombol tidak "hilang"
+   akibat ketimpa style/reset lain */
+.photo-source-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1f2937;
+  cursor: pointer;
+  text-align: center;
+  font-size: 14px;
+  font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.photo-source-btn svg {
+  flex-shrink: 0;
+}
+
+.photo-source-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: #1f2937;
+}
+
+.photo-source-btn.active-source {
+  border-color: #16a34a;
+  color: #16a34a;
+  font-weight: 600;
+}
+
+/* dipakai sebagai pengganti <button> untuk "Local Device"
+   karena membungkus <input type="file"> */
+label.photo-source-btn {
+  cursor: pointer;
+}
+
+.dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.dropzone-icon {
+  font-size: 28px;
+}
+
+.dropzone-preview {
+  max-width: 100%;
+  max-height: 160px;
+  border-radius: 8px;
+}
+
+.photo-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
 }
