@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock, KeyRound, Eye, EyeOff, Pencil } from 'lucide-react';
-// npm install lucide-react   (kalau belum terpasang)
 import ChangePhotoModal from './change_photo_modal';
 
 export default function EditProfilePage() {
@@ -10,7 +9,7 @@ export default function EditProfilePage() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showConfirmModal, setShowConfirmModal] = useState(false); // dulu namanya "showConfirm" — diganti biar tidak bentrok dengan toggle password
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showCurrentPw, setShowCurrentPw] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPhotoModal, setShowPhotoModal] = useState(false);

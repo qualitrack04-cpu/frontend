@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { X, UploadCloud, HardDrive, Camera, Link2, Cloud } from 'lucide-react';
-// npm install lucide-react   (kalau belum terpasang)
 
 interface ChangePhotoModalProps {
   currentName: string;

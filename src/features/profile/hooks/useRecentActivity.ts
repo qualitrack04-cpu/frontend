@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getRecentActivity, RecentActivityItem } from '../api/profileApi';
+import { getRecentActivity } from '../api/profileApi';
+import type { RecentActivityItem } from '../api/profileApi';
 
 export function useRecentActivity() {
   const [data, setData] = useState<RecentActivityItem[]>([]);

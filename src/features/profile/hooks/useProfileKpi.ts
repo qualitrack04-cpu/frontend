@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { getProfileKpi, ProfileKpi } from '../api/profileApi';
+import { getProfileKpi } from '../api/profileApi';
+import type { ProfileKpi } from '../api/profileApi';
 
 export function useProfileKpi() {
   const [data, setData] = useState<ProfileKpi | null>(null);
