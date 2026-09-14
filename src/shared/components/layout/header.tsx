@@ -1,13 +1,15 @@
-export default function header() {
+import { Link } from 'react-router-dom';
+
+export default function Header() {
   return (
     <header className="app-header">
       <div className="logo">
         <span className="logo-text">QualiTrack</span>
       </div>
 
-      <div className="user-avatar">
+      <Link to="/profile" className="user-avatar">
         <img src="/default-avatar.png" alt="User avatar" />
-      </div>
+      </Link>
     </header>
   );
 }
