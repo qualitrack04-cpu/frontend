@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { forgotPassword, verifyOtp, resetPassword } from '../api/auth_api';
+import { forgotPassword, verifyOtp, resetPassword, resendOtp as resendOtpApi } from '../api/auth_api';
 
 type Step = 'email' | 'otp' | 'reset';
 
@@ -11,13 +11,12 @@ export function useForgotPasswordFlow() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // Step 1: kirim email, minta OTP dikirim
   const sendOtp = async (inputEmail: string) => {
     setLoading(true);
     setError(null);
     try {
       await forgotPassword({ email: inputEmail });
-      setEmail(inputEmail); // simpan email untuk dipakai di step berikutnya
+      setEmail(inputEmail); 
       setStep('otp');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Gagal mengirim kode OTP.');
@@ -26,7 +25,18 @@ export function useForgotPasswordFlow() {
     }
   };
 
-  // Step 2: verifikasi OTP yang diinput user
+  const resendOtp = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      await resendOtpApi({ email });
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Gagal mengirim ulang kode OTP.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const submitOtp = async (otp: string) => {
     setLoading(true);
     setError(null);
@@ -40,13 +50,12 @@ export function useForgotPasswordFlow() {
     }
   };
 
-  // Step 3: kirim password baru
   const submitNewPassword = async (newPassword: string) => {
     setLoading(true);
     setError(null);
     try {
       await resetPassword({ email, newPassword });
-      navigate('/login'); // selesai, kembali ke halaman login
+      navigate('/login'); 
     } catch (err: any) {
       setError(err.response?.data?.message || 'Gagal mengubah password.');
     } finally {
@@ -60,6 +69,7 @@ export function useForgotPasswordFlow() {
     loading,
     error,
     sendOtp,
+    resendOtp,
     submitOtp,
     submitNewPassword,
   };
