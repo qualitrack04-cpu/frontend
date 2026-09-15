@@ -1,7 +1,8 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 // Layout & Route Protection
 import AppLayout from '../shared/components/layout/app_layout';
 import ProtectedRoute from '../shared/components/protected_route';
+import PublicOnlyRoute from '../shared/components/public_only_route';
 // Auth Pages
 import SignInPage from '../features/auth/components/sign_in_page';
 import SignUpPage from '../features/auth/components/sign_up_page';
@@ -21,9 +22,16 @@ import ProfilePage from '../features/profile/components/profile_page';
 import EditProfilePage from '../features/profile/components/edit_profile_page';
 
 const router = createBrowserRouter([
-  // Halaman publik — tidak butuh login
-  { path: '/login', element: <SignInPage /> },
-  { path: '/signup', element: <SignUpPage /> },
+  // Hanya untuk yang belum login
+  {
+    element: <PublicOnlyRoute />,
+    children: [
+      { path: '/login', element: <SignInPage /> },
+      { path: '/signup', element: <SignUpPage /> },
+    ],
+  },
+
+  // Publik, bisa diakses kapan saja
   { path: '/forgot-password', element: <ForgotPasswordPage /> },
   { path: '/verify-otp', element: <VerifyOtpPage /> },
   { path: '/reset-password', element: <ResetPasswordPage /> },
@@ -36,12 +44,13 @@ const router = createBrowserRouter([
         path: '/',
         element: <AppLayout />,
         children: [
+          { index: true, element: <Navigate to="/dashboard" replace /> },
           { path: 'dashboard', element: <DashboardPage /> },
           { path: 'audits', element: <AuditsPage /> },
           { path: 'findings', element: <FindingsPage /> },
           { path: 'capa', element: <CapaPage /> },
           { path: 'spc-analysis', element: <SpcAnalysisPage /> },
-          { path: 'spc-analysis/history', element: <SpcHistoryPage /> }, 
+          { path: 'spc-analysis/history', element: <SpcHistoryPage /> },
           { path: 'spc-analysis/history/:id', element: <SpcResultDetailPage /> },
           { path: 'profile', element: <ProfilePage /> },
           { path: 'profile/edit', element: <EditProfilePage /> },
@@ -49,6 +58,8 @@ const router = createBrowserRouter([
       },
     ],
   },
+
+  { path: '*', element: <Navigate to="/login" replace /> },
 ]);
 
 export default router;

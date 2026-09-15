@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type{ AxiosError } from 'axios';
 
 const axios_instance = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
@@ -17,10 +18,23 @@ axios_instance.interceptors.request.use((config) => {
 
 axios_instance.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
+  (error : AxiosError) => {
+    const status = error.response?.status;
+    const url = error.config?.url ?? '';
+
+    const isAuthAttempt = 
+      url.includes('/login') || url.includes('/forgot-password');
+
+    if (status === 401 && !isAuthAttempt) {
       localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      localStorage.removeItem('fullName');
+
+      if (window.location.pathname !== '/login'){
+        window.location.href = '/login';
+      }
     }
+
     return Promise.reject(error); 
   }
 );
