@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, replace, useNavigate } from 'react-router-dom';
 import { Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useForgotPasswordFlow } from '../hooks/use_forgot_password_flow';
 import AuthBrandPanel from './auth_brand_panel';
+import { Navigate } from 'react-router-dom';
 
 export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState('');
@@ -14,18 +15,27 @@ export default function ResetPasswordPage() {
   const location = useLocation();
   const email = location.state?.email || '';
   const resetToken = location.state?.resetToken || '';
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError(null);
 
-    if (newPassword !== confirmPassword) {
-      setLocalError('Password tidak sama.');
+    if (!email || !resetToken) {
+      setLocalError('Sesi reset tidak valid. Silakan ulangi dari halaman Forgot Password.');
       return;
     }
 
-    await submitNewPassword(email, resetToken, newPassword, confirmPassword);
-    // submitNewPassword otomatis navigate ke /login kalau berhasil (sudah diatur di hook)
+    if (newPassword !== confirmPassword){
+      setLocalError('Password tidak sama.');
+      return
+    }
+
+    try{
+      await submitNewPassword(email, resetToken, newPassword, confirmPassword);
+      navigate('/login', { replace: true});
+    } catch {}
+
   };
 
   return (

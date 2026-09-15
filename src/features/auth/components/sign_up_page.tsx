@@ -4,12 +4,18 @@ import { User, Mail, Lock, Eye, EyeOff, Briefcase } from 'lucide-react';
 import { register } from '../api/auth_api';
 import AuthBrandPanel from './auth_brand_panel';
 
+const ROLE_OPTIONS = [
+  { value: 'AuditorInternal', label: 'Auditor Internal' },
+  { value: 'QualityManager', label: 'Quality Manager' },
+  { value: 'Admin', label: 'Admin' },
+] as const;
+
 export default function SignUpPage() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('Auditor Internal');
+  const [role, setRole] = useState('AuditorInternal');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -102,9 +108,11 @@ export default function SignUpPage() {
           <div className="input-with-icon">
             <Briefcase size={16} className="input-icon-left" />
             <select value={role} onChange={(e) => setRole(e.target.value)}>
-              <option value="Auditor Internal">Auditor Internal</option>
-              <option value="Quality Manager">Quality Manager</option>
-              <option value="Admin">Admin</option>
+              {ROLE_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
             </select>
           </div>
 

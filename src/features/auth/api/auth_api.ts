@@ -5,38 +5,6 @@ interface LoginPayload {
   password: string;
 }
 
-interface ForgotPasswordPayload {
-  email: string;
-}
-
-interface VerifyOtpPayload {
-  email: string;
-  otp: string;
-}
-
-interface ResetPasswordPayload {
-  email: string;
-  newPassword: string;
-}
-
-// Path diperbaiki mengikuti endpoint asli: /api/Auth/forgot-password/request-otp
-export async function forgotPassword(payload: ForgotPasswordPayload) {
-  const response = await axios_instance.post('/auth/forgot-password/request-otp', payload);
-  return response.data;
-}
-
-// Path diperbaiki mengikuti endpoint asli: /api/Auth/forgot-password/verify-otp
-export async function verifyOtp(payload: VerifyOtpPayload) {
-  const response = await axios_instance.post('/auth/forgot-password/verify-otp', payload);
-  return response.data;
-}
-
-// Path diperbaiki mengikuti endpoint asli: /api/Auth/forgot-password/reset
-export async function resetPassword(payload: ResetPasswordPayload) {
-  const response = await axios_instance.post('/auth/forgot-password/reset', payload);
-  return response.data;
-}
-
 interface ResendOtpPayload {
   email: string;
 }

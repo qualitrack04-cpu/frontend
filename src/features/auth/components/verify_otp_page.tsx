@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect} from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useForgotPasswordFlow } from '../hooks/use_forgot_password_flow';
+import { verifyEmail, resendOtp as resendSignupOtp } from '../api/auth_api';
 import AuthBrandPanel from './auth_brand_panel';
 
 const OTP_LENGTH = 4;
@@ -10,12 +11,21 @@ const RESEND_SECONDS = 60;
 export default function VerifyOtpPage() {
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(''));
   const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS);
+  const [localLoading, setLocalLoading] = useState(false)
+  const [localError, setLocalError] = useState<string | null>(null);
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
-  const { submitOtp, resendOtp, loading, error } = useForgotPasswordFlow();
+  const { submitOtp, sendOtp, loading, error } = useForgotPasswordFlow();
   const navigate = useNavigate();
   const location = useLocation();
-  const email = location.state?.email || '';
+
+  const email = location.state?.email ?? '';
+  const fromSignup: boolean = location.state.fromSignuo ?? false;
+
+
+  useEffect(() =>{
+    if (!email) navigate(fromSignup ? '/signup' : '/forgot-password', {replace: true});
+  }, [email, fromSignup, navigate]);
 
   // Countdown "Resend code in 00:59"
   useEffect(() => {
@@ -24,10 +34,11 @@ export default function VerifyOtpPage() {
     return () => clearInterval(timer);
   }, [secondsLeft]);
 
-  const formattedTime = `00:${String(secondsLeft).padStart(2, '0')}`;
+  const formattedTime = `${String(Math.floor(secondsLeft / 60)).padStart(2, '0')}:${String(
+    secondsLeft % 60
+  ).padStart(2, '0')}`;
 
   const handleDigitChange = (index: number, value: string) => {
-    // Cuma terima 1 digit angka per kotak
     const digit = value.replace(/[^0-9]/g, '').slice(-1);
     const next = [...digits];
     next[index] = digit;
@@ -56,19 +67,52 @@ export default function VerifyOtpPage() {
 
   const handleResend = async () => {
     if (secondsLeft > 0) return;
-    await resendOtp();
-    setSecondsLeft(RESEND_SECONDS);
-    setDigits(Array(OTP_LENGTH).fill(''));
-    inputsRef.current[0]?.focus();
+    setLocalError(null);
+    try {
+      if (fromSignup) {
+        setLocalLoading(true);
+        await resendSignupOtp ({email});
+      }else {
+        await sendOtp(email);
+      }
+      setSecondsLeft(RESEND_SECONDS);
+      setDigits(Array(OTP_LENGTH).fill(''));
+      inputsRef.current[0]?.focus();
+    } catch (err: any){
+      setLocalError(err.response?.data?.messaeg ?? 'gagal mengirim ualng otp.');
+    } finally{
+      setLocalLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const otp = digits.join('');
-    if (otp.length < OTP_LENGTH) return;
-    await submitOtp(otp);
-    navigate('/reset-password', { state: { email } });
+    if (otp.length < OTP_LENGTH) {
+      setLocalError('Masukkan ${OTP_LENGTH} digit kode OTP.');
+      return;
+    }
+    setLocalError(null);
+
+    try {
+      if (fromSignup) {
+        setLocalLoading(true);
+        await verifyEmail({email, otp});
+        navigate('/login', {replace: true});
+      } else {
+        const resetToken = await submitOtp(email, otp);
+        navigate('/reset-password', { state: { email, resetToken}});
+      }
+    } catch (err: any){
+      setLocalError(err.response?.data?.message ?? 'Kode OTP salah atau kadaluarsa.');
+    }finally{
+      setLocalLoading(false);
+    }
+
   };
+
+  const isBusy = loading || localLoading;
+  const shownError = localError ?? error;
 
   return (
     <div className="auth-page auth-page--reversed">
@@ -113,10 +157,10 @@ export default function VerifyOtpPage() {
             )}
           </p>
 
-          {error && <p className="error-text">{error}</p>}
+          {shownError && <p className="error-text">{shownError}</p>}
 
-          <button type="submit" className="btn-auth-submit" disabled={loading}>
-            {loading ? 'Verifying...' : 'VERIFY & PROCEED'}
+          <button type="submit" className="btn-auth-submit" disabled={isBusy}>
+            {isBusy ? 'Verifying...' : 'VERIFY & PROCEED'}
           </button>
         </form>
 
