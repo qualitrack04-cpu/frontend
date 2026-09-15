@@ -13,6 +13,7 @@ export default function ResetPasswordPage() {
   const { submitNewPassword, loading, error } = useForgotPasswordFlow();
   const location = useLocation();
   const email = location.state?.email || '';
+  const resetToken = location.state?.resetToken || '';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +24,7 @@ export default function ResetPasswordPage() {
       return;
     }
 
-    await submitNewPassword(newPassword);
+    await submitNewPassword(email, resetToken, newPassword, confirmPassword);
     // submitNewPassword otomatis navigate ke /login kalau berhasil (sudah diatur di hook)
   };
 

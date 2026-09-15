@@ -5,7 +5,7 @@ import { register } from '../api/auth_api';
 import AuthBrandPanel from './auth_brand_panel';
 
 export default function SignUpPage() {
-  const [username, setUsername] = useState('');
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -27,8 +27,8 @@ export default function SignUpPage() {
 
     setLoading(true);
     try {
-      await register({ username, email, password, role });
-      navigate('/login');
+      await register({ fullName, email, password, role });
+      navigate('/verify-otp', { state: { email, fromSignup: true } }); // navigasi ke halaman verifikasi OTP
     } catch (err: any) {
       setError(err.response?.data?.message || 'Pendaftaran gagal. Coba lagi.');
     } finally {
@@ -50,8 +50,8 @@ export default function SignUpPage() {
             <input
               type="text"
               placeholder="Nailong bin Amir"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
               required
             />
           </div>

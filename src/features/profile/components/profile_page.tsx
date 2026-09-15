@@ -1,52 +1,47 @@
 import { Link } from 'react-router-dom';
 import { useProfileKpi } from '../hooks/useProfileKpi';
-
-const dummyUserInfo = {
-  name: 'SAKY Auditor',
-  role: 'Quality Auditor',
-  photoUrl: '',
-  username: 'saky_po_sm',
-  email: 'sakyyyyyyy@company.com',
-  detailRole: 'Senior Quality Auditor',
-};
+import { useProfile } from '../hooks/use_profile';
 
 export default function ProfilePage() {
-  const { data: kpi, loading, error } = useProfileKpi();
-  const userInfo = dummyUserInfo;
+  const { data: kpi, loading: kpiLoading, error: kpiError } = useProfileKpi();
+  const { profile, loading: profileLoading, error: profileError } = useProfile();
 
-  if (loading) {
+  if (kpiLoading || profileLoading) {
     return <div className="page-container">Loading...</div>;
   }
 
-  if (error) {
-    return <div className="page-container error-text">{error}</div>;
+  if (kpiError || profileError) {
+    return <div className="page-container error-text">{kpiError || profileError}</div>;
   }
 
-  if (!kpi) {
+  if (!kpi || !profile) {
     return null;
   }
 
   return (
     <div className="page-container">
       <div className="profile-grid">
+        {/* Kolom kiri: foto + info dasar */}
         <div className="profile-card">
           <div className="profile-avatar">
-            {userInfo.photoUrl ? (
-              <img src={userInfo.photoUrl} alt={userInfo.name} />
+            {profile.profilePhotoUrl ? (
+              <img src={profile.profilePhotoUrl} alt={profile.fullName} />
             ) : (
-              <div className="avatar-placeholder">{userInfo.name.charAt(0)}</div>
+              <div className="avatar-placeholder">{profile.fullName.charAt(0)}</div>
             )}
           </div>
-          <h2>{userInfo.name}</h2>
-          <span className="role-badge">{userInfo.role}</span>
+          <h2>{profile.fullName}</h2>
+          <span className="role-badge">{profile.role}</span>
         </div>
 
+        {/* Quality Score */}
         <div className="profile-card center">
           <p className="card-label">QUALITY SCORE</p>
           <div className="score-circle">{kpi.qualityScore}%</div>
           <span className="score-tag">{kpi.qualityLabel}</span>
         </div>
 
+        {/* Success Rate */}
         <div className="profile-card dark">
           <p className="card-label">SUCCESS RATE</p>
           <p className="stat-big-number">
@@ -58,6 +53,7 @@ export default function ProfilePage() {
           <p className="target-text">Target: {kpi.target}%</p>
         </div>
 
+        {/* On Time / Overdue */}
         <div className="profile-stats">
           <div className="stat-box">
             <p className="stat-number">{kpi.onTime}</p>
@@ -70,19 +66,20 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {/* Account Details */}
       <div className="profile-card">
         <h3>Account Details</h3>
         <div className="detail-row">
-          <label>Username</label>
-          <div className="detail-value">{userInfo.username}</div>
+          <label>Full Name</label>
+          <div className="detail-value">{profile.fullName}</div>
         </div>
         <div className="detail-row">
           <label>Email</label>
-          <div className="detail-value">{userInfo.email}</div>
+          <div className="detail-value">{profile.email}</div>
         </div>
         <div className="detail-row">
           <label>Role</label>
-          <div className="detail-value">{userInfo.detailRole}</div>
+          <div className="detail-value">{profile.role}</div>
         </div>
         <Link to="/profile/edit" className="btn-edit-profile">Edit Profile</Link>
       </div>
