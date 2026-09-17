@@ -1,15 +1,5 @@
-import { useState, useEffect } from 'react';
-import axios_instance from '../../../shared/api/axios_instance';
-
-// Sesuaikan dengan field asli dari GET /api/Dashboard/compliance-score
-interface ComplianceApiItem {
-  department: string;
-  score: number;
-}
-
-interface ComplianceItem extends ComplianceApiItem {
-  color: string;
-}
+import { useFetch } from '../../../shared/hooks/use_fetch';
+import { getComplianceScore } from '../api/dashboard_api';
 
 const departmentColors: Record<string, string> = {
   Production: '#a855f7',
@@ -18,49 +8,51 @@ const departmentColors: Record<string, string> = {
   QC: '#22c55e',
 };
 
-export default function ComplianceScore() {
-  const [compliance, setCompliance] = useState<ComplianceItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+const colorFor = (dept: string) => departmentColors[dept] ?? '#64748b';
 
-  useEffect(() => {
-    axios_instance
-      .get<ComplianceApiItem[]>('/Dashboard/compliance-score')
-      .then((res) => {
-        setCompliance(
-          res.data.map((item) => ({
-            ...item,
-            color: departmentColors[item.department] ?? '#64748b',
-          }))
-        );
-      })
-      .catch((err) => setError(err.response?.data?.message ?? 'Gagal memuat compliance score'))
-      .finally(() => setLoading(false));
-  }, []);
+export default function ComplianceScore() {
+  const { data, loading, error } = useFetch(getComplianceScore);
+  const departments = data?.data ?? [];
 
   return (
     <div className="compliance-section">
-      <p className="card-label">COMPLIANCE SCORE</p>
+      <div className="compliance-header">
+        <p className="card-label">COMPLIANCE SCORE</p>
+        {data && (
+          <span className="compliance-overall">
+            Overall: <strong>{data.overallScore.toFixed(1)}%</strong>
+          </span>
+        )}
+      </div>
+
       <div className="compliance-grid">
         {loading && <p className="text-muted">Memuat compliance score...</p>}
         {error && <p className="error-text">{error}</p>}
+        {!loading && !error && departments.length === 0 && (
+          <p className="text-muted">Belum ada data compliance.</p>
+        )}
 
-        {!loading &&
-          !error &&
-          compliance.map((item) => (
-            <div key={item.department} className="compliance-box" style={{ borderLeftColor: item.color }}>
-              <div className="compliance-top">
-                <strong>{item.department}</strong>
-                <span style={{ color: item.color }}>{item.score}%</span>
-              </div>
-              <div className="compliance-bar">
-                <div
-                  className="compliance-fill"
-                  style={{ width: `${item.score}%`, backgroundColor: item.color }}
-                />
-              </div>
+        {departments.map((item) => (
+          <div
+            key={item.department}
+            className="compliance-box"
+            style={{ borderLeftColor: colorFor(item.department) }}
+          >
+            <div className="compliance-top">
+              <strong>{item.department}</strong>
+              <span style={{ color: colorFor(item.department) }}>{item.score.toFixed(1)}%</span>
             </div>
-          ))}
+            <div className="compliance-bar">
+              <div
+                className="compliance-fill"
+                style={{ width: `${item.score}%`, backgroundColor: colorFor(item.department) }}
+              />
+            </div>
+            <p className="text-muted small">
+              {item.conformResponses}/{item.totalResponses} sesuai · {item.totalAudit} audit
+            </p>
+          </div>
+        ))}
       </div>
     </div>
   );
