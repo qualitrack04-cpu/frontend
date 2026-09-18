@@ -20,7 +20,7 @@ export default function VerifyOtpPage() {
   const location = useLocation();
 
   const email = location.state?.email ?? '';
-  const fromSignup: boolean = location.state.fromSignuo ?? false;
+  const fromSignup: boolean = location.state?.fromSignup ?? false;
 
 
   useEffect(() =>{
@@ -79,7 +79,7 @@ export default function VerifyOtpPage() {
       setDigits(Array(OTP_LENGTH).fill(''));
       inputsRef.current[0]?.focus();
     } catch (err: any){
-      setLocalError(err.response?.data?.messaeg ?? 'gagal mengirim ualng otp.');
+      setLocalError(err.response?.data?.message ?? 'gagal mengirim ualng otp.');
     } finally{
       setLocalLoading(false);
     }
@@ -89,7 +89,7 @@ export default function VerifyOtpPage() {
     e.preventDefault();
     const otp = digits.join('');
     if (otp.length < OTP_LENGTH) {
-      setLocalError('Masukkan ${OTP_LENGTH} digit kode OTP.');
+      setLocalError(`Masukkan ${OTP_LENGTH} digit kode OTP.`);
       return;
     }
     setLocalError(null);
