@@ -14,7 +14,7 @@ export default function EditProfilePage() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [showCurrentPw, setShowCurrentPw] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
 
   const navigate = useNavigate();
