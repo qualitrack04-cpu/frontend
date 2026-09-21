@@ -175,6 +175,10 @@ code {
 }
 
 .btn-new-audit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   background: transparent;
   border: 1px solid #2ecc71;
   color: #2ecc71;
@@ -182,6 +186,7 @@ code {
   border-radius: 8px;
   cursor: pointer;
   margin-bottom: 24px;
+  font-weight: 600;
 }
 
 .sidebar-menu {
@@ -197,22 +202,42 @@ code {
   gap: 12px;
   padding: 12px;
   border-radius: 8px;
+  border-left: 3px solid transparent;
   color: #cbd5e1;
   text-decoration: none;
+  font-size: 15px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.sidebar-item svg {
+  flex-shrink: 0;
+}
+
+.sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
 }
 
 .sidebar-item.active {
   background: #1e3a5f;
+  border-left-color: #60a5fa;
   color: white;
 }
 
 .btn-logout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   background: transparent;
   border: none;
   color: #cbd5e1;
-  padding: 12px;
+  padding: 12px 14px;
   text-align: left;
   cursor: pointer;
+}
+
+.btn-logout:hover {
+  color: #ffffff;
 }
 
 .app-content {
@@ -242,7 +267,8 @@ code {
    (lihat .auth-logo/.auth-heading dst di bawah), jadi aman dari
    notch clip-path yang makan sisi KANAN. */
 .auth-brand {
-  flex: 0 0 50%;
+  flex: 0 0 60%;
+  box-sizing: border-box;
   background: linear-gradient(135deg, #0a2647, #1e6fd9);
   color: white;
   padding: 56px;
@@ -259,7 +285,7 @@ code {
      titik kiri-atas (25%) harus LEBIH BESAR dari titik kiri-bawah
      (10%), bukan sebaliknya. Ini titik yang paling gampang salah. */
   clip-path: polygon(25% 0, 100% 0, 100% 100%, 10% 100%);
-  padding: 56px 56px 56px 220px;
+  padding: 56px 56px 56px 21%;
 }
 
 .auth-logo {
@@ -380,8 +406,13 @@ code {
 }
 
 /* Input dengan icon (pakai .input-with-icon yang sudah ada di Edit Profile) */
-.auth-card .input-with-icon input {
+
+.auth-card .input-with-icon {
   margin-bottom: 16px;
+}
+
+.auth-card .input-with-icon input {
+  margin-bottom: 0;
 }
 
 .btn-auth-submit,
@@ -1151,7 +1182,11 @@ code {
   position: absolute;
   left: 14px;
   color: #64748b;
+  top: 50%;
+  transform: translateY(-50%);
   pointer-events: none;
+  display: flex;
+  align-items: center;
 }
 
 .input-with-icon input,
@@ -1162,6 +1197,8 @@ code {
 .input-with-icon .input-icon-right {
   position: absolute;
   right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
   color: #64748b;
   cursor: pointer;
   background: none;
