@@ -23,6 +23,8 @@ import SpcResultDetailPage from '../features/spc_analysis/components/spc_result_
 import ProfilePage from '../features/profile/components/profile_page';
 import EditProfilePage from '../features/profile/components/edit_profile_page';
 
+import CreateAuditPlanPage from '../features/audits/components/create_audit_page';
+
 const router = createBrowserRouter([
   // Hanya untuk yang belum login
   {
@@ -32,13 +34,10 @@ const router = createBrowserRouter([
       { path: '/signup', element: <SignUpPage /> },
     ],
   },
-
-  // Publik, bisa diakses kapan saja
   { path: '/forgot-password', element: <ForgotPasswordPage /> },
   { path: '/verify-otp', element: <VerifyOtpPage /> },
   { path: '/reset-password', element: <ResetPasswordPage /> },
 
-  // Halaman terproteksi — wajib login
   {
     element: <ProtectedRoute />,
     children: [
@@ -59,6 +58,7 @@ const router = createBrowserRouter([
           { path: 'spc-analysis/history/:id', element: <SpcResultDetailPage /> },
           { path: 'profile', element: <ProfilePage /> },
           { path: 'profile/edit', element: <EditProfilePage /> },
+          { path: 'audits/new', element: <CreateAuditPlanPage /> },
         ],
       },
     ],

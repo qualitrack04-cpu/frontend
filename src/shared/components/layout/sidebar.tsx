@@ -1,11 +1,11 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 
 const menuItems = [
-  { label: 'Dashboard', path: '/dashboard', icon: '📊' },
-  { label: 'Audits', path: '/audits', icon: '📋' },
-  { label: 'Findings', path: '/findings', icon: '⚠️' },
-  { label: 'CAPA', path: '/capa', icon: '✔️' },
-  { label: 'SPC Analysis', path: '/spc-analysis', icon: '📈' },
+  { label: 'Dashboard', path: '/dashboard'},
+  { label: 'Audits', path: '/audits'},
+  { label: 'Findings', path: '/findings'},
+  { label: 'CAPA', path: '/capa'},
+  { label: 'SPC Analysis', path: '/spc-analysis'},
 ];
 
 export default function Sidebar() {
@@ -31,7 +31,7 @@ export default function Sidebar() {
               isActive ? 'sidebar-item active' : 'sidebar-item'
             }
           >
-            <span className="icon">{item.icon}</span>
+            <span className="icon"></span>
             <span>{item.label}</span>
           </NavLink>
         ))}

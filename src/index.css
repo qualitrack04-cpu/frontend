@@ -237,15 +237,12 @@ code {
 }
 
 /* Panel biru — flex-basis TETAP (bukan flex:1) supaya tidak
-   memakan semua sisa ruang dan rasio biru:putih seimbang.
-   Padding simetris di sini karena teks di dalam panel rata KIRI
-   (lihat .auth-logo/.auth-heading dst di bawah), jadi aman dari
-   notch clip-path yang makan sisi KANAN. */
+   memakan semua sisa ruang dan rasio biru:putih seimbang */
 .auth-brand {
   flex: 0 0 50%;
   background: linear-gradient(135deg, #0a2647, #1e6fd9);
   color: white;
-  padding: 56px;
+  padding: 56px 220px 56px 56px; /* padding-right diperbesar supaya teks rata-kanan tidak kena potong clip-path */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -253,23 +250,18 @@ code {
 }
 
 .auth-page--reversed .auth-brand {
-  /* PENTING: trennya BUKAN sekadar mirror horizontal dari .auth-brand
-     biasa. Di desain, panel biru versi reversed justru MEMBESAR ke
-     bawah (kebalikan dari Sign In yang mengecil ke bawah) — makanya
-     titik kiri-atas (25%) harus LEBIH BESAR dari titik kiri-bawah
-     (10%), bukan sebaliknya. Ini titik yang paling gampang salah. */
-  clip-path: polygon(25% 0, 100% 0, 100% 100%, 10% 100%);
-  padding: 56px 56px 56px 220px;
+  /* mirror: notch diagonal di sisi KIRI (menghadap area putih) */
+  clip-path: polygon(10% 0, 100% 0, 100% 100%, 25% 100%);
 }
 
 .auth-logo {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 10px;
   font-size: 26px;
   font-weight: 700;
-  text-align: left;
+  text-align: center;
 }
 
 .auth-tagline {
@@ -277,7 +269,7 @@ code {
   color: #cbd5e1;
   margin: 6px 0 48px;
   font-size: 15px;
-  text-align: left;
+  text-align: center;
 }
 
 .auth-heading {
@@ -287,7 +279,8 @@ code {
   color: white;
   margin: 0 0 20px;
   max-width: 460px;
-  text-align: left;
+  text-align: right;
+  margin-left: auto; /* dorong blok teks ke kanan dalam kolom */
 }
 
 .auth-subtitle {
@@ -296,13 +289,14 @@ code {
   line-height: 1.5;
   max-width: 420px;
   margin-bottom: 32px;
-  text-align: left;
+  text-align: right;
+  margin-left: auto;
 }
 
 .feature-badges {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start;
+  justify-content: flex-end;
   gap: 12px;
 }
 
@@ -1541,3 +1535,1277 @@ label.photo-source-btn {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* ============================================================
+   AUDIT PLAN (list halaman Audits)
+   ============================================================ */
+.audit-tabs {
+  display: inline-flex;
+  background: #f1f5f9;
+  border-radius: 10px;
+  padding: 4px;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+
+.audit-tab {
+  background: transparent;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.audit-tab--active {
+  background: white;
+  color: #0f2c52;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.audit-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .audit-plan-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.audit-plan-card {
+  display: flex;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.audit-date-block {
+  flex-shrink: 0;
+  width: 110px;
+  background: #f1f5f9;
+  color: #0f2c52;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 12px;
+  text-align: center;
+}
+
+.audit-date-block--priority {
+  background: #0f2c52;
+  color: white;
+}
+
+.audit-date-day {
+  font-size: 34px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.audit-date-month {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+.audit-date-year {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.audit-priority-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fca5a5;
+  margin-top: 12px;
+}
+
+.audit-plan-card-body {
+  flex: 1;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.audit-plan-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.audit-plan-title-row h3 {
+  color: #0f2c52;
+  font-size: 19px;
+  margin: 0;
+}
+
+.audit-card-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.audit-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.audit-icon-btn:hover {
+  background: #f1f5f9;
+}
+
+.audit-icon-btn--danger {
+  color: #dc2626;
+}
+
+.audit-icon-btn--danger:hover {
+  background: #fef2f2;
+}
+
+.audit-tag-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tag-badge {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+
+.btn-checklist {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #0f2c52;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 12px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  width: fit-content;
+  margin-top: 4px;
+}
+
+.btn-checklist:hover {
+  background: #0c2444;
+}
+
+/* ============================================================
+   CREATE AUDIT PLAN (form)
+   ============================================================ */
+.create-audit-form {
+  max-width: 12000px;
+}
+
+.create-audit-form .form-group {
+  margin-bottom: 20px;
+}
+
+.create-audit-form label {
+  display: block;
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.create-audit-form input[type="text"],
+.create-audit-form input[type="date"],
+.create-audit-form select,
+.create-audit-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  font-size: 14px;
+  color: #1f2937;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.create-audit-form textarea {
+  resize: vertical;
+}
+
+.create-audit-form .input-with-icon input {
+  background: #f8fafc;
+}
+
+.input-error {
+  border-color: #dc2626 !important;
+  background: #fef2f2 !important;
+}
+
+.create-audit-form .error-text {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
+.create-audit-form .form-actions {
+  justify-content: stretch;
+}
+
+.create-audit-form .btn-primary {
+  background: #0f5132;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.create-audit-form .btn-primary:hover {
+  background: #0c4128;
+}
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 8px;
+}
+
+.toggle-row-text strong {
+  display: block;
+  color: #0f2c52;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+.toggle-row-text span {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-switch .toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #cbd5e1;
+  border-radius: 999px;
+  transition: background-color 0.2s ease;
+}
+
+.toggle-switch .toggle-slider::before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+  background-color: #0f2c52;
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+  transform: translateX(20px);
+}
+
+.toggle-switch input:focus-visible + .toggle-slider {
+  box-shadow: 0 0 0 3px rgba(15, 44, 82, 0.25);
+}
+
+.iso-template-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.iso-template-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.iso-template-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+  cursor: pointer;
+  background: #f8fafc;
+}
+
+.iso-template-option input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #0f2c52;
+  flex-shrink: 0;
+}
+
+.iso-template-option--active {
+  border-color: #0f2c52;
+  background: #eef1fb;
+}
+
+.iso-template-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.iso-template-text strong {
+  color: #0f2c52;
+  font-size: 15px;
+}
+
+.iso-template-text span {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.iso-template-check {
+  color: #0f2c52;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   AUDIT CHECKLIST PAGE
+   ============================================================ */
+.checklist-header-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.pending-badge {
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+.checklist-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-top: 24px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .checklist-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.checklist-items-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.checklist-item-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.checklist-item-card h3 {
+  color: #0f2c52;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.checklist-item-card p {
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.checklist-item-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-add-evidence,
+.btn-add-findings {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border: 1px dashed #cbd5e1;
+  color: #94a3b8;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: not-allowed;
+}
+
+.btn-add-findings {
+  border: 1px solid #0f2c52;
+  color: #0f2c52;
+  cursor: pointer;
+  border-style: solid;
+}
+
+.btn-fail,
+.btn-pass {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  color: #94a3b8;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-fail--active {
+  background: #fef2f2;
+  border-color: #dc2626;
+  color: #dc2626;
+}
+
+.btn-pass--active {
+  background: #f0fdf4;
+  border-color: #16a34a;
+  color: #16a34a;
+}
+
+.finding-input-box {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.finding-input-box textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.checklist-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.audit-details-card h3 {
+  color: #0f2c52;
+  margin-bottom: 16px;
+}
+
+.audit-detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 14px;
+  color: #64748b;
+}
+
+.audit-detail-row strong {
+  color: #0f2c52;
+}
+
+.completion-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  margin: 16px 0 8px;
+}
+
+.completion-label span {
+  color: #0f2c52;
+}
+
+.instructions-box {
+  background: #eef2ff;
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.instructions-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #0f2c52;
+  font-weight: 700;
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.instructions-box p:not(.instructions-title) {
+  color: #475569;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.btn-submit-capa {
+  background: #0f2c52;
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.btn-submit-capa:hover {
+  background: #0c2444;
+}
+
+.btn-submit-capa:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   EVIDENCE UPLOAD MODAL (bottom-sheet style)
+   ============================================================ */
+.evidence-modal-box {
+  background: white;
+  border-radius: 20px 20px 16px 16px;
+  padding: 28px;
+  width: 360px;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.evidence-drag-handle {
+  width: 40px;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  margin: 0 auto 16px;
+}
+
+.evidence-modal-title {
+  color: #0f2c52;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.evidence-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  border: 2px dashed #93c5fd;
+  border-radius: 12px;
+  padding: 32px 16px;
+  cursor: pointer;
+  color: #0f2c52;
+  font-weight: 600;
+  background: #f8fafc;
+}
+
+.evidence-dropzone svg {
+  color: #1e6fd9;
+}
+
+.evidence-preview-wrapper {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.evidence-preview-img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+}
+
+.evidence-delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #fee2e2;
+  color: #dc2626;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.btn-evidence-upload {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #0f2c52;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.btn-evidence-upload:hover {
+  background: #0c2444;
+}
+
+.btn-evidence-upload:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.evidence-cancel {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  color: #64748b;
+  font-weight: 500;
+  padding: 14px 0 0;
+  cursor: pointer;
+}
+
+/* ============================================================
+   SUCCESS TOAST
+   ============================================================ */
+.success-toast {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: 1px solid #16a34a;
+  color: #16a34a;
+  font-weight: 700;
+  padding: 14px 24px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+/* ============================================================
+   AUDIT SUMMARY MODAL
+   ============================================================ */
+.summary-modal-box {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  width: 480px;
+  max-width: 90vw;
+  text-align: left;
+}
+
+.summary-modal-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #475569;
+  margin: 0 0 8px;
+}
+
+.summary-textarea {
+  width: 100%;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  font-family: inherit;
+  font-size: 14px;
+  color: #1f2937;
+  resize: vertical;
+  box-sizing: border-box;
+  margin-top: 12px;
+}
+
+.summary-char-count {
+  text-align: right;
+  font-size: 12px;
+  color: #94a3b8;
+  margin: 6px 0 16px;
+}
+
+.btn-save-progress {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #0f2c52;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-save-progress:hover {
+  background: #0c2444;
+}
+
+.btn-save-progress:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   AUDIT REPORT PREVIEW
+   ============================================================ */
+.report-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-top: 24px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .report-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.report-main-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.report-section-card h3 {
+  color: #0f2c52;
+}
+
+.report-summary-box {
+  background: #eef1fb;
+  border-radius: 10px;
+  padding: 16px;
+  color: #1f2937;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.checklist-result-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.checklist-result-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.checklist-result-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #eef1fb;
+  color: #0f2c52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.checklist-result-item span:not(.result-badge) {
+  flex: 1;
+  color: #1f2937;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.result-badge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.result-badge--pass {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.result-badge--fail {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.result-badge--pending {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.report-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.report-sidebar .audit-detail-row span:first-child {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+}
+
+.auditor-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #0f2c52;
+}
+
+.auditor-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #0f2c52;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-dot-badge {
+  background: #dcfce7;
+  color: #16a34a;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.ready-export-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 28px 24px;
+  text-align: center;
+}
+
+.ready-export-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #eef1fb;
+  color: #0f2c52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.ready-export-card h3 {
+  color: #0f2c52;
+  margin-bottom: 8px;
+}
+
+.ready-export-card p {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.btn-create-pdf {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #0f2c52;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-create-pdf:hover {
+  background: #0c2444;
+}
+
+.btn-create-pdf:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   PDF SUCCESS MODAL
+   ============================================================ */
+.pdf-success-box {
+  position: relative;
+  background: white;
+  border-radius: 16px;
+  padding: 32px;
+  width: 400px;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.pdf-success-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pdf-success-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #16a34a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.pdf-success-title {
+  color: #0f2c52;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.pdf-thumbnail-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  min-height: 140px;
+}
+
+.pdf-thumbnail-logo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.pdf-thumbnail-title {
+  color: #0f2c52;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.3;
+  max-width: 60%;
+  position: relative;
+  z-index: 1;
+}
+
+.pdf-thumbnail-shape {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 45%;
+  background: linear-gradient(160deg, #1e6fd9 0%, #14b8a6 100%);
+  clip-path: polygon(40% 0, 100% 0, 100% 100%, 10% 100%);
+}
+
+.pdf-success-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.pdf-success-actions .btn-view,
+.pdf-success-actions .btn-download {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+
+.pdf-success-actions .btn-view {
+  background: #0f2c52;
+  color: white;
+}
+
+.pdf-success-actions .btn-view:hover {
+  background: #0c2444;
+}
+
+.pdf-success-actions .btn-download {
+  background: white;
+  border: 1px solid #cbd5e1;
+  color: #1f2937;
+}
+
+.pdf-success-actions .btn-download:hover {
+  background: #f8fafc;
+}
+
+.btn-share-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: #0f2c52;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.btn-share-icon:hover {
+  background: #0c2444;
+}
+
+/* ============================================================
+   SHARE AUDIT REPORT MODAL
+   ============================================================ */
+.share-modal-box {
+  background: white;
+  border-radius: 16px;
+  width: 480px;
+  max-width: 90vw;
+  text-align: left;
+  overflow: hidden;
+}
+
+.share-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.share-modal-header h3 {
+  color: #0f2c52;
+  margin: 0;
+}
+
+.share-modal-body {
+  padding: 24px;
+}
+
+.share-status-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 24px;
+}
+
+.pdf-file-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #eef1fb;
+  color: #0f2c52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.share-status-row span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 14px;
+}
+
+.status-check-icon {
+  color: #16a34a;
+}
+
+.share-section-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 12px;
+}
+
+.share-via-row {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.share-via-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #1f2937;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.share-via-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #eef1fb;
+  color: #0f2c52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.share-link-row {
+  display: flex;
+  gap: 10px;
+}
+
+.share-link-row input {
+  flex: 1;
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  font-size: 13px;
+  color: #475569;
+}
+
+.btn-copy-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #0f2c52;
+  color: white;
+  border: none;
+  padding: 0 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-copy-link:hover {
+  background: #0c2444;
+}
+
+
+/* Catatan: h1 "Hello, Auditor!" sudah otomatis dark & bold lewat
+   style h1 global (color: var(--text-h)), jadi tidak perlu class
+   tambahan apa pun untuk itu. */
