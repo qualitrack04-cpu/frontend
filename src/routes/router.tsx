@@ -13,6 +13,8 @@ import ResetPasswordPage from '../features/auth/components/reset_password_page';
 import DashboardPage from '../features/dashboard/components/dashboard_page';
 import AuditsPage from '../features/audits/components/audits_page';
 import FindingsPage from '../features/findings/components/findings_page';
+import FindingFormPage from '../features/findings/components/finding_form_page';
+import FindingDetailPage from '../features/findings/components/finding_detail_page';
 import CapaPage from '../features/capa/components/capa_page';
 import SpcAnalysisPage from '../features/spc_analysis/components/spc_analysis_page';
 import SpcHistoryPage from '../features/spc_analysis/components/spc_history_page';
@@ -47,6 +49,9 @@ const router = createBrowserRouter([
           { path: 'dashboard', element: <DashboardPage /> },
           { path: 'audits', element: <AuditsPage /> },
           { path: 'findings', element: <FindingsPage /> },
+          { path: 'findings/new', element: <FindingFormPage mode="create" /> },
+          { path: 'findings/:id', element: <FindingDetailPage /> },
+          { path: 'findings/:id/edit', element: <FindingFormPage mode="edit" /> },        
           { path: 'capa', element: <CapaPage /> },
           { path: 'spc-analysis', element: <SpcAnalysisPage /> },
           { path: 'spc-analysis/history', element: <SpcHistoryPage /> },
