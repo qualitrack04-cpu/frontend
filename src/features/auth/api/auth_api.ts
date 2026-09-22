@@ -108,11 +108,6 @@ export async function updateProfile(payload: UpdateProfilePayload) {
   return response.data;
 }
 
-export async function deleteProfilePhoto() {
-  const response = await axios_instance.delete('/Auth/profile-photo');
-  return response.data;
-}
-
 export async function changePassword(payload: { newPassword: string; confirmPassword: string }) {
   const response = await axios_instance.post('/Auth/change-password', payload);
   return response.data;

@@ -158,6 +158,20 @@ code {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  object-fit: cover;
+}
+
+.user-avatar .avatar-placeholder-sm {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
 }
 
 .app-body {
@@ -807,6 +821,11 @@ code {
 }
 
 .profile-avatar img,
+
+.profile-name {
+    color: black;
+}
+
 .avatar-placeholder {
   width: 80px;
   height: 80px;
@@ -967,6 +986,10 @@ code {
 .profile-quickstats strong {
   font-size: 20px;
   color: #0f2c52;
+}
+
+.profile-detail {
+    color: black;
 }
 
 .profile-quickstats span {
@@ -1287,6 +1310,22 @@ code {
   color: #475569;
   margin-top: 12px;
   cursor: pointer;
+}
+
+.btn-confirm-danger {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  width: 100%;
+  margin-top: 16px;
+  cursor: pointer;
+}
+
+.btn-confirm-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .photo-modal-box {

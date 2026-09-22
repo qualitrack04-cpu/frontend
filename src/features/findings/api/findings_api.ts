@@ -20,10 +20,13 @@ export interface Finding {
   createdAt: string;
 }
 
-// ⚠️ ASUMSI bentuk response GET /api/Upload/finding/{findingId}.
+// Bentuk response GET /api/Upload/finding/{findingId} (lihat UploadController.GetFindingFiles):
+// backend sudah mengirim `url` langsung (hasil storage.GetPresignedUrl), jadi
+// foto bisa dipakai langsung sebagai <img src> tanpa perlu fetch terpisah.
 export interface FindingPhoto {
   id: string;
   fileName?: string | null;
+  url: string;
 }
 
 // Body POST /api/Finding (dari Swagger).
@@ -131,35 +134,10 @@ export async function uploadFindingPhoto(findingId: string, file: File) {
   return res.data;
 }
 
-// Deteksi tipe gambar dari byte awal (magic bytes), untuk jaga-jaga kalau
-// backend mengirim Content-Type yang salah (mis. application/octet-stream).
-async function sniffImageType(blob: Blob): Promise<string | null> {
-  const b = new Uint8Array(await blob.slice(0, 12).arrayBuffer());
-  if (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4e) return 'image/png';
-  if (b[0] === 0xff && b[1] === 0xd8) return 'image/jpeg';
-  if (b[0] === 0x47 && b[1] === 0x49 && b[2] === 0x46) return 'image/gif';
-  if (b[0] === 0x52 && b[1] === 0x49 && b[8] === 0x57) return 'image/webp';
-  return null;
-}
-
-// GET /api/Upload/file/{fileId}
-// Endpoint butuh Bearer token, jadi <img src> langsung tidak bisa.
-// Ambil sebagai blob lewat axios lalu buat object URL.
-export async function fetchFileBlob(fileId: string): Promise<Blob> {
-  const res = await axios_instance.get<Blob>(`/Upload/file/${fileId}`, {
-    responseType: 'blob',
-  });
-  const blob = res.data;
-  if (blob.type.startsWith('image/')) return blob;
-
-  const sniffed = await sniffImageType(blob);
-  if (sniffed) return new Blob([blob], { type: sniffed });
-
-  // Bukan gambar (mungkin JSON / base64 / URL). Tampilkan isinya di console untuk diagnosis.
-  const preview = (await blob.text()).slice(0, 300);
-  console.error(
-    `[findings] /Upload/file/${fileId} bukan gambar. Content-Type: "${blob.type}". Isi:`,
-    preview
-  );
-  throw new Error('Response file bukan gambar');
-}
+// Catatan: sebelumnya ada fungsi fetchFileBlob() yang mengambil foto lewat
+// GET /api/Upload/file/{fileId} sebagai blob. Itu salah asumsi — endpoint
+// itu ternyata mengembalikan JSON metadata (bukan file mentah), sehingga
+// hasilnya selalu gagal di-parse sebagai gambar ("Gagal memuat" di UI).
+// GetFindingFiles (di bawah, dipanggil lewat getFindingPhotos) sudah
+// mengirim `url` langsung ke file publiknya, jadi tidak perlu fetch
+// terpisah lagi — cukup pakai `photo.url` langsung sebagai <img src>.

@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useProfileKpi } from '../hooks/useProfileKpi';
 import { useProfile } from '../hooks/use_profile';
 import RecentActivity from './recent_activity';
+import { fileUrl } from '../../../shared/utils/file_url';
 
 export default function ProfilePage() {
   const { data: kpi, loading: kpiLoading, error: kpiError } = useProfileKpi();
@@ -35,12 +36,16 @@ export default function ProfilePage() {
         <div className="profile-card">
           <div className="profile-avatar">
             {profile.profilePhotoUrl ? (
-              <img src={profile.profilePhotoUrl} alt={profile.fullName} />
+              <img
+                src={fileUrl(profile.profilePhotoUrl)}
+                alt={profile.fullName}
+                className="avatar-placeholder"
+              />
             ) : (
               <div className="avatar-placeholder">{profile.fullName.charAt(0)}</div>
             )}
           </div>
-          <h2>{profile.fullName}</h2>
+          <h2 className="profile-name">{profile.fullName}</h2>
           <span className="role-badge">{profile.role}</span>
 
           <div className="profile-quickstats">
@@ -93,7 +98,7 @@ export default function ProfilePage() {
       {/* Baris bawah: Account Details + Recent Activity */}
       <div className="profile-bottom-grid">
         <div className="profile-card">
-          <h3>Account Details</h3>
+          <h3 className="profile-detail">Account Details</h3>
           <div className="detail-row">
             <label>Full Name</label>
             <div className="detail-value">{profile.fullName}</div>

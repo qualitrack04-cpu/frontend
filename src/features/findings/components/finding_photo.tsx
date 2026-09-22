@@ -1,49 +1,23 @@
-import { useEffect, useState } from 'react';
-import { fetchFileBlob } from '../api/findings_api';
+import { useState } from 'react';
 import PhotoLightbox from './photo_lightbox';
+import { fileUrl } from '../../../shared/utils/file_url';
 
 interface Props {
-  fileId: string;
+  url: string;
   alt: string;
 }
 
 // Thumbnail kecil; klik untuk membuka preview besar.
-// <img src="/api/Upload/file/..."> tidak mengirim header Authorization,
-// jadi file diambil sebagai blob lewat axios_instance lalu dipakai sebagai object URL.
-export default function FindingPhotoView({ fileId, alt }: Props) {
-  const [src, setSrc] = useState<string | null>(null);
+// Backend (UploadController.GetFindingFiles) sudah mengirim `url` langsung
+// ke file yang di-serve publik lewat static files middleware, jadi cukup
+// dipakai langsung sebagai <img src> (digabung base URL API lewat fileUrl()).
+export default function FindingPhotoView({ url, alt }: Props) {
   const [failed, setFailed] = useState(false);
   const [open, setOpen] = useState(false);
+  const src = fileUrl(url);
 
-  useEffect(() => {
-    let active = true;
-    let objectUrl: string | null = null;
-    setSrc(null);
-    setFailed(false);
-
-    fetchFileBlob(fileId)
-      .then((blob) => {
-        if (!active) return;
-        objectUrl = URL.createObjectURL(blob);
-        setSrc(objectUrl);
-      })
-      .catch((err) => {
-        if (!active) return;
-        console.error(`[findings] gagal memuat foto ${fileId}`, err);
-        setFailed(true);
-      });
-
-    return () => {
-      active = false;
-      if (objectUrl) URL.revokeObjectURL(objectUrl);
-    };
-  }, [fileId]);
-
-  if (failed) {
+  if (failed || !src) {
     return <div className="fd-thumb fd-thumb--empty">Gagal memuat</div>;
-  }
-  if (!src) {
-    return <div className="fd-thumb fd-thumb--loading" aria-busy="true" />;
   }
 
   return (
@@ -59,7 +33,7 @@ export default function FindingPhotoView({ fileId, alt }: Props) {
             src={src}
             alt={alt}
             onError={() => {
-              console.error(`[findings] foto ${fileId} tidak bisa dirender sebagai gambar`);
+              console.error(`[findings] foto ${url} gagal dimuat`);
               setFailed(true);
             }}
           />

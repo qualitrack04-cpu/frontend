@@ -1,9 +1,15 @@
 import { useState } from 'react';
-import { updateProfile, changePassword, uploadProfilePhoto, deleteProfilePhoto } from '../../auth/api/auth_api';
+import { updateProfile, changePassword, uploadProfilePhoto } from '../../auth/api/auth_api';
 
 export function useEditProfile() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // State terpisah untuk aksi foto (upload/hapus), supaya tidak ikut
+  // ter-disable/ter-error oleh proses simpan nama & password, dan supaya
+  // pesan errornya bisa ditampilkan tepat di kartu foto.
+  const [photoSaving, setPhotoSaving] = useState(false);
+  const [photoError, setPhotoError] = useState<string | null>(null);
 
   async function saveProfile(fullName: string, newPassword: string) {
     setSaving(true);
@@ -25,31 +31,18 @@ export function useEditProfile() {
   }
 
   async function savePhoto(file: File) {
-    setSaving(true);
-    setError(null);
+    setPhotoSaving(true);
+    setPhotoError(null);
     try {
       const result = await uploadProfilePhoto(file);
       return result.url as string;
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Gagal mengunggah foto.');
+      setPhotoError(err.response?.data?.message || 'Gagal mengunggah foto.');
       throw err;
     } finally {
-      setSaving(false);
+      setPhotoSaving(false);
     }
   }
 
-  const removePhoto = async () => {
-    setSaving(true);
-    setError(null);
-    try {
-      await deleteProfilePhoto();
-    } catch (err: any) {
-      setError(err.response?.data?.message ?? 'Gagal menghapus foto.');
-      throw err;
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return { saveProfile, savePhoto, removePhoto, saving, error };
+  return { saveProfile, savePhoto, saving, error, photoSaving, photoError };
 }
