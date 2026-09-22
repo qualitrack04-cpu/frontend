@@ -12,13 +12,16 @@ const colorFor = (dept: string) => departmentColors[dept] ?? '#64748b';
 
 export default function ComplianceScore() {
   const { data, loading, error } = useFetch(getComplianceScore);
+
+  console.log('compliance-score response', data)
+
   const departments = data?.data ?? [];
 
   return (
     <div className="compliance-section">
       <div className="compliance-header">
         <p className="card-label">COMPLIANCE SCORE</p>
-        {data && (
+        {typeof data?.overallScore === 'number' && (
           <span className="compliance-overall">
             Overall: <strong>{data.overallScore.toFixed(1)}%</strong>
           </span>
@@ -40,12 +43,12 @@ export default function ComplianceScore() {
           >
             <div className="compliance-top">
               <strong>{item.department}</strong>
-              <span style={{ color: colorFor(item.department) }}>{item.score.toFixed(1)}%</span>
+              <span style={{ color: colorFor(item.department) }}>{(item.score ?? 0).toFixed(1)}%</span>
             </div>
             <div className="compliance-bar">
               <div
                 className="compliance-fill"
-                style={{ width: `${item.score}%`, backgroundColor: colorFor(item.department) }}
+                style={{ width: `${item.score ?? 0}%`, backgroundColor: colorFor(item.department) }}
               />
             </div>
             <p className="text-muted small">

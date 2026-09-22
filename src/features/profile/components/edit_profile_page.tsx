@@ -1,20 +1,20 @@
 import { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, KeyRound, Eye, EyeOff, Pencil } from 'lucide-react';
+import { KeyRound, Pencil } from 'lucide-react';
 import ChangePhotoModal from './change_photo_modal';
 import { useProfile } from '../hooks/use_profile';
 import { useEditProfile } from '../hooks/use_edit_profile';
+import { fileUrl } from '../../../shared/utils/file_url';
 
 export default function EditProfilePage() {
   const { profile, loading: profileLoading, refetch } = useProfile();
-  const { saveProfile, savePhoto, saving, error: saveError } = useEditProfile();
+  const { saveProfile, savePhoto, removePhoto, saving, error: saveError } = useEditProfile();
 
   const [fullName, setFullName] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [showCurrentPw, setShowCurrentPw] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
 
   const navigate = useNavigate();
@@ -66,6 +66,18 @@ export default function EditProfilePage() {
     }
   };
 
+    const handleRemovePhoto = async () => {
+    if (!window.confirm('Hapus foto profil?')) return;
+    try {
+      await removePhoto();
+      await refetch();
+    } catch {
+      // error sudah ditangani di hook
+    } finally {
+      setShowPhotoModal(false);
+    }
+  };
+
   return (
     <div className="page-container">
       <button className="back-btn" onClick={() => navigate('/profile')}>← Back</button>
@@ -77,7 +89,7 @@ export default function EditProfilePage() {
         <div className="profile-card center">
           <button className="avatar-edit-btn" onClick={() => setShowPhotoModal(true)}>
             {profile.profilePhotoUrl ? (
-              <img src={profile.profilePhotoUrl} alt={profile.fullName} className="avatar-placeholder large" />
+              <img src={fileUrl(profile.profilePhotoUrl)} alt={profile.fullName} className="avatar-placeholder large" />
             ) : (
               <div className="avatar-placeholder large">{fullName.charAt(0).toUpperCase()}</div>
             )}
@@ -85,6 +97,12 @@ export default function EditProfilePage() {
           </button>
           <h3 className="profile-name">{fullName}</h3>
           <span className="role-badge">{profile.role}</span>
+
+          {profile.profilePhotoUrl && (
+            <button className="link-danger" onClick={handleRemovePhoto} disabled={saving}>
+              Remove Photo
+            </button>
+          )}
         </div>
 
         {/* ---- Form (kanan) ---- */}

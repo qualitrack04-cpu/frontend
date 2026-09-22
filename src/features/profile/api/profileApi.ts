@@ -1,21 +1,19 @@
 import axiosInstance from '../../../shared/api/axios_instance';
 
 export interface ProfileKpi {
-  qualityScore: number;
-  qualityLabel: string;
-  successRate: number;
-  successCount: string;
-  target: number;
-  onTime: number;
-  overdue: number;
-  // TODO: sesuaikan setelah lihat response asli backend
+  totalCapaAssigned: number;
+  totalCapaClosed: number;
+  totalCapaOpenInProgress: number;
+  totalCapaClosedOnTime: number;
+  totalFindingsReported: number;
+  onTimeCompletionRate: number; // desimal 0..1, misal 0.857
 }
 
 export interface RecentActivityItem {
-  id: string;
+  activityType: string;
   description: string;
-  date: string;
-  // TODO: sesuaikan setelah lihat response asli backend
+  timestamp: string;
+  relatedId: string;
 }
 
 export async function getProfileKpi(): Promise<ProfileKpi> {
@@ -23,7 +21,9 @@ export async function getProfileKpi(): Promise<ProfileKpi> {
   return response.data;
 }
 
-export async function getRecentActivity(): Promise<RecentActivityItem[]> {
-  const response = await axiosInstance.get('/Profile/recent-activity'); // baseURL sudah termasuk /api
+export async function getRecentActivity(limit = 10): Promise<RecentActivityItem[]> {
+  const response = await axiosInstance.get('/Profile/recent-activity', {
+    params: { limit },
+  });
   return response.data;
 }
