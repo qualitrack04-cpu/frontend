@@ -9,7 +9,7 @@ interface AuditCardProps {
 
 export default function AuditCard({ audit, onDelete }: AuditCardProps) {
   const schedule = audit.schedules[0];
-  const isPriority = audit.priority === 'High';
+  const isPriority = audit.priority === 'Priority';
 
   const date = schedule ? new Date(schedule.scheduledDate) : null;
   const day = date?.toLocaleDateString('en-US', { day: '2-digit' });

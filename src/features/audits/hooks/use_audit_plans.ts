@@ -35,10 +35,8 @@ export function useAuditPlans() {
     }
   }, []);
 
-  // ⚠️ priority sekarang enum string ('Low'|'Common'|'High'), bukan boolean.
-  // Verifikasi value 'High' ini sesuai dengan enum AuditPriority asli di backend.
   const audits = useMemo(
-    () => (tab === 'priority' ? allAudits.filter((a) => a.priority === 'High') : allAudits),
+    () => (tab === 'priority' ? allAudits.filter((a) => a.priority === 'Priority') : allAudits),
     [allAudits, tab]
   );
 

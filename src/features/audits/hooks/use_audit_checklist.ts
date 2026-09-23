@@ -63,6 +63,11 @@ export function useAuditChecklist(planId: string, scheduleId: string) {
     async function load() {
       setLoading(true);
       setError(null);
+      setSession(null);
+      setItems([]);
+      setNeedsChecklistSelection(false);
+      setChecklistOptions([]);
+
       try {
         const planData = await getAuditPlanById(planId);
         if (cancelled) return;
@@ -74,24 +79,46 @@ export function useAuditChecklist(planId: string, scheduleId: string) {
           setError('Jadwal audit tidak ditemukan pada audit plan ini');
           return;
         }
+        
+        let sessionData = await getAuditSessionByScheduleId(scheduleId);
+        if (cancelled) return;
 
-        const sessionData = await getAuditSessionByScheduleId(scheduleId);
-
-        if (sessionData) {
-          if (cancelled) return;
-          setSession(sessionData);
-          await loadItemsForSession(sessionData);
-        } else {
+        if (!sessionData) {
           const checklists = await getChecklists();
           if (cancelled) return;
-          setChecklistOptions(checklists);
-          setNeedsChecklistSelection(true);
+          
+          const matched =
+            checklists.find(
+              (c) => c.title === scheduleData.clauseRef && c.department === scheduleData.department
+            ) ?? checklists.find((c) => c.title === scheduleData.clauseRef);
+
+          if (!matched) {
+            const sameDept = checklists.filter((c) => c.department === scheduleData.department);
+            setChecklistOptions(sameDept.length > 0 ? sameDept : checklists);
+            setNeedsChecklistSelection(true);
+            return;
+          }
+
+          try {
+            sessionData =await createAuditSession(scheduleId, matched.id);
+          } catch {
+            sessionData = await getAuditSessionByScheduleId(scheduleId);
+          }
+          if (cancelled) return;
         }
+        
+        if (!sessionData) {
+          setError('Gagal memulai sesi audit');
+          return;
+        }
+
+        setSession(sessionData);
+        await loadItemsForSession(sessionData);
       } catch (err: any) {
         if (!cancelled) setError(err.response?.data?.message ?? 'Gagal memuat audit checklist');
       } finally {
         if (!cancelled) setLoading(false);
-      }
+      }        
     }
 
     load();

@@ -24,6 +24,9 @@ import ProfilePage from '../features/profile/components/profile_page';
 import EditProfilePage from '../features/profile/components/edit_profile_page';
 
 import CreateAuditPlanPage from '../features/audits/components/create_audit_page';
+//import AuditChecklistPage from '../features/audits/components/edit_audit_page';
+import AuditChecklistPage from '../features/audits/components/audit_checklist_page';
+import AuditReportPage from '../features/audits/components/audit_report_preview_page'
 
 const router = createBrowserRouter([
   // Hanya untuk yang belum login
@@ -59,6 +62,9 @@ const router = createBrowserRouter([
           { path: 'profile', element: <ProfilePage /> },
           { path: 'profile/edit', element: <EditProfilePage /> },
           { path: 'audits/new', element: <CreateAuditPlanPage /> },
+          { path: 'audits/:planId/edit', element: <CreateAuditPlanPage />},
+          { path: 'audits/:planId/schedule/:scheduleId/checklist',element: <AuditChecklistPage />},
+          { path: 'audits/:planId/schedule/:scheduleId/report',element: <AuditReportPage />,}
         ],
       },
     ],

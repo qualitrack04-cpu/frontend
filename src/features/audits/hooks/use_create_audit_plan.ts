@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createAuditPlan, type AuditPriority } from '../api/audit_plan_api';
 import { getAuditors, type Auditor } from '../api/auditors_api';
@@ -42,9 +42,6 @@ export function useCreateAuditPlan() {
 
       if (checklistsResult.status === 'fulfilled') {
         setChecklists(checklistsResult.value);
-        if (checklistsResult.value.length > 0) {
-          setChecklistId(checklistsResult.value[0].id); 
-        }
       } else {
         errors.push(checklistsResult.reason?.response?.data?.message ?? 'Gagal memuat daftar checklist.');
       }
@@ -53,6 +50,16 @@ export function useCreateAuditPlan() {
       setLoadingOptions(false);
     });
   }, []);
+
+  const filteredChecklists = useMemo(
+    () => (department ? checklists.filter((c) => c.department === department) : []),
+    [department, checklists]
+  );
+
+  useEffect(() => {
+    if (filteredChecklists.some((c) => c.id === checklistId)) return;
+    setChecklistId(filteredChecklists[0]?.id ?? '');
+  }, [filteredChecklists]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,7 +72,7 @@ export function useCreateAuditPlan() {
     }
 
     const selectedAuditor = auditors.find((a) => a.id === leadAuditorId);
-    const selectedChecklist = checklists.find((c) => c.id === checklistId);
+    const selectedChecklist = filteredChecklists.find((c) => c.id === checklistId);
 
     if (!selectedAuditor) {
       setSubmitError('Pilih Lead Auditor terlebih dahulu.');
@@ -79,18 +86,26 @@ export function useCreateAuditPlan() {
       setSubmitError('Isi Scheduled Date terlebih dahulu.');
       return;
     }
+
+    const year = Number(scheduledDate.split('-')[0]);
+    const maxYear = new Date().getFullYear() + 5;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(scheduledDate) || year < 2000 || year > maxYear) {
+      setSubmitError(`Tanggal tidak valid. Tahun harus antara 2000 dan ${maxYear}.`);
+      return;
+    }
+
     if (!selectedChecklist) {
       setSubmitError('Pilih ISO Template terlebih dahulu.');
       return;
     }
 
-    const priority: AuditPriority = highPriority ? 'High' : 'Common';
+    const priority: AuditPriority = highPriority ? 'Priority' : 'Common';
 
     setSubmitting(true);
     try {
       await createAuditPlan({
         title,
-        year: new Date(scheduledDate).getFullYear(),
+        year,
         standard: selectedChecklist.standard,
         priority,
         description: scopeDescription || undefined,
@@ -105,7 +120,15 @@ export function useCreateAuditPlan() {
       });
       navigate('/audits');
     } catch (err: any) {
-      const message = err.response?.data?.message ?? 'Gagal membuat audit plan.';
+      const data = err.response?.data;
+
+      const validationMessages = data?.errors
+        ? Object.values(data.errors as Record<string, string[]>).flat().join(' ')
+        : null;
+
+      const message =
+        data?.message ?? validationMessages ?? data?.title ?? 'Gagal membuat audit plan.';
+
       if (err.response?.status === 400 && message.toLowerCase().includes('title')) {
         setTitleError(message);
       } else {
@@ -125,7 +148,7 @@ export function useCreateAuditPlan() {
     checklistId, setChecklistId,
     highPriority, setHighPriority,
     auditors,
-    checklists,
+    checklists: filteredChecklists,
     loadingOptions,
     titleError,
     submitError,
