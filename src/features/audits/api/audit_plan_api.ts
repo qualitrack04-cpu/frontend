@@ -1,6 +1,6 @@
 import axios_instance from '../../../shared/api/axios_instance';
 
-export type AuditPriority = 'Low' | 'Common' | 'High';
+export type AuditPriority = 'Common' |'Priority';
 
 
 export interface ScheduleResponse {

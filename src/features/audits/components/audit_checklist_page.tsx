@@ -5,6 +5,7 @@ import ChecklistItemCard from './checklist_item_card';
 import SuccessToast from './success_toast';
 import AuditSummaryModal from './audit_summary_modal';
 import { getFindingsBySession } from '../../findings/api/finding_api';
+import { getSessionSummary } from '../api/audit_session_api';
 //import { createCapaFromFinding } from '../../capa/api/capa_api';
 import { useState, useEffect } from 'react';
 
@@ -21,12 +22,28 @@ export default function AuditChecklistPage() {
   const [capaError, setCapaError] = useState<string | null>(null);
   const [showEvidenceToast, setShowEvidenceToast] = useState(false);
   const [showSummaryModal, setShowSummaryModal] = useState(false);
+  const [summaryExists, setSummaryExists] = useState(false);
+
+  const reportPath = `/audits/${planId}/schedule/${scheduleId}/report`;
 
   useEffect(() => {
-    if (completionPercent === 100 && items.length > 0) {
-      setShowSummaryModal(true);
-    }
-  }, [completionPercent, items.length]);
+    if (!session || completionPercent !== 100 || items.length === 0) return;
+    let cancelled = false;
+
+    // Summary cuma boleh dibuat sekali per sesi — cek dulu sebelum buka modal
+    getSessionSummary(session.id)
+      .then(() => {
+        if (!cancelled) setSummaryExists(true);
+      })
+      .catch((err: any) => {
+        if (cancelled) return;
+        if (err.response?.status === 404) setShowSummaryModal(true);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session, completionPercent, items.length]);
 
   const handleSubmitCapa = async () => {
     if (!session) return;
@@ -149,6 +166,17 @@ export default function AuditChecklistPage() {
 
           {capaError && <p className="error-text">{capaError}</p>}
 
+          {summaryExists && (
+            <button className="btn-save-progress" onClick={() => navigate(reportPath)}>
+              View Audit Report →
+            </button>
+          )}
+          {!summaryExists && completionPercent === 100 && items.length > 0 && !showSummaryModal && (
+            <button className="btn-save-progress" onClick={() => setShowSummaryModal(true)}>
+              Isi Audit Summary
+            </button>
+          )}
+
           <button className="btn-submit-capa" onClick={handleSubmitCapa} disabled={submittingCapa}>
             {submittingCapa ? 'Submitting...' : 'Submit CAPA →'}
           </button>
@@ -162,7 +190,8 @@ export default function AuditChecklistPage() {
       {showSummaryModal && session && (
         <AuditSummaryModal
           sessionId={session.id}
-          onSaved={() => navigate(`/audits/${planId}/schedule/${scheduleId}/report`)}
+          onSaved={() => navigate(reportPath)}
+          onClose={() => setShowSummaryModal(false)}
         />
       )}
     </div>

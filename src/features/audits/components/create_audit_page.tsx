@@ -1,6 +1,18 @@
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, CircleAlert, Save } from 'lucide-react';
 import { useCreateAuditPlan, DEPARTMENTS } from '../hooks/use_create_audit_plan';
+import DatePicker from '../../../shared/components/date_picker';
+
+function toLocalisoDate(date: Date){
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+const todayIso = toLocalisoDate(new Date());
+const maxDateIso = `${new Date().getFullYear() + 5}-12-31`;
+
 
 export default function CreateAuditPlanPage() {
   const navigate = useNavigate();
@@ -73,10 +85,11 @@ export default function CreateAuditPlanPage() {
         <div className="form-group">
           <label>Scheduled Date</label>
           <div className="input-with-icon">
-            <input
-              type="date"
+            <DatePicker
+              min={todayIso}
+              max={maxDateIso}
               value={scheduledDate}
-              onChange={(e) => setScheduledDate(e.target.value)}
+              onChange={setScheduledDate}
             />
           </div>
         </div>

@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Calendar, FileText, Download, Check, Eye, Share2, Mail, MessageCircle, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { useAuditReport } from '../hooks/use_audit_report';
-import { generatePdfReport, type PdfReportResult } from '../api/pdf_api';
+import { generatePdfReport, downloadPdfReport, type PdfReportResult } from '../api/pdf_api';
 
 export default function AuditReportPreviewPage() {
   const { planId, scheduleId } = useParams<{ planId: string; scheduleId: string }>();
@@ -14,6 +14,7 @@ export default function AuditReportPreviewPage() {
   const [pdfResult, setPdfResult] = useState<PdfReportResult | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   const handleCreatePdf = async () => {
     if (!session) return;
@@ -26,6 +27,27 @@ export default function AuditReportPreviewPage() {
       setPdfError(err.response?.data?.message ?? 'Gagal membuat PDF');
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const handleDownload = async () => {
+    if (!session) return;
+    setDownloading(true);
+    setPdfError(null);
+    try {
+      const blob = await downloadPdfReport(session.id);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `audit-report-${session.id.slice(0, 8)}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch {
+      setPdfError('Gagal mengunduh PDF');
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -151,6 +173,8 @@ export default function AuditReportPreviewPage() {
               <div className="pdf-thumbnail-title">Audit Compliance Report</div>
             </div>
 
+            {pdfError && <p className="error-text">{pdfError}</p>}
+
             <div className="pdf-success-actions">
               <a href={pdfResult.pdfUrl} target="_blank" rel="noreferrer" className="btn-view">
                 <Eye size={16} /> View
@@ -163,9 +187,14 @@ export default function AuditReportPreviewPage() {
               >
                 <Share2 size={16} />
               </button>
-              <a href={pdfResult.pdfUrl} download className="btn-download">
-                <Download size={16} /> Download
-              </a>
+              <button
+                type="button"
+                className="btn-download"
+                onClick={handleDownload}
+                disabled={downloading}
+              >
+                <Download size={16} /> {downloading ? 'Downloading...' : 'Download'}
+              </button>
             </div>
           </div>
         </div>
