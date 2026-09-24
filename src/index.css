@@ -3143,10 +3143,31 @@ label.photo-source-btn {
 
 .capa-status--editable {
   position: relative;
-  padding-right: 30px;
+  gap: 6px;
   cursor: pointer;
+  padding-right: 10px;
 }
 
+/* Label teks & dot terlihat di z-index 1 */
+.capa-status-label {
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.capa-status--editable .capa-status-dot {
+  position: relative;
+  z-index: 1;
+}
+
+.capa-status-chevron {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+}
+
+/* Select transparan melayang di atas (z-index 2), tapi tidak menghalangi tampilan */
 .capa-status--editable select {
   position: absolute;
   inset: 0;
@@ -3155,18 +3176,13 @@ label.photo-source-btn {
   opacity: 0;
   border: none;
   cursor: pointer;
-}
-
-.capa-status-chevron {
-  pointer-events: none;
-  position: absolute;
-  right: 10px;
+  z-index: 2;
 }
 
 /* ---------- List grid & card ---------- */
 .capa-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
 

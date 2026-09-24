@@ -26,8 +26,13 @@ export default function CapaStatusBadge({ status, onChange, disabled }: CapaStat
     );
   }
 
+  // Varian editable: teks + chevron tampil di atas, <select> transparan overlay di bawah
+  // agar label tetap terlihat sementara select bisa diklik.
   return (
     <span className={`${statusClass(status)} capa-status--editable`}>
+      <span className="capa-status-dot" />
+      <span className="capa-status-label">{capaStatusLabel[status]}</span>
+      <ChevronDown size={14} className="capa-status-chevron" />
       <select
         value={status}
         disabled={disabled}
@@ -41,7 +46,6 @@ export default function CapaStatusBadge({ status, onChange, disabled }: CapaStat
           </option>
         ))}
       </select>
-      <ChevronDown size={16} className="capa-status-chevron" />
     </span>
   );
 }
