@@ -6,7 +6,7 @@ import SuccessToast from './success_toast';
 import AuditSummaryModal from './audit_summary_modal';
 import { getFindingsBySession } from '../../findings/api/finding_api';
 import { getSessionSummary } from '../api/audit_session_api';
-//import { createCapaFromFinding } from '../../capa/api/capa_api';
+// import { createCapaFromFinding } from '../../capa/api/capa_api';
 import { useState, useEffect } from 'react';
 
 export default function AuditChecklistPage() {

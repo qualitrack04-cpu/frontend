@@ -3036,6 +3036,398 @@ label.photo-source-btn {
   font-family: inherit;
 }
 
+/* ============================================================
+   CAPA PAGE (list / detail / create)
+   ============================================================ */
+.capa-page {
+  --capa-navy: #0f2c52;
+  --capa-muted: #64748b;
+  --capa-border: #e2e8f0;
+  --capa-tint: #eef2fc;
+  --capa-open: #dc2626;
+  --capa-open-bg: #fde8e8;
+  --capa-inprogress: #2563eb;
+  --capa-inprogress-bg: #dbeafe;
+  --capa-pending: #b45309;
+  --capa-pending-bg: #fef3c7;
+  --capa-closed: #059669;
+  --capa-closed-bg: #d1fae5;
+}
+
+.capa-title {
+  margin: 0 0 24px;
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--capa-navy);
+}
+
+.capa-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--capa-navy);
+  text-decoration: none;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.capa-back:hover {
+  text-decoration: underline;
+}
+
+/* ---------- List header & buttons ---------- */
+.capa-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.capa-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--capa-navy);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.capa-btn-primary:hover {
+  background: #0c2444;
+}
+
+/* ---------- Status badge / dropdown ---------- */
+.capa-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.capa-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.capa-status--open {
+  color: var(--capa-open);
+  background: var(--capa-open-bg);
+}
+
+.capa-status--inprogress {
+  color: var(--capa-inprogress);
+  background: var(--capa-inprogress-bg);
+}
+
+.capa-status--pendingverification {
+  color: var(--capa-pending);
+  background: var(--capa-pending-bg);
+}
+
+.capa-status--closed {
+  color: var(--capa-closed);
+  background: var(--capa-closed-bg);
+}
+
+.capa-status--editable {
+  position: relative;
+  padding-right: 30px;
+  cursor: pointer;
+}
+
+.capa-status--editable select {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  border: none;
+  cursor: pointer;
+}
+
+.capa-status-chevron {
+  pointer-events: none;
+  position: absolute;
+  right: 10px;
+}
+
+/* ---------- List grid & card ---------- */
+.capa-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 20px;
+}
+
+.capa-card {
+  background: white;
+  border: 1.5px solid var(--capa-border);
+  border-radius: 14px;
+  padding: 20px 22px;
+}
+
+.capa-card--open {
+  border-color: var(--capa-open);
+}
+
+.capa-card--inprogress {
+  border-color: var(--capa-inprogress);
+}
+
+.capa-card--pendingverification {
+  border-color: var(--capa-pending);
+}
+
+.capa-card--closed {
+  border-color: var(--capa-closed);
+}
+
+.capa-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.capa-card-head h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--capa-navy);
+}
+
+.capa-card-date {
+  margin: 6px 0 16px;
+  color: var(--capa-muted);
+  font-size: 13px;
+}
+
+.capa-label {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--capa-muted);
+  margin-bottom: 6px;
+}
+
+.capa-card-summary {
+  background: var(--capa-tint);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+.capa-card-summary p {
+  margin: 0;
+  color: #1f2937;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.capa-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--capa-border);
+}
+
+.capa-assignee {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.capa-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--capa-inprogress-bg);
+  color: var(--capa-navy);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.capa-avatar--lg {
+  width: 36px;
+  height: 36px;
+  font-size: 13px;
+}
+
+.capa-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--capa-navy);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.capa-link:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Detail page ---------- */
+.capa-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+}
+
+.capa-panel {
+  background: white;
+  border: 1px solid var(--capa-border);
+  border-radius: 14px;
+  padding: 24px 26px;
+  margin-bottom: 20px;
+}
+
+.capa-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.capa-section-title {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #334155;
+  padding-bottom: 10px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--capa-border);
+}
+
+.capa-detail-heading {
+  margin: 4px 0 20px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--capa-navy);
+}
+
+.capa-finding-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--capa-tint);
+  color: var(--capa-navy);
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.capa-finding-chip:hover {
+  background: #e2e8fb;
+}
+
+.capa-desc-box {
+  background: var(--capa-tint);
+  border-radius: 10px;
+  padding: 18px 20px;
+  color: #1f2937;
+  font-size: 14.5px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.capa-meta {
+  position: sticky;
+  top: 20px;
+}
+
+.capa-meta-block {
+  margin-bottom: 22px;
+}
+
+.capa-meta-block:last-child {
+  margin-bottom: 0;
+}
+
+.capa-meta-assignee {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 15px;
+}
+
+.capa-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--capa-tint);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-weight: 600;
+  color: #1f2937;
+  font-size: 14px;
+}
+
+/* ---------- Create CAPA form ---------- */
+.capa-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+}
+
+.capa-form-main .form-group {
+  margin-bottom: 22px;
+}
+
+.capa-form-main label,
+.capa-form-side label {
+  display: block;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 12px;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.capa-form-main input[type="text"],
+.capa-form-main textarea,
+.capa-form-main select,
+.capa-form-side input[type="date"],
+.capa-form-side select {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--capa-border);
+  border-radius: 8px;
+  background: #f8fafc;
+  font-size: 14px;
+  color: #1f2937;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
 .date-picker-toggle {
   position: absolute;
   right: 8px;
@@ -3149,4 +3541,104 @@ label.photo-source-btn {
 
 .date-picker-today-btn:hover {
   background: #e2e8f0;
+}
+
+.capa-form-main textarea {
+  resize: vertical;
+}
+
+.capa-form-main .error-text,
+.capa-form-side .error-text {
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
+.capa-finding-warning {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: var(--capa-open);
+  font-size: 14px;
+}
+
+.capa-finding-warning span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.capa-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--capa-navy);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.capa-form-side .capa-panel .form-group:last-child {
+  margin-bottom: 0;
+}
+
+.capa-guidelines-box {
+  background: var(--capa-tint);
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 20px;
+}
+
+.capa-guidelines-box h3 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: var(--capa-navy);
+}
+
+.capa-guidelines-box p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #475569;
+}
+
+.capa-btn-submit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--capa-navy);
+  color: white;
+  border: none;
+  padding: 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.capa-btn-submit:hover {
+  background: #0c2444;
+}
+
+.capa-btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 900px) {
+  .capa-detail-grid,
+  .capa-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .capa-meta {
+    position: static;
+  }
 }

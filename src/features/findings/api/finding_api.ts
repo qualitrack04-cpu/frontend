@@ -45,3 +45,8 @@ export async function getFindingsBySession(sessionId: string): Promise<FindingRe
   const response = await axios_instance.get<ListEnvelope<FindingRecord>>(`/Finding/by-session/${sessionId}`);
   return response.data.data;
 }
+
+export async function getFindingsWithoutCapa(): Promise<FindingRecord[]> {
+  const response = await axios_instance.get<ListEnvelope<FindingRecord>>('/Finding/without-capa');
+  return response.data.data;
+}

@@ -16,6 +16,8 @@ import FindingsPage from '../features/findings/components/findings_page';
 import FindingFormPage from '../features/findings/components/finding_form_page';
 import FindingDetailPage from '../features/findings/components/finding_detail_page';
 import CapaPage from '../features/capa/components/capa_page';
+import CreateCapaPage from '../features/capa/components/create_capa_page';
+import CapaDetailPage from '../features/capa/components/capa_detail_page';
 import SpcAnalysisPage from '../features/spc_analysis/components/spc_analysis_page';
 import SpcHistoryPage from '../features/spc_analysis/components/spc_history_page';
 import SpcResultDetailPage from '../features/spc_analysis/components/spc_result_detail_page';
@@ -24,10 +26,8 @@ import ProfilePage from '../features/profile/components/profile_page';
 import EditProfilePage from '../features/profile/components/edit_profile_page';
 
 import CreateAuditPlanPage from '../features/audits/components/create_audit_page';
-//import AuditChecklistPage from '../features/audits/components/edit_audit_page';
 import AuditChecklistPage from '../features/audits/components/audit_checklist_page';
-import AuditReportPage from '../features/audits/components/audit_report_preview_page'
-
+import AuditReportPreviewPage from '../features/audits/components/audit_report_preview_page';
 const router = createBrowserRouter([
   // Hanya untuk yang belum login
   {
@@ -56,6 +56,8 @@ const router = createBrowserRouter([
           { path: 'findings/:id', element: <FindingDetailPage /> },
           { path: 'findings/:id/edit', element: <FindingFormPage mode="edit" /> },        
           { path: 'capa', element: <CapaPage /> },
+          { path: 'capa/new', element: <CreateCapaPage /> },
+          { path: 'capa/:id', element: <CapaDetailPage /> },
           { path: 'spc-analysis', element: <SpcAnalysisPage /> },
           { path: 'spc-analysis/history', element: <SpcHistoryPage /> },
           { path: 'spc-analysis/history/:id', element: <SpcResultDetailPage /> },
@@ -63,8 +65,8 @@ const router = createBrowserRouter([
           { path: 'profile/edit', element: <EditProfilePage /> },
           { path: 'audits/new', element: <CreateAuditPlanPage /> },
           { path: 'audits/:planId/edit', element: <CreateAuditPlanPage />},
-          { path: 'audits/:planId/schedule/:scheduleId/checklist',element: <AuditChecklistPage />},
-          { path: 'audits/:planId/schedule/:scheduleId/report',element: <AuditReportPage />,}
+          { path: 'audits/:planId/schedule/:scheduleId/checklist', element: <AuditChecklistPage /> },
+          { path: 'audits/:planId/schedule/:scheduleId/report', element: <AuditReportPreviewPage /> },
         ],
       },
     ],
