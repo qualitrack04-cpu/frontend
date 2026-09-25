@@ -76,6 +76,8 @@ export interface MonthlyReportSummary {
 
 export interface MonthlyReportSchedule {
   sessionId: string | null;
+  scheduleId: string;
+  planId: string;
   department: string;
   auditorName: string;
   scheduledDate: string;

@@ -1624,6 +1624,7 @@ label.photo-source-btn {
   display: flex;
   align-items: flex-start;
   gap: 10px;
+  color: #08060d;
 }
 
 .audit-report-icon {
