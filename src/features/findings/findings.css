@@ -170,6 +170,10 @@
   border-left: 10px solid var(--stripe);
   border-radius: 12px;
   box-shadow: 0 1px 6px rgba(15, 40, 90, 0.07);
+  min-width: 0;
+  overflow: hidden;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
 }
 
 .fd-card--MinorNC {
@@ -201,6 +205,7 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 1rem;
+  min-width: 0;
 }
 
 .fd-card-head h2 {
@@ -208,6 +213,14 @@
   font-size: 1.05rem;
   font-weight: 700;
   color: var(--fd-heading);
+  min-width: 0;
+  flex: 1;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .fd-badge {
@@ -233,6 +246,8 @@
 .fd-card-clause {
   margin: 0.4rem 0 0;
   color: var(--fd-muted);
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .fd-card-clause--empty {
@@ -257,6 +272,8 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  word-break: break-word;
+  overflow-wrap: anywhere;
 }
 
 .fd-card-foot {
