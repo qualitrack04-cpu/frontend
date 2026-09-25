@@ -2,8 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { forgotPasswordRequestOtp, forgotPasswordReset, forgotPasswordVerifyOtp } from '../api/auth_api';
 
-type Step = 'email' | 'otp' | 'reset';
-
 export function useForgotPasswordFlow() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

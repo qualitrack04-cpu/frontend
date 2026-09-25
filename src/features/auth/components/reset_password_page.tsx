@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation, Link, replace, useNavigate } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useForgotPasswordFlow } from '../hooks/use_forgot_password_flow';
 import AuthBrandPanel from './auth_brand_panel';
@@ -26,15 +26,15 @@ export default function ResetPasswordPage() {
       return;
     }
 
-    if (newPassword !== confirmPassword){
+    if (newPassword !== confirmPassword) {
       setLocalError('Password tidak sama.');
       return
     }
 
-    try{
+    try {
       await submitNewPassword(email, resetToken, newPassword, confirmPassword);
-      navigate('/login', { replace: true});
-    } catch {}
+      navigate('/login', { replace: true });
+    } catch { }
 
   };
 
