@@ -4,7 +4,7 @@ import { useAuditChecklist } from '../hooks/use_audit_checklist';
 import ChecklistItemCard from './checklist_item_card';
 import SuccessToast from './success_toast';
 import AuditSummaryModal from './audit_summary_modal';
-import { getFindingsBySession } from '../../findings/api/finding_api';
+import { getFindings } from '../../findings/api/findings_api';
 import { getSessionSummary } from '../api/audit_session_api';
 // import { createCapaFromFinding } from '../../capa/api/capa_api';
 import { useState, useEffect } from 'react';
@@ -50,7 +50,7 @@ export default function AuditChecklistPage() {
     setSubmittingCapa(true);
     setCapaError(null);
     try {
-      const findings = await getFindingsBySession(session.id);
+      const findings = await getFindings({ sessionId: session.id } as any);
       const withoutCapa = findings.filter((f) => f.status === 'Open');
 
       if (withoutCapa.length === 0) {
