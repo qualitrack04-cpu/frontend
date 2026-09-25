@@ -9,6 +9,7 @@ import {
   Plus,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
+import { canManageAuditPlans } from '../../utils/role';
 
 const menuItems:  {label: string; path: string; icon: LucideIcon}[] = [
   { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -30,9 +31,11 @@ export default function Sidebar() {
 
   return (
     <aside className="sidebar">
-      <button className="btn-new-audit" onClick={() => navigate('/audits/new')}>
-        <Plus size={16} /> New Audit
-      </button>
+      {canManageAuditPlans() && (
+        <button className="btn-new-audit" onClick={() => navigate('/audits/new')}>
+          <Plus size={16} /> New Audit
+        </button>
+      )}
 
       <nav className="sidebar-menu">
         {menuItems.map(( { label, path, icon:  Icon}) => (

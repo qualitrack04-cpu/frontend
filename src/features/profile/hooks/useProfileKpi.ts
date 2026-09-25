@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { getProfileKpi } from '../api/profileApi';
 import type { ProfileKpi } from '../api/profileApi';
 
-export function useProfileKpi() {
+// enabled = false -> tidak fetch (role yang tidak menampilkan KPI)
+export function useProfileKpi(enabled = true) {
   const [data, setData] = useState<ProfileKpi | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(enabled);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!enabled) return;
     let isMounted = true;
 
     async function fetchKpi() {
@@ -25,7 +27,7 @@ export function useProfileKpi() {
 
     fetchKpi();
     return () => { isMounted = false; };
-  }, []);
+  }, [enabled]);
 
   return { data, loading, error };
 }

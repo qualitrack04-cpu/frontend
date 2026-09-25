@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate,} from 'react-router-dom';
 import {
   createAuditPlan,
   getAuditPlanById,
@@ -11,9 +11,8 @@ import { getChecklists, type ChecklistListItem } from '../api/checklist_api';
 
 export const DEPARTMENTS = ['Production', 'Packaging', 'Warehouse', 'QC'];
 
-export function useCreateAuditPlan() {
-  const { planId } = useParams();
-  const isEdit = Boolean(planId);
+export function useCreateAuditPlan(planId?: string) {
+  const isEdit = !! planId;
 
   const [title, setTitle] = useState('');
   const [leadAuditorId, setLeadAuditorId] = useState('');
@@ -26,6 +25,10 @@ export function useCreateAuditPlan() {
   const [auditors, setAuditors] = useState<Auditor[]>([]);
   const [checklists, setChecklists] = useState<ChecklistListItem[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
+
+  const [loadingPlan, setLoadingPlan] = useState(isEdit);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [initialized, setInitialized] = useState(!isEdit);
 
   const [titleError, setTitleError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -59,35 +62,62 @@ export function useCreateAuditPlan() {
     });
   }, []);
 
+  useEffect(() => {
+    if (!planId || loadingOptions) return;
+
+    let cancelled = false;
+    setLoadingPlan(true);
+    setLoadError(null);
+
+    getAuditPlanById(planId)
+      .then((plan) => {
+        if (cancelled) return;
+        const schedule = plan.schedules[0];
+
+        setTitle(plan.title);
+        setScopeDescription(plan.description ?? '');
+        setHighPriority(plan.priority === 'Priority');
+
+        if (schedule) {
+          setDepartment(schedule.department);
+          setScheduledDate(schedule.scheduledDate.slice(0, 10));
+
+          const matchedAuditor =
+            (schedule.auditorId && auditors.find((a) => a.id === schedule.auditorId)) ||
+            auditors.find((a) => a.fullName === schedule.auditorName);
+          setLeadAuditorId(matchedAuditor?.id ?? '');
+
+          const matchedChecklist = checklists.find(
+            (c) => c.title === schedule.clauseRef && c.standard === plan.standard
+          );
+          setChecklistId(matchedChecklist?.id ?? '');
+        }
+
+        setInitialized(true);
+      })
+      .catch((err: any) => {
+        if (cancelled) return;
+        setLoadError(err.response?.data?.message ?? 'Gagal memuat data audit plan.');
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingPlan(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [planId, loadingOptions]);
+
   const filteredChecklists = useMemo(
     () => (department ? checklists.filter((c) => c.department === department) : []),
     [department, checklists]
   );
 
   useEffect(() => {
+    if (!initialized) return;
     if (filteredChecklists.some((c) => c.id === checklistId)) return;
     setChecklistId(filteredChecklists[0]?.id ?? '');
-  }, [filteredChecklists, checklistId]);
-
-  // Load existing plan data if in edit mode
-  useEffect(() => {
-    if (!planId) return;
-    getAuditPlanById(planId)
-      .then((plan) => {
-        setTitle(plan.title);
-        setScopeDescription(plan.description ?? '');
-        setHighPriority(plan.priority === 'Priority');
-        if (plan.schedules && plan.schedules.length > 0) {
-          const sch = plan.schedules[0];
-          setDepartment(sch.department);
-          setScheduledDate(sch.scheduledDate ? sch.scheduledDate.slice(0, 10) : '');
-          if (sch.auditorId) {
-            setLeadAuditorId(sch.auditorId);
-          }
-        }
-      })
-      .catch(() => setSubmitError('Gagal memuat data audit plan.'));
-  }, [planId]);
+  }, [filteredChecklists, initialized]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -128,29 +158,35 @@ export function useCreateAuditPlan() {
     }
 
     const priority: AuditPriority = highPriority ? 'Priority' : 'Common';
+    const schedules = [
+      {
+        clauseRef: selectedChecklist.title,
+        auditorName: selectedAuditor.fullName,
+        department,
+        scheduledDate: new Date(scheduledDate).toISOString(),
+      },
+    ];
 
     setSubmitting(true);
     try {
-      const payload = {
-        title,
-        year,
-        standard: selectedChecklist.standard,
-        priority,
-        description: scopeDescription || undefined,
-        schedules: [
-          {
-            clauseRef: selectedChecklist.title,
-            auditorName: selectedAuditor.fullName,
-            department,
-            scheduledDate: new Date(scheduledDate).toISOString(),
-          },
-        ],
-      };
-
-      if (planId) {
-        await updateAuditPlan(planId, payload);
+      if (isEdit && planId) {
+        await updateAuditPlan(planId, {
+          title,
+          year,
+          standard: selectedChecklist.standard,
+          priority,
+          description: scopeDescription || undefined,
+          schedules,
+        });
       } else {
-        await createAuditPlan(payload);
+        await createAuditPlan({
+          title,
+          year,
+          standard: selectedChecklist.standard,
+          priority,
+          description: scopeDescription || undefined,
+          schedules,
+        });
       }
       navigate('/audits');
     } catch (err: any) {
@@ -161,8 +197,7 @@ export function useCreateAuditPlan() {
         : null;
 
       const message =
-        data?.message ?? validationMessages ?? data?.title ?? 'Gagal menyimpan audit plan.';
-
+        data?.message ?? validationMessages ?? data?.title ?? `Gagal ${isEdit ? 'menyimpan perubahan' : 'membuat'} audit plan.`;
       if (err.response?.status === 400 && message.toLowerCase().includes('title')) {
         setTitleError(message);
       } else {
@@ -174,6 +209,7 @@ export function useCreateAuditPlan() {
   };
 
   return {
+    isEdit,
     title, setTitle,
     leadAuditorId, setLeadAuditorId,
     department, setDepartment,
@@ -184,6 +220,8 @@ export function useCreateAuditPlan() {
     auditors,
     checklists: filteredChecklists,
     loadingOptions,
+    loadingPlan,
+    loadError,
     titleError,
     submitError,
     submitting,

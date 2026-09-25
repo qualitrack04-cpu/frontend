@@ -99,7 +99,7 @@ export default function AuditReportPreviewPage() {
         </div>
 
         <div className="report-sidebar">
-          <div className="profile-card">
+          <div className="profile-card audit-details-card">
             <h3>Audit Detail</h3>
 
             <div className="audit-detail-row">
@@ -133,7 +133,9 @@ export default function AuditReportPreviewPage() {
             </div>
             <div className="audit-detail-row">
               <span>AUDIT STATUS</span>
-              <span className="status-dot-badge">● Completed</span>
+              <span className="status-dot-badge">
+                ● {session?.status === 'InProgress' ? 'In Progress' : session?.status ?? '—'}
+              </span>
             </div>
           </div>
 

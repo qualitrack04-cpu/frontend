@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Pencil, Trash2, TriangleAlert, ClipboardCheck } from 'lucide-react';
 import type { AuditPlan } from '../api/audit_plan_api';
+import { canManageAuditPlans } from '../../../shared/utils/role';
 
 interface AuditCardProps {
   audit: AuditPlan;
@@ -32,18 +33,20 @@ export default function AuditCard({ audit, onDelete }: AuditCardProps) {
       <div className="audit-plan-card-body">
         <div className="audit-plan-title-row">
           <h3>{audit.title}</h3>
-          <div className="audit-card-actions">
-            <Link to={`/audits/${audit.id}/edit`} className="audit-icon-btn" aria-label="Edit">
-              <Pencil size={16} />
-            </Link>
-            <button
-              className="audit-icon-btn audit-icon-btn--danger"
-              onClick={() => onDelete(audit.id)}
-              aria-label="Hapus"
-            >
-              <Trash2 size={16} />
-            </button>
-          </div>
+          {canManageAuditPlans() && (
+            <div className="audit-card-actions">
+              <Link to={`/audits/${audit.id}/edit`} className="audit-icon-btn" aria-label="Edit">
+                <Pencil size={16} />
+              </Link>
+              <button
+                className="audit-icon-btn audit-icon-btn--danger"
+                onClick={() => onDelete(audit.id)}
+                aria-label="Hapus"
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="audit-tag-row">

@@ -28,7 +28,7 @@ export default function SignInPage() {
             <Mail size={16} className="input-icon-left" />
             <input
               type="email"
-              placeholder="name@company.com"
+              placeholder="name@gmail.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -43,6 +43,7 @@ export default function SignInPage() {
             <Lock size={16} className="input-icon-left" />
             <input
               type={showPassword ? 'text' : 'password'}
+              placeholder='******'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required

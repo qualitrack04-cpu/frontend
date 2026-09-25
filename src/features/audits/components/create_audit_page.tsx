@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, CircleAlert, Save } from 'lucide-react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { ShieldCheck, CircleAlert, Save, Pencil } from 'lucide-react';
 import { useCreateAuditPlan, DEPARTMENTS } from '../hooks/use_create_audit_plan';
 import DatePicker from '../../../shared/components/date_picker';
 
@@ -16,7 +16,9 @@ const maxDateIso = `${new Date().getFullYear() + 5}-12-31`;
 
 export default function CreateAuditPlanPage() {
   const navigate = useNavigate();
+  const { planId } = useParams<{ planId: string }>();
   const {
+    isEdit,
     title, setTitle,
     leadAuditorId, setLeadAuditorId,
     department, setDepartment,
@@ -27,12 +29,25 @@ export default function CreateAuditPlanPage() {
     auditors,
     checklists,
     loadingOptions,
+    loadingPlan,
+    loadError,
     titleError,
     submitError,
     submitting,
     handleSubmit,
-    isEdit,
-  } = useCreateAuditPlan();
+  } = useCreateAuditPlan(planId);
+
+  if (loadingPlan) {
+    return <div className="page-container"><p className="text-muted">Memuat audit plan...</p></div>;
+  }
+  if (loadError) {
+    return (
+      <div className="page-container">
+        <button className="back-btn" onClick={() => navigate('/audits')}>← Back to Audits</button>
+        <p className="error-text">{loadError}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="page-container">
@@ -87,7 +102,7 @@ export default function CreateAuditPlanPage() {
           <label>Scheduled Date</label>
           <div className="input-with-icon">
             <DatePicker
-              min={todayIso}
+              min={isEdit ? undefined : todayIso}
               max={maxDateIso}
               value={scheduledDate}
               onChange={setScheduledDate}
@@ -131,6 +146,15 @@ export default function CreateAuditPlanPage() {
                   <span>{c.standard}</span>
                 </div>
                 {checklistId === c.id && <ShieldCheck size={22} className="iso-template-check" />}
+                <Link
+                  to={`/audits/checklists/${c.id}/edit`}
+                  className="audit-icon-btn iso-template-edit"
+                  aria-label={`Edit checklist ${c.title}`}
+                  title="Edit checklist"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Pencil size={16} />
+                </Link>
               </label>
             ))}
           </div>
