@@ -1,27 +1,32 @@
 import { useState } from 'react';
+import { analyzeSpc, type SpcResult } from '../api/spc_api';
+
+interface Props {
+  onResult: (result: SpcResult) => void;
+}
 
 interface SpcFormData {
   file: File | null;
-  parameterName: string;
+  productName: string;
   targetValue: string;
   unit: string;
-  productName: string;
   usl: string;
   lsl: string;
   description: string;
 }
 
-export default function SpcAnalysisForm() {
+export default function SpcAnalysisForm({ onResult }: Props) {
   const [formData, setFormData] = useState<SpcFormData>({
     file: null,
-    parameterName: '',
+    productName: '',
     targetValue: '',
     unit: 'mm',
-    productName: '',
     usl: '',
     lsl: '',
     description: '',
   });
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
@@ -35,31 +40,59 @@ export default function SpcAnalysisForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
 
     if (!formData.file) {
-      alert('Silakan upload file Excel terlebih dahulu.');
+      setError('Silakan upload file Excel terlebih dahulu.');
       return;
     }
 
-    console.log('Data siap dikirim:', formData);
+    const lsl = parseFloat(formData.lsl);
+    const usl = parseFloat(formData.usl);
+    if (isNaN(lsl) || isNaN(usl)) {
+      setError('LSL dan USL harus berupa angka.');
+      return;
+    }
+    if (lsl >= usl) {
+      setError('LSL harus lebih kecil dari USL.');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const result = await analyzeSpc({
+        file: formData.file,
+        productName: formData.productName,
+        lsl,
+        usl,
+        target: formData.targetValue ? parseFloat(formData.targetValue) : undefined,
+        unit: formData.unit || undefined,
+        description: formData.description || undefined,
+      });
+      onResult(result);
+    } catch (err: any) {
+      setError(err.response?.data?.message ?? 'Gagal melakukan analisis. Coba lagi.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit} className="spc-form">
       <div className="form-group">
-        <label>Upload Excel</label>
+        <label>Upload Excel (.xlsx / .xls)</label>
         <input type="file" accept=".xlsx,.xls" onChange={handleFileChange} required />
       </div>
 
       <div className="form-group">
-        <label>Parameter Name</label>
+        <label>Product / Parameter Name</label>
         <input
           type="text"
-          name="parameterName"
+          name="productName"
           placeholder="e.g. Outer Diameter"
-          value={formData.parameterName}
+          value={formData.productName}
           onChange={handleChange}
           required
         />
@@ -67,7 +100,7 @@ export default function SpcAnalysisForm() {
 
       <div className="form-row">
         <div className="form-group">
-          <label>Target Value</label>
+          <label>Target Value (opsional)</label>
           <input
             type="number"
             step="0.01"
@@ -75,7 +108,6 @@ export default function SpcAnalysisForm() {
             placeholder="0.00"
             value={formData.targetValue}
             onChange={handleChange}
-            required
           />
         </div>
 
@@ -91,18 +123,6 @@ export default function SpcAnalysisForm() {
             <option value="%">%</option>
           </select>
         </div>
-      </div>
-
-      <div className="form-group">
-        <label>Product Name</label>
-        <input
-          type="text"
-          name="productName"
-          placeholder="Product Diameter"
-          value={formData.productName}
-          onChange={handleChange}
-          required
-        />
       </div>
 
       <div className="form-row">
@@ -134,7 +154,7 @@ export default function SpcAnalysisForm() {
       </div>
 
       <div className="form-group">
-        <label>Description (optional)</label>
+        <label>Description (opsional)</label>
         <textarea
           name="description"
           placeholder="Catatan tambahan..."
@@ -143,7 +163,11 @@ export default function SpcAnalysisForm() {
         />
       </div>
 
-      <button type="submit">Analyze</button>
+      {error && <p className="spc-error">{error}</p>}
+
+      <button type="submit" className="spc-submit-btn" disabled={submitting}>
+        {submitting ? 'Menganalisis...' : 'Analyze'}
+      </button>
     </form>
   );
 }
