@@ -59,7 +59,7 @@ export default function AuditSchedule() {
         return target >= today;
       })
       .sort((a, b) => a.day - b.day);
-  }, [data]);
+  }, [data, year, month]);
 
   return (
     <div className="profile-card audit-schedule-card">

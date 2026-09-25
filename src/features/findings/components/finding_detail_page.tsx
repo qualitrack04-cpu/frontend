@@ -90,7 +90,7 @@ export default function FindingDetailPage() {
               </span>
               <div>
                 <span className="fd-label">Date</span>
-                <p>{formatDate(data.createdAt)}</p>
+                <p>{formatDate(data.foundAt ?? data.createdAt)}</p>
               </div>
             </div>
           </aside>
