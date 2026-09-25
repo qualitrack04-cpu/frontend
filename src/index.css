@@ -18,9 +18,9 @@
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
+  font: 14px/145% var(--sans);
+  letter-spacing: 0.15px;
+  color-scheme: light;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -84,6 +84,7 @@ h1 {
   font-size: 56px;
   letter-spacing: -1.68px;
   margin: 32px 0;
+
   @media (max-width: 1024px) {
     font-size: 36px;
     margin: 20px 0;
@@ -95,6 +96,7 @@ h2 {
   line-height: 118%;
   letter-spacing: -0.24px;
   margin: 0 0 8px;
+
   @media (max-width: 1024px) {
     font-size: 20px;
   }
@@ -133,16 +135,22 @@ code {
 .app-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
 }
 
 .app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 32px;
+  padding: 12px 28px;
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
 }
 
 .logo {
@@ -177,15 +185,19 @@ code {
 .app-body {
   display: flex;
   flex: 1;
+  overflow: hidden;
+  height: calc(100vh - 65px);
 }
 
 .sidebar {
-  width: 240px;
+  width: 210px;
   background: #0f2c52;
   color: white;
-  padding: 24px 16px;
+  padding: 18px 12px;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  flex-shrink: 0;
 }
 
 .btn-new-audit {
@@ -213,13 +225,13 @@ code {
 .sidebar-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
+  gap: 10px;
+  padding: 9px 10px;
   border-radius: 8px;
   border-left: 3px solid transparent;
   color: #cbd5e1;
   text-decoration: none;
-  font-size: 15px;
+  font-size: 13px;
   transition: background 0.15s ease, color 0.15s ease;
 }
 
@@ -248,6 +260,11 @@ code {
   padding: 12px 14px;
   text-align: left;
   cursor: pointer;
+  margin-top: auto;
+}
+
+.btn-logout:hover {
+  color: #ffffff;
 }
 
 .btn-logout:hover {
@@ -256,8 +273,11 @@ code {
 
 .app-content {
   flex: 1;
-  padding: 32px;
+  padding: 24px 28px 60px;
   background: #f8fafc;
+  overflow-y: auto;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 /* ============================================================
@@ -282,7 +302,8 @@ code {
   box-sizing: border-box;
   background: linear-gradient(135deg, #0a2647, #1e6fd9);
   color: white;
-  padding: 56px 220px 56px 56px; /* padding-right diperbesar supaya teks rata-kanan tidak kena potong clip-path */
+  padding: 56px 220px 56px 56px;
+  /* padding-right diperbesar supaya teks rata-kanan tidak kena potong clip-path */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -407,11 +428,11 @@ code {
 .auth-card input,
 .auth-card select {
   padding: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
   margin-bottom: 16px;
-  background: #ffffff;
-  color: #1f2937;
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
   width: 100%;
   box-sizing: border-box;
 }
@@ -427,7 +448,7 @@ code {
 }
 
 .btn-auth-submit,
-.auth-card form > button {
+.auth-card form>button {
   background: #0f2c52;
   color: white;
   padding: 14px;
@@ -488,7 +509,8 @@ code {
 
 @media (max-width: 900px) {
   .auth-brand {
-    display: none; /* sembunyikan panel kiri di layar kecil, card jadi full width */
+    display: none;
+    /* sembunyikan panel kiri di layar kecil, card jadi full width */
   }
 
   .auth-page {
@@ -532,7 +554,8 @@ code {
 }
 
 .auth-card form {
-  text-align: left; /* pastikan input & label rata kiri walau parent center */
+  text-align: left;
+  /* pastikan input & label rata kiri walau parent center */
 }
 
 /* Kotak OTP 4 digit terpisah */
@@ -549,10 +572,10 @@ code {
   text-align: center;
   font-size: 22px;
   font-weight: 700;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   border-radius: 10px;
-  background: #f8fafc;
-  color: #0f2c52;
+  background-color: #ffffff !important;
+  color: #0f2c52 !important;
 }
 
 .otp-box:focus {
@@ -608,17 +631,31 @@ code {
 .page-container {
   max-width: 100%;
   margin: 0;
-  text-align: left; /* override text-align:center dari #root */
+  text-align: left;
+  /* override text-align:center dari #root */
 }
 
-.page-container h1 {
-  color: #0f2c52;
+.page-container h1,
+.capa-list-header h1,
+.fd-list-title {
+  font-size: 3rem;
   font-weight: 700;
+  color: #0f2c52;
+  margin: 0 0 20px 0;
+  letter-spacing: -0.5px;
+  line-height: 1.25;
+}
+
+.capa-list-header h1,
+.fd-list-header h1 {
+  margin: 0;
 }
 
 .page-subtitle {
   color: #64748b;
-  margin-bottom: 24px;
+  margin-top: -6px;
+  margin-bottom: 16px;
+  font-size: 13px;
 }
 
 .back-btn {
@@ -633,12 +670,39 @@ code {
 /* ============================================================
    SPC ANALYSIS
    ============================================================ */
+.spc-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  margin-top: 16px;
+}
+
+.spc-layout .spc-form {
+  flex: 0 0 460px;
+  max-width: 460px;
+}
+
+.spc-layout .spc-result {
+  flex: 1;
+  min-width: 0;
+  margin-top: 0;
+}
+
+@media (max-width: 1024px) {
+  .spc-layout {
+    flex-direction: column;
+  }
+  .spc-layout .spc-form {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+}
+
 .spc-form {
   background: white;
   padding: 24px;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
-  max-width: 500px;
 }
 
 .form-group {
@@ -660,8 +724,11 @@ code {
 .spc-form input,
 .spc-form textarea {
   padding: 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  font-family: inherit;
 }
 
 .spc-form button {
@@ -671,13 +738,16 @@ code {
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  font-weight: 600;
 }
 
 .spc-form select {
   padding: 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
-  background: white;
+  background-color: #ffffff !important;
+  color: #1f2937 !important;
+  font-family: inherit;
 }
 
 .spc-result {
@@ -686,7 +756,6 @@ code {
   border-radius: 12px;
   border: 1px solid #e2e8f0;
   margin-top: 24px;
-  max-width: 600px;
 }
 
 .spc-product-name {
@@ -717,6 +786,65 @@ code {
   color: #64748b;
   font-size: 14px;
   margin-bottom: 16px;
+}
+
+.spc-result--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.spc-description {
+  color: #64748b;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.spc-error {
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.spc-submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 12px;
+  margin-top: 8px;
+  background: var(--spc-navy, #0f2c52);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.spc-submit-btn:hover:not(:disabled) {
+  background: #0c2444;
+}
+
+.spc-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spc-metric-mini {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+  color: #64748b;
+  margin: 4px 0 8px;
 }
 
 /* ============================================================
@@ -823,7 +951,7 @@ code {
 .profile-avatar img,
 
 .profile-name {
-    color: black;
+  color: black;
 }
 
 .avatar-placeholder {
@@ -915,7 +1043,8 @@ code {
   font-size: 28px;
   font-weight: 700;
   margin: 8px 0;
-  color: #ffffff; /* .profile-card.dark backgroundnya gelap */
+  color: #ffffff;
+  /* .profile-card.dark backgroundnya gelap */
   line-height: 1.2;
 }
 
@@ -990,6 +1119,129 @@ code {
 
 .profile-detail {
     color: black;
+}
+
+.profile-quickstats span {
+  font-size: 11px;
+  color: #8a94a6;
+}
+
+.stat-danger {
+  color: #dc2626;
+}
+
+.target-text {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+/* ---- Recent Activity ---- */
+.recent-activity-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  font-size: 16px;
+  color: #0f2c52;
+}
+
+.activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.activity-item {
+  display: flex;
+  gap: 12px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #eef1f5;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.activity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.activity-body {
+  flex: 1;
+}
+
+.activity-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.activity-head strong {
+  font-size: 14px;
+  color: #0f2c52;
+}
+
+.activity-desc {
+  margin: 4px 0 8px;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.activity-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+@media (max-width: 900px) {
+  .profile-bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Baris bawah: Account Details (kiri) + Recent Activity (kanan) */
+.profile-bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.profile-quickstats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #eef1f5;
+}
+
+.profile-quickstats div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-quickstats strong {
+  font-size: 20px;
+  color: #0f2c52;
+}
+
+.profile-detail {
+  color: black;
 }
 
 .profile-quickstats span {
@@ -1666,7 +1918,8 @@ label.photo-source-btn {
   border-radius: 8px;
   padding: 16px;
   text-align: center;
-  aspect-ratio: 3 / 4; /* portrait: tinggi lebih besar dari lebar */
+  aspect-ratio: 3 / 4;
+  /* portrait: tinggi lebih besar dari lebar */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1913,11 +2166,12 @@ label.photo-source-btn {
   color: white;
   font-size: 14px;
   font-weight: 600;
-  padding: 12px 18px;
+  padding: 10px 18px;
   border-radius: 8px;
   text-decoration: none;
   width: fit-content;
-  margin-top: 4px;
+  margin-top: auto;
+  align-self: flex-end;
 }
 
 .btn-checklist:hover {
@@ -1949,11 +2203,11 @@ label.photo-source-btn {
 .create-audit-form textarea {
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
-  background: #f8fafc;
+  background-color: #ffffff !important;
   font-size: 14px;
-  color: #1f2937;
+  color: #1f2937 !important;
   box-sizing: border-box;
   font-family: inherit;
 }
@@ -1963,7 +2217,7 @@ label.photo-source-btn {
 }
 
 .create-audit-form .input-with-icon input {
-  background: #f8fafc;
+  background-color: #ffffff !important;
 }
 
 .input-error {
@@ -2053,15 +2307,15 @@ label.photo-source-btn {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-.toggle-switch input:checked + .toggle-slider {
+.toggle-switch input:checked+.toggle-slider {
   background-color: #0f2c52;
 }
 
-.toggle-switch input:checked + .toggle-slider::before {
+.toggle-switch input:checked+.toggle-slider::before {
   transform: translateX(20px);
 }
 
-.toggle-switch input:focus-visible + .toggle-slider {
+.toggle-switch input:focus-visible+.toggle-slider {
   box-shadow: 0 0 0 3px rgba(15, 44, 82, 0.25);
 }
 
@@ -3026,12 +3280,12 @@ label.photo-source-btn {
 
 .date-picker input[type="text"] {
   width: 100%;
-  padding: 12px 44px 12px 14px;
-  border: 1px solid #e2e8f0;
+  padding: 12px 14px 12px 42px;
+  border: 1px solid #cbd5e1;
   border-radius: 8px;
-  background: #f8fafc;
+  background-color: #ffffff !important;
   font-size: 14px;
-  color: #1f2937;
+  color: #1f2937 !important;
   box-sizing: border-box;
   font-family: inherit;
 }
@@ -3143,31 +3397,10 @@ label.photo-source-btn {
 
 .capa-status--editable {
   position: relative;
-  gap: 6px;
+  padding-right: 30px;
   cursor: pointer;
-  padding-right: 10px;
 }
 
-/* Label teks & dot terlihat di z-index 1 */
-.capa-status-label {
-  position: relative;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.capa-status--editable .capa-status-dot {
-  position: relative;
-  z-index: 1;
-}
-
-.capa-status-chevron {
-  pointer-events: none;
-  position: relative;
-  z-index: 1;
-  flex-shrink: 0;
-}
-
-/* Select transparan melayang di atas (z-index 2), tapi tidak menghalangi tampilan */
 .capa-status--editable select {
   position: absolute;
   inset: 0;
@@ -3176,21 +3409,33 @@ label.photo-source-btn {
   opacity: 0;
   border: none;
   cursor: pointer;
-  z-index: 2;
 }
+
+.capa-status-chevron {
+  pointer-events: none;
+  position: absolute;
+  right: 10px;
+}
+
+.capa-status-label {
+  pointer-events: none;
+  position: relative;
+  z-index: 0;
+}
+
 
 /* ---------- List grid & card ---------- */
 .capa-card-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  gap: 14px;
 }
 
 .capa-card {
   background: white;
   border: 1.5px solid var(--capa-border);
-  border-radius: 14px;
-  padding: 20px 22px;
+  border-radius: 12px;
+  padding: 14px 16px;
 }
 
 .capa-card--open {
@@ -3437,16 +3682,17 @@ label.photo-source-btn {
   padding: 12px 14px;
   border: 1px solid var(--capa-border);
   border-radius: 8px;
-  background: #f8fafc;
+  background-color: #ffffff !important;
   font-size: 14px;
-  color: #1f2937;
+  color: #1f2937 !important;
   box-sizing: border-box;
   font-family: inherit;
 }
 
 .date-picker-toggle {
   position: absolute;
-  right: 8px;
+  left: 10px;
+  right: auto;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -3650,10 +3896,12 @@ label.photo-source-btn {
 }
 
 @media (max-width: 900px) {
+
   .capa-detail-grid,
   .capa-form-grid {
     grid-template-columns: 1fr;
   }
+
   .capa-meta {
     position: static;
   }
