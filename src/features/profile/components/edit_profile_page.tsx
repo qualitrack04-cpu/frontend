@@ -8,7 +8,14 @@ import { fileUrl } from '../../../shared/utils/file_url';
 
 export default function EditProfilePage() {
   const { profile, loading: profileLoading, refetch } = useProfile();
-  const { saveProfile, savePhoto, removePhoto, saving, error: saveError } = useEditProfile();
+  const {
+    saveProfile,
+    savePhoto,
+    saving,
+    error: saveError,
+    photoSaving,
+    photoError,
+  } = useEditProfile();
 
   const [fullName, setFullName] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -43,6 +50,7 @@ export default function EditProfilePage() {
   const handleConfirmSave = async () => {
     try {
       await saveProfile(fullName, newPassword);
+      localStorage.setItem('fullName', fullName);
       setShowConfirmModal(false);
       navigate('/profile');
     } catch {
@@ -52,29 +60,13 @@ export default function EditProfilePage() {
   };
 
   const handleSavePhoto = async (file: File | null) => {
-    if (!file) {
-      setShowPhotoModal(false);
-      return;
-    }
+    setShowPhotoModal(false);
+    if (!file) return;
     try {
       await savePhoto(file);
       await refetch(); // ambil ulang data profile supaya foto baru langsung tampil
     } catch {
-      // error sudah ditangani di dalam hook
-    } finally {
-      setShowPhotoModal(false);
-    }
-  };
-
-    const handleRemovePhoto = async () => {
-    if (!window.confirm('Hapus foto profil?')) return;
-    try {
-      await removePhoto();
-      await refetch();
-    } catch {
-      // error sudah ditangani di hook
-    } finally {
-      setShowPhotoModal(false);
+      // error sudah ditangani di dalam hook (photoError) dan ditampilkan di kartu avatar
     }
   };
 
@@ -87,7 +79,7 @@ export default function EditProfilePage() {
       <div className="edit-profile-grid">
         {/* ---- Kartu Avatar (kiri) ---- */}
         <div className="profile-card center">
-          <button className="avatar-edit-btn" onClick={() => setShowPhotoModal(true)}>
+          <button className="avatar-edit-btn" onClick={() => setShowPhotoModal(true)} disabled={photoSaving}>
             {profile.profilePhotoUrl ? (
               <img src={fileUrl(profile.profilePhotoUrl)} alt={profile.fullName} className="avatar-placeholder large" />
             ) : (
@@ -97,12 +89,11 @@ export default function EditProfilePage() {
           </button>
           <h3 className="profile-name">{fullName}</h3>
           <span className="role-badge">{profile.role}</span>
+          <p className="text-muted" style={{ marginTop: 8, fontSize: 13 }}>
+            Klik foto untuk mengganti
+          </p>
 
-          {profile.profilePhotoUrl && (
-            <button className="link-danger" onClick={handleRemovePhoto} disabled={saving}>
-              Remove Photo
-            </button>
-          )}
+          {photoError && <p className="error-text">{photoError}</p>}
         </div>
 
         {/* ---- Form (kanan) ---- */}
@@ -183,6 +174,7 @@ export default function EditProfilePage() {
           </div>
         </div>
       )}
+
     </div>
   );
 }
