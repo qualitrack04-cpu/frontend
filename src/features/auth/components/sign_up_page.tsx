@@ -4,12 +4,19 @@ import { User, Mail, Lock, Eye, EyeOff, Briefcase } from 'lucide-react';
 import { register } from '../api/auth_api';
 import AuthBrandPanel from './auth_brand_panel';
 
+const ROLE_OPTIONS = [
+  { value: 'AuditorInternal', label: 'Auditor Internal' },
+  { value: 'QualityManager', label: 'Quality Manager' },
+  { value: 'Auditee', label: 'Auditee' },
+  // { value: 'Admin', label: 'Admin' }, // Admin didaftarkan secara manual oleh sysadmin
+] as const;
+
 export default function SignUpPage() {
-  const [username, setUsername] = useState('');
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('Auditor Internal');
+  const [role, setRole] = useState('AuditorInternal');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -27,8 +34,8 @@ export default function SignUpPage() {
 
     setLoading(true);
     try {
-      await register({ username, email, password, role });
-      navigate('/login');
+      await register({ fullName, email, password, role });
+      navigate('/verify-otp', { state: { email, fromSignup: true } }); // navigasi ke halaman verifikasi OTP
     } catch (err: any) {
       setError(err.response?.data?.message || 'Pendaftaran gagal. Coba lagi.');
     } finally {
@@ -50,8 +57,8 @@ export default function SignUpPage() {
             <input
               type="text"
               placeholder="Nailong bin Amir"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
               required
             />
           </div>
@@ -102,9 +109,11 @@ export default function SignUpPage() {
           <div className="input-with-icon">
             <Briefcase size={16} className="input-icon-left" />
             <select value={role} onChange={(e) => setRole(e.target.value)}>
-              <option value="Auditor Internal">Auditor Internal</option>
-              <option value="Quality Manager">Quality Manager</option>
-              <option value="Admin">Admin</option>
+              {ROLE_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
             </select>
           </div>
 
