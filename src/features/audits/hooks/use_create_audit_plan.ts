@@ -226,7 +226,5 @@ export function useCreateAuditPlan(planId?: string) {
     submitError,
     submitting,
     handleSubmit,
-    isEdit,
-    planId,
   };
 }

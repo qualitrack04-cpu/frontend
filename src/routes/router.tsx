@@ -76,7 +76,7 @@ const router = createBrowserRouter([
             ],
           },
           { path: 'audits/:planId/schedule/:scheduleId/checklist',element: <AuditChecklistPage />},
-          { path: 'audits/:planId/schedule/:scheduleId/report',element: <AuditReportPage />,}
+          { path: 'audits/:planId/schedule/:scheduleId/report',element: <AuditReportPreviewPage />,}
         ],
       },
     ],

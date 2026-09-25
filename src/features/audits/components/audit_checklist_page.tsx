@@ -50,7 +50,7 @@ export default function AuditChecklistPage() {
     setSubmittingCapa(true);
     setCapaError(null);
     try {
-      const findings = await getFindings({ sessionId: session.id } as any);
+      const findings = await getFindings({ sessionId: session.id} as any);
       const withoutCapa = findings.filter((f) => f.status === 'Open');
 
       if (withoutCapa.length === 0) {
