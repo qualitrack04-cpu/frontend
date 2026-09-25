@@ -295,7 +295,7 @@ export default function FindingFormPage({ mode }: Props) {
                   ? photos.data?.map((photo) => (
                       <FindingPhotoView
                         key={photo.id}
-                        fileId={photo.id}
+                        url={photo.url}
                         alt={photo.fileName ?? 'Evidence photo'}
                       />
                     ))

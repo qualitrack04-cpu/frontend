@@ -56,7 +56,7 @@ export default function FindingDetailPage() {
                 {photoList.map((photo) => (
                   <FindingPhotoView
                     key={photo.id}
-                    fileId={photo.id}
+                    url={photo.url}
                     alt={photo.fileName ?? 'Evidence photo'}
                   />
                 ))}
@@ -90,7 +90,7 @@ export default function FindingDetailPage() {
               </span>
               <div>
                 <span className="fd-label">Date</span>
-                <p>{formatDate(data.createdAt)}</p>
+                <p>{formatDate(data.foundAt ?? data.createdAt)}</p>
               </div>
             </div>
           </aside>
