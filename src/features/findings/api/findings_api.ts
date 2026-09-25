@@ -94,12 +94,6 @@ export async function getFindings(params: FindingListParams = {}): Promise<Findi
   return res.data;
 }
 
-// GET /api/Finding?status=Open — khusus finding belum ada CAPA
-export async function getFindingsWithoutCapa(): Promise<Finding[]> {
-  const res = await axios_instance.get<Finding[]>('/Finding', { params: { status: 'Open' } });
-  return res.data;
-}
-
 // GET /api/Finding/{id}
 export async function getFinding(id: string): Promise<Finding> {
   const res = await axios_instance.get<Finding>(`/Finding/${id}`);
