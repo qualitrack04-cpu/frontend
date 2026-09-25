@@ -17,7 +17,8 @@ export interface Finding {
   clauseRef?: string | null;
   status: FindingStatus;
   sessionId?: string | null;
-  createdAt: string;
+  createdAt?: string;
+  foundAt?: string;
 }
 
 // Bentuk response GET /api/Upload/finding/{findingId} (lihat UploadController.GetFindingFiles):
@@ -58,6 +59,7 @@ export interface FindingListParams {
   category?: FindingCategory;
   from?: string;
   to?: string;
+  sessionId?: string;
 }
 
 // Label di dropdown form.
@@ -141,3 +143,23 @@ export async function uploadFindingPhoto(findingId: string, file: File) {
 // GetFindingFiles (di bawah, dipanggil lewat getFindingPhotos) sudah
 // mengirim `url` langsung ke file publiknya, jadi tidak perlu fetch
 // terpisah lagi — cukup pakai `photo.url` langsung sebagai <img src>.
+
+interface ListEnvelope<T> {
+  total: number;
+  data: T[];
+}
+
+export type FindingRecord = Finding;
+
+// GET /api/Finding/without-capa
+export async function getFindingsWithoutCapa(): Promise<Finding[]> {
+  const res = await axios_instance.get<ListEnvelope<Finding>>('/Finding/without-capa');
+  return res.data.data;
+}
+
+// GET /api/Finding/by-session/{sessionId}
+export async function getFindingsBySession(sessionId: string): Promise<Finding[]> {
+  const res = await axios_instance.get<ListEnvelope<Finding>>(`/Finding/by-session/${sessionId}`);
+  return res.data.data;
+}
+

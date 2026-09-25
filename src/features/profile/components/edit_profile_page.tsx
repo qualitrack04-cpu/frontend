@@ -50,6 +50,7 @@ export default function EditProfilePage() {
   const handleConfirmSave = async () => {
     try {
       await saveProfile(fullName, newPassword);
+      localStorage.setItem('fullName', fullName);
       setShowConfirmModal(false);
       navigate('/profile');
     } catch {

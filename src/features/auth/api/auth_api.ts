@@ -144,7 +144,12 @@ export async function getUsers() {
   return response.data;
 }
 
-export async function getPicCandidates() {
-  const response = await axios_instance.get('/Auth/pic-candidates');
-  return response.data;
+export interface PicCandidate {
+  id: string;
+  fullName: string;
+}
+
+export async function getPicCandidates(): Promise<PicCandidate[]> {
+  const response = await axios_instance.get<{ data: PicCandidate[] }>('/Auth/pic-candidates');
+  return response.data.data;
 }

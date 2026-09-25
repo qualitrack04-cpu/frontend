@@ -1,18 +1,57 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { dummyHistoryData } from '../api/spc_dummy_data';
+import { getSpcHistory, type SpcHistoryItem } from '../api/spc_api';
 import { getStatusColor } from '../utils/status_color';
+
+const PERIOD_MAP: Record<string, string> = {
+  'All Time': 'all',
+  '3 Months': '3m',
+  '6 Months': '6m',
+  '1 Year': '1y',
+};
+
+const STATUS_MAP: Record<string, string> = {
+  'All Status': '',
+  'Process Capable': 'Process Capable',
+  'Marginal': 'Marginal',
+  'Not Capable': 'Not Capable',
+  'Process Unstable': 'Process Unstable',
+};
+
+function formatDate(iso: string) {
+  const d = new Date(iso);
+  return d.toLocaleString('id-ID', {
+    day: '2-digit', month: 'long', year: 'numeric',
+    hour: '2-digit', minute: '2-digit',
+  });
+}
 
 export default function SpcHistoryPage() {
   const [statusFilter, setStatusFilter] = useState('All Status');
   const [periodFilter, setPeriodFilter] = useState('All Time');
+  const [items, setItems] = useState<SpcHistoryItem[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const filteredData = dummyHistoryData.filter((item) => {
-    if (statusFilter !== 'All Status' && item.status !== statusFilter) return false;
-    // Filter periode belum diimplementasi nyata karena masih data dummy tanpa tanggal asli
-    return true;
-  });
+  useEffect(() => {
+    async function fetch() {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await getSpcHistory({
+          period: PERIOD_MAP[periodFilter] ?? 'all',
+          status: STATUS_MAP[statusFilter] || undefined,
+        });
+        setItems(res.data);
+      } catch (err: any) {
+        setError(err.response?.data?.message ?? 'Gagal memuat riwayat analisis.');
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetch();
+  }, [statusFilter, periodFilter]);
 
   return (
     <div className="page-container">
@@ -23,7 +62,7 @@ export default function SpcHistoryPage() {
           <label>Analysis Status</label>
           <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
             <option>All Status</option>
-            <option>Capable</option>
+            <option>Process Capable</option>
             <option>Marginal</option>
             <option>Not Capable</option>
             <option>Process Unstable</option>
@@ -41,8 +80,15 @@ export default function SpcHistoryPage() {
         </div>
       </div>
 
+      {loading && <p className="text-muted">Memuat riwayat analisis...</p>}
+      {error && <p className="spc-error">{error}</p>}
+
+      {!loading && !error && items.length === 0 && (
+        <p className="text-muted">Belum ada analisis SPC yang tersimpan.</p>
+      )}
+
       <div className="history-list">
-        {filteredData.map((item) => (
+        {items.map((item) => (
           <div
             key={item.id}
             className="history-card"
@@ -50,7 +96,12 @@ export default function SpcHistoryPage() {
           >
             <div>
               <h4>{item.productName}</h4>
-              <p className="history-date">{item.date}</p>
+              {item.description && <p className="spc-description">{item.description}</p>}
+              <p className="history-date">{formatDate(item.analyzedAt)}</p>
+              <div className="spc-metric-mini">
+                <span>Cp {item.cp}</span>
+                <span>Cpk {item.cpk}</span>
+              </div>
               <span className={`status-badge ${getStatusColor(item.status)}`}>
                 {item.status}
               </span>
