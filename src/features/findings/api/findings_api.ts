@@ -59,6 +59,7 @@ export interface FindingListParams {
   category?: FindingCategory;
   from?: string;
   to?: string;
+  sessionId?: string;
 }
 
 // Label di dropdown form.
@@ -90,6 +91,12 @@ export const departmentOptions = ['Production', 'Packaging', 'Warehouse', 'QC'];
 // GET /api/Finding?status=&category=&from=&to=
 export async function getFindings(params: FindingListParams = {}): Promise<Finding[]> {
   const res = await axios_instance.get<Finding[]>('/Finding', { params });
+  return res.data;
+}
+
+// GET /api/Finding?status=Open — khusus finding belum ada CAPA
+export async function getFindingsWithoutCapa(): Promise<Finding[]> {
+  const res = await axios_instance.get<Finding[]>('/Finding', { params: { status: 'Open' } });
   return res.data;
 }
 

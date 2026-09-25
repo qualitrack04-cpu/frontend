@@ -3,7 +3,6 @@ import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useForgotPasswordFlow } from '../hooks/use_forgot_password_flow';
 import AuthBrandPanel from './auth_brand_panel';
-import { Navigate } from 'react-router-dom';
 
 export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState('');

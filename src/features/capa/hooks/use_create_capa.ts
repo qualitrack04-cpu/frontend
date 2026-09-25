@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createCapaFromFinding } from '../api/capa_api';
-import { getFindingsWithoutCapa, type FindingRecord } from '../../findings/api/finding_api';
+import { getFindingsWithoutCapa, type Finding } from '../../findings/api/findings_api';
 import { getPicCandidates, type PicCandidate } from '../../auth/api/auth_api';
 
 function todayIso() {
@@ -18,7 +18,7 @@ export function useCreateCapa() {
   const [picId, setPicId] = useState('');
   const [deadline, setDeadline] = useState(todayIso());
 
-  const [findings, setFindings] = useState<FindingRecord[]>([]);
+  const [findings, setFindings] = useState<Finding[]>([]);
   const [pics, setPics] = useState<PicCandidate[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [findingsError, setFindingsError] = useState<string | null>(null);
@@ -58,7 +58,7 @@ export function useCreateCapa() {
     setFindingsError(null);
     setLoadingOptions(true);
     getFindingsWithoutCapa()
-      .then((result: FindingRecord[]) => {
+      .then((result: Finding[]) => {
         setFindings(result);
         if (result.length === 0) setFindingsError('Tidak ada finding tersedia');
       })
@@ -90,6 +90,10 @@ export function useCreateCapa() {
     }
     if (!findingId) {
       setSubmitError('Pilih Linked Finding terlebih dahulu.');
+      hasError = true;
+    }
+    if (!picId) {
+      setSubmitError('Pilih Assignee / PIC terlebih dahulu.');
       hasError = true;
     }
     if (!deadline) {

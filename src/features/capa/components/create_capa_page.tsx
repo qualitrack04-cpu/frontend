@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, RefreshCw, TriangleAlert } from 'lucide-react';
+import DatePicker from '../../../shared/components/date_picker';
 import { useCreateCapa } from '../hooks/use_create_capa';
 
 export default function CreateCapaPage() {
@@ -108,10 +109,10 @@ export default function CreateCapaPage() {
 
             <div className="form-group">
               <label>TARGET DATE</label>
-              <input
-                type="date"
+              <DatePicker
                 value={deadline}
-                onChange={(e) => setDeadline(e.target.value)}
+                onChange={setDeadline}
+                placeholder="dd-mm-yyyy"
               />
             </div>
           </div>

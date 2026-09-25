@@ -152,7 +152,7 @@ export default function FindingFormPage({ mode }: Props) {
         // Temuan sudah tersimpan; jangan submit ulang agar tidak duplikat
         setSubmitError(
           `Temuan tersimpan, tetapi ${failed.length} foto gagal diunggah (${failed.join(', ')}). ` +
-            'Tambahkan lagi lewat halaman Edit.'
+          'Tambahkan lagi lewat halaman Edit.'
         );
         setTimeout(() => navigate('/findings'), 3500);
         return;
@@ -293,32 +293,32 @@ export default function FindingFormPage({ mode }: Props) {
               <div className="fd-photo-grid">
                 {isEdit
                   ? photos.data?.map((photo) => (
-                      <FindingPhotoView
-                        key={photo.id}
-                        url={photo.url}
-                        alt={photo.fileName ?? 'Evidence photo'}
-                      />
-                    ))
+                    <FindingPhotoView
+                      key={photo.id}
+                      url={photo.url}
+                      alt={photo.fileName ?? 'Evidence photo'}
+                    />
+                  ))
                   : previews.map((p, i) => (
-                      <div key={p.url} className="fd-thumb">
-                        <button
-                          type="button"
-                          className="fd-thumb-open"
-                          aria-label={`Preview ${p.file.name}`}
-                          onClick={() => setLightbox({ src: p.url, alt: p.file.name })}
-                        >
-                          <img src={p.url} alt={p.file.name} />
-                        </button>
-                        <button
-                          type="button"
-                          className="fd-thumb-remove"
-                          aria-label={`Hapus ${p.file.name}`}
-                          onClick={() => setPending((prev) => prev.filter((_, idx) => idx !== i))}
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    ))}
+                    <div key={p.url} className="fd-thumb">
+                      <button
+                        type="button"
+                        className="fd-thumb-open"
+                        aria-label={`Preview ${p.file.name}`}
+                        onClick={() => setLightbox({ src: p.url, alt: p.file.name })}
+                      >
+                        <img src={p.url} alt={p.file.name} />
+                      </button>
+                      <button
+                        type="button"
+                        className="fd-thumb-remove"
+                        aria-label={`Hapus ${p.file.name}`}
+                        onClick={() => setPending((prev) => prev.filter((_, idx) => idx !== i))}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  ))}
               </div>
             )}
 
