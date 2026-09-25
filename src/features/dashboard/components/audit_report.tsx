@@ -1,5 +1,6 @@
-import { FileText,Download } from 'lucide-react';
+import { FileText, Download, FileCheck } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useFetch } from '../../../shared/hooks/use_fetch';
 import { getMonthlyReport, downloadAuditReportPdf } from '../api/dashboard_api';
 
@@ -22,12 +23,12 @@ export default function AuditReport() {
   );
 
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
-  const [downloadError, setDownloadError] = useState<string | null>(null); 
+  const [downloadError, setDownloadError] = useState<string | null>(null);
 
   const handleDownload = async (sessionId: string, department: string) => {
     setDownloadingId(sessionId);
     setDownloadError(null);
-    try{
+    try {
       const blob = await downloadAuditReportPdf(sessionId);
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -37,8 +38,8 @@ export default function AuditReport() {
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
-    }catch (err: any){
-       setDownloadError(
+    } catch (err: any) {
+      setDownloadError(
         err.response?.status === 404
           ? 'PDF belum tersedia untuk audit ini.'
           : 'Gagal mengunduh PDF.'
@@ -48,93 +49,64 @@ export default function AuditReport() {
     }
   };
 
+  const reportCards = data ? data.schedules.filter((row) => row.sessionId) : [];
+
   return (
     <div className="audit-report-section">
       <div className="audit-report-header">
-        <p className="card-label">MONTHLY REPORT</p>
-        {data && (
-          <span className="text-muted small">
-            Dibuat {formatDate(data.generatedAt)}
-          </span>
-        )}
+        <p className="card-label">AUDIT REPORT</p>
       </div>
 
       {loading && <p className="text-muted">Memuat laporan...</p>}
       {error && <p className="error-text">{error}</p>}
       {downloadError && <p className="error-text">{downloadError}</p>}
 
-      {data && (
-        <>
-          <div className="report-summary-grid">
-            {[
-              { label: 'Total Jadwal', value: data.summary.totalSchedules },
-              { label: 'Selesai', value: data.summary.completedAudit },
-              { label: 'Berjalan', value: data.summary.inProgressAudit },
-              { label: 'Belum Mulai', value: data.summary.notStartedAudit },
-              { label: 'Temuan', value: data.summary.totalFindings },
-              { label: 'CAPA Overdue', value: data.summary.capaOverdue },
-              { label: 'Compliance', value: `${data.summary.complianceScore.toFixed(1)}%`},
-            ].map((stat) => (
-              <div key={stat.label} className="report-summary-box">
-                <span className="summary-value">{stat.value}</span>
-                <span className="summary-label">{stat.label}</span>
-              </div>
-            ))}
-          </div>
+      {data && reportCards.length === 0 && (
+        <p className="text-muted">Belum ada audit report bulan ini.</p>
+      )}
 
-          <table className="report-table">
-            <thead>
-              <tr>
-                <th>Departemen</th>
-                <th>Auditor</th>
-                <th>Tanggal</th>
-                <th>Status</th>
-                <th>Temuan</th>
-                <th>Major</th>
-                <th>Minor</th>
-                <th>Obs</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.schedules.length === 0 && (
-                <tr>
-                  <td colSpan={9} className="text-muted">
-                    Belum ada audit bulan ini.
-                  </td>
-                </tr>
-              )}
-              {data.schedules.map((row, i) => (
-                <tr key={`${row.department}-${row.scheduledDate}-${i}`}>
-                  <td>
-                    <FileText size={14} /> {row.department}
-                  </td>
-                  <td>{row.auditorName}</td>
-                  <td>{formatDate(row.scheduledDate)}</td>
-                  <td>{row.status}</td>
-                  <td>{row.totalFindings}</td>
-                  <td>{row.majorNC}</td>
-                  <td>{row.minorNC}</td>
-                  <td>{row.observation}</td>
-                  <td>
-                    {row.sessionId ? (
-                      <button
-                        className="btn-download-pdf"
-                        onClick={() => handleDownload(row.sessionId!, row.department)}
-                        disabled={downloadingId === row.sessionId}
-                      >
-                        <Download size={14} />
-                        {downloadingId === row.sessionId ? 'Mengunduh...' : 'PDF'}
-                      </button>
-                    ): (
-                      <span className="text-muted small">-</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </>
+      {data && reportCards.length > 0 && (
+        <div className="audit-report-grid">
+          {reportCards.map((row, i) => (
+            <div key={`${row.department}-${row.scheduledDate}-${i}`} className="audit-report-card">
+              <div className="audit-report-thumbnail">
+                <span className="skeleton-line w-60" />
+                <span className="skeleton-line w-80" />
+                <span className="skeleton-line w-50" />
+              </div>
+
+              <div className="audit-report-info">
+                <div className="audit-report-icon">
+                  <FileText size={18} />
+                </div>
+                <div>
+                  <strong>{row.department} Audit Report</strong>
+                  <p className="text-muted small">
+                    {formatDate(row.scheduledDate)} · {row.status}
+                    {row.totalFindings > 0 && ` · ${row.totalFindings} temuan`}
+                  </p>
+                </div>
+              </div>
+
+              <div className="audit-report-actions">
+                <button
+                  className="btn-download"
+                  onClick={() => handleDownload(row.sessionId!, row.department)}
+                  disabled={downloadingId === row.sessionId}
+                >
+                  <Download size={14} />
+                  {downloadingId === row.sessionId ? 'Mengunduh...' : 'Download'}
+                </button>
+                <Link
+                  to={`/audits/${row.planId}/schedule/${row.scheduleId}/report`}
+                  className="btn-view-report"
+                >
+                  <FileCheck size={14} /> View Report
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );
