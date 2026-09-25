@@ -4,7 +4,7 @@ import { useAuditChecklist } from '../hooks/use_audit_checklist';
 import ChecklistItemCard from './checklist_item_card';
 import SuccessToast from './success_toast';
 import AuditSummaryModal from './audit_summary_modal';
-import { getFindingsBySession } from '../../findings/api/finding_api';
+import { getFindingsBySession } from '../../findings/api/findings_api';
 import { getSessionSummary } from '../api/audit_session_api';
 // import { createCapaFromFinding } from '../../capa/api/capa_api';
 import { useState, useEffect } from 'react';

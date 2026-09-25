@@ -31,12 +31,13 @@ export default function CreateAuditPlanPage() {
     submitError,
     submitting,
     handleSubmit,
+    isEdit,
   } = useCreateAuditPlan();
 
   return (
     <div className="page-container">
       <button className="back-btn" onClick={() => navigate('/audits')}>← Back to Audits</button>
-      <h1>Create Audit Plan</h1>
+      <h1>{isEdit ? 'Edit Audit Plan' : 'Create Audit Plan'}</h1>
 
       <form onSubmit={handleSubmit} className="create-audit-form">
         <div className="form-section-title">Audit Details</div>
@@ -154,7 +155,7 @@ export default function CreateAuditPlanPage() {
 
         <div className="form-actions">
           <button type="submit" className="btn-primary" disabled={submitting}>
-            <Save size={16} /> {submitting ? 'Creating...' : 'Create Plan'}
+            <Save size={16} /> {submitting ? 'Saving...' : isEdit ? 'Save Changes' : 'Create Plan'}
           </button>
         </div>
       </form>

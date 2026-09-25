@@ -13,7 +13,7 @@ import {
   type ChecklistListItem,
   type ChecklistItem,
 } from '../api/checklist_api';
-import { createFinding } from '../../findings/api/finding_api';
+import { createFinding } from '../../findings/api/findings_api';
 
 export type ItemStatus = 'pending' | 'pass' | 'fail';
 
