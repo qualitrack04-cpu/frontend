@@ -76,3 +76,22 @@ export async function createChecklist(payload: CreateChecklistPayload): Promise<
   const response = await axios_instance.post<ChecklistDetail>('/Checklist', payload);
   return response.data;
 }
+
+export interface UpdateChecklistItemPayload {
+  id?: string; // kosong = item baru
+  question: string;
+  description?: string;
+  clauseRef: string;
+}
+
+export interface UpdateChecklistPayload {
+  title: string;
+  standard: string;
+  department: string;
+  items: UpdateChecklistItemPayload[]; // urutan array = urutan item
+}
+
+export async function updateChecklist(id: string, payload: UpdateChecklistPayload): Promise<ChecklistDetail> {
+  const response = await axios_instance.put<ChecklistDetail>(`/Checklist/${id}`, payload);
+  return response.data;
+}

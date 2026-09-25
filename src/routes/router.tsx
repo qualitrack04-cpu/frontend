@@ -3,6 +3,8 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import AppLayout from '../shared/components/layout/app_layout';
 import ProtectedRoute from '../shared/components/protected_route';
 import PublicOnlyRoute from '../shared/components/public_only_route';
+import RoleRoute from '../shared/components/role_route';
+import { ROLES } from '../shared/utils/role';
 // Auth Pages
 import SignInPage from '../features/auth/components/sign_in_page';
 import SignUpPage from '../features/auth/components/sign_up_page';
@@ -24,7 +26,7 @@ import ProfilePage from '../features/profile/components/profile_page';
 import EditProfilePage from '../features/profile/components/edit_profile_page';
 
 import CreateAuditPlanPage from '../features/audits/components/create_audit_page';
-//import AuditChecklistPage from '../features/audits/components/edit_audit_page';
+import AuditChecklistEditPage from '../features/audits/components/audit_checklist_edit_page';
 import AuditChecklistPage from '../features/audits/components/audit_checklist_page';
 import AuditReportPage from '../features/audits/components/audit_report_preview_page'
 
@@ -61,8 +63,15 @@ const router = createBrowserRouter([
           { path: 'spc-analysis/history/:id', element: <SpcResultDetailPage /> },
           { path: 'profile', element: <ProfilePage /> },
           { path: 'profile/edit', element: <EditProfilePage /> },
-          { path: 'audits/new', element: <CreateAuditPlanPage /> },
-          { path: 'audits/:planId/edit', element: <CreateAuditPlanPage />},
+          {
+            // Create/edit audit plan hanya untuk Admin & Quality Manager
+            element: <RoleRoute allow={[ROLES.Admin, ROLES.QualityManager]} redirectTo="/audits" />,
+            children: [
+              { path: 'audits/new', element: <CreateAuditPlanPage /> },
+              { path: 'audits/:planId/edit', element: <CreateAuditPlanPage /> },
+              { path: 'audits/checklists/:checklistId/edit', element: <AuditChecklistEditPage /> },
+            ],
+          },
           { path: 'audits/:planId/schedule/:scheduleId/checklist',element: <AuditChecklistPage />},
           { path: 'audits/:planId/schedule/:scheduleId/report',element: <AuditReportPage />,}
         ],

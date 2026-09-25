@@ -1,5 +1,6 @@
 import AuditCard from './audit_card';
 import { useAuditPlans } from '../hooks/use_audit_plans';
+import { canManageAuditPlans } from '../../../shared/utils/role';
 
 export default function AuditsPage() {
   const { audits, loading, error, tab, setTab, handleDelete } = useAuditPlans();
@@ -28,7 +29,9 @@ export default function AuditsPage() {
       {error && <p className="error-text">{error}</p>}
 
       {!loading && !error && audits.length === 0 && (
-        <p className="text-muted">Belum ada audit plan. Klik "+ New Audit" untuk membuat yang baru.</p>
+        <p className="text-muted">
+          Belum ada audit plan.{canManageAuditPlans() && ' Klik "+ New Audit" untuk membuat yang baru.'}
+        </p>
       )}
 
       <div className="audit-plan-grid">
