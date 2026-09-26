@@ -7,20 +7,28 @@ export function useAuth() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const login = async (email: string, password: string) => {
+  async function login(email: string, password: string) {
     setLoading(true);
     setError(null);
     try {
-      const data = await loginApi({ email, password });
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      navigate('/dashboard');
+      const result = await loginApi({ email, password });
+
+      if (!result?.token) {
+        throw new Error('Response login tidak berisi token.')
+      }
+
+      localStorage.setItem('token', result.token);
+      localStorage.setItem('role', result.role ?? '');
+      localStorage.setItem('fullName', result.fullName ?? '');
+
+      navigate('/dashboard', {replace: true}); 
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login gagal. Cek email/password kamu.');
+      setError(
+        err.response?.data?.message ?? err.message ?? 'Email atau password salah.');
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return { login, loading, error };
 }
