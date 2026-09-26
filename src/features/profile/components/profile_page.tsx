@@ -37,9 +37,9 @@ export default function ProfilePage() {
     );
   }
 
-  const toPct = (rate: number) => Math.round(rate * 1000) / 10;
+  const toPct = (rate: number) => Math.round(rate * 10) / 10;
   const qualityPct = toPct(kpi.qualityScore);
-  const successPct = toPct(kpi.successRate);
+  const successPct = toPct(kpi.successRate * 100);
   const taskLabel = kpi.kpiBasis === 'Capa' ? 'CAPA' : 'audit';
   const qualityLabel =
     kpi.totalCompleted === 0
