@@ -1959,6 +1959,39 @@ label.photo-source-btn {
   margin-top: 12px;
 }
 
+.audit-plan-card--done{
+  opacity: 0.7;
+  filter: grayscale(0.5);
+  background: #f8fafc;
+}
+
+.audit-plan-card--done .audit-plan-title-row h3{
+  color: #64748b;
+}
+
+.audit-date-block--done {
+  background: #e2e8f0;
+  color: #64748b;
+}
+
+.audit-done-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #16a34a;
+  margin-top: 12px;
+}
+
+.audit-plan-card--done .btn-checklist {
+  background: #94a3b8;
+}
+
+.audit-plan-card--done .btn-checklist:hover {
+  background: #7c8aa0;
+}
+
 .audit-plan-card-body {
   flex: 1;
   min-width: 0;
