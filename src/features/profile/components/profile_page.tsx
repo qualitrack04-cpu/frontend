@@ -147,10 +147,10 @@ function ProfileIdentityCard({ profile, children }: { profile: ProfileData; chil
             className="avatar-img"
           />
         ) : (
-          <div className="avatar-initials">{profile.fullName.charAt(0)}</div>
+          <div className="avatar-initials">{profile.fullName?.charAt(0) ?? '?'}</div>
         )}
       </div>
-      <h2 className="profile-name">{profile.fullName}</h2>
+      <h2 className="profile-name">{profile.fullName ?? '-'}</h2>
       <span className="role-badge">{profile.role}</span>
       {children}
     </div>
@@ -166,7 +166,7 @@ function AccountDetailsCard({ profile }: { profile: ProfileData }) {
       </h3>
       <div className="detail-row">
         <label>Username</label>
-        <div className="detail-value">{profile.fullName}</div>
+        <div className="detail-value">{profile.fullName ?? '-'}</div>
       </div>
       <div className="detail-row">
         <label>Email</label>

@@ -96,7 +96,7 @@ export default function EditProfilePage() {
             {profile.profilePhotoUrl ? (
               <img src={fileUrl(profile.profilePhotoUrl)} alt={profile.fullName} className="avatar-img large" />
             ) : (
-              <div className="avatar-initials large">{fullName.charAt(0).toUpperCase()}</div>
+              <div className="avatar-initials large">{fullName?.charAt(0)?.toUpperCase() ?? '?'}</div>
             )}
             <span className="edit-icon"><Pencil size={12} /></span>
           </button>
