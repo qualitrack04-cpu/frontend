@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Pencil, Trash2, TriangleAlert, ClipboardCheck } from 'lucide-react';
+import { Pencil, Trash2, TriangleAlert, ClipboardCheck, CheckCircle2 } from 'lucide-react';
 import type { AuditPlan } from '../api/audit_plan_api';
 import { canManageAuditPlans } from '../../../shared/utils/role';
 
@@ -11,6 +11,7 @@ interface AuditCardProps {
 export default function AuditCard({ audit, onDelete }: AuditCardProps) {
   const schedule = audit.schedules[0];
   const isPriority = audit.priority === 'Priority';
+  const isFinished = !!schedule?.isFinished;
 
   const date = schedule ? new Date(schedule.scheduledDate) : null;
   const day = date?.toLocaleDateString('en-US', { day: '2-digit' });
@@ -18,14 +19,27 @@ export default function AuditCard({ audit, onDelete }: AuditCardProps) {
   const year = date?.getFullYear();
 
   return (
-    <div className="audit-plan-card">
-      <div className={`audit-date-block ${isPriority ? 'audit-date-block--priority' : ''}`}>
+    <div className={isFinished ? 'audit-plan-card audit-plan-card--done' : 'audit-plan-card'}>
+      <div
+        className={
+          isFinished
+            ? 'audit-date-block audit-date-block--done'
+            : isPriority
+            ? 'audit-date-block audit-date-block--priority'
+            : 'audit-date-block'
+        }
+      >
         <span className="audit-date-day">{day ?? '--'}</span>
         <span className="audit-date-month">{month ?? '---'}</span>
         <span className="audit-date-year">{year ?? ''}</span>
-        {isPriority && (
+        {isPriority && !isFinished && (
           <span className="audit-priority-tag">
             <TriangleAlert size={13} /> Priority
+          </span>
+        )}
+        {isFinished && (
+          <span className="audit-done-tag">
+            <CheckCircle2 size={13} /> Selesai
           </span>
         )}
       </div>
@@ -65,3 +79,4 @@ export default function AuditCard({ audit, onDelete }: AuditCardProps) {
     </div>
   );
 }
+
