@@ -316,6 +316,19 @@ code {
   padding: 56px 56px 56px 21%;
 }
 
+.auth-logo-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.auth-splash-logo {
+  max-width: 220px;
+  height: auto;
+  object-fit: contain;
+  display: block;
+}
+
 .auth-logo {
   display: flex;
   align-items: center;

@@ -1,16 +1,17 @@
-// Ini supaya kalau ganti teks tidak perlu mengganti satu satu seperti sebelumnya (pada bagian signIn signUp)
-
-import { ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
+import splashLogo from '../../../assets/splash.png';
 const features = ['ISO 9001 Ready', 'Real-time Analytics', 'Automated CAPA'];
 
 export default function AuthBrandPanel() {
   return (
     <div className="auth-brand">
-      <div className="auth-logo">
-        <ShieldCheck size={28} />
-        <span>QualiTrack</span>
+      <div className="auth-logo-wrapper">
+        <img
+          src={splashLogo}
+          alt="QualiTrack - Checklist Today, Better tomorrow"
+          className="auth-splash-logo"
+        />
       </div>
-      <p className="auth-tagline">Checklist Today, Better tomorrow</p>
 
       <h1 className="auth-heading">Quality &amp; Audit Management, Simplified</h1>
       <p className="auth-subtitle">
