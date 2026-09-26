@@ -22,3 +22,7 @@ export function canManageAuditPlans() {
 export function canEditAuditPlans() {
   return hasRole(ROLES.QualityManager, ROLES.Admin);
 }
+
+export function canCreateCapa() {
+  return !hasRole(ROLES.Auditee);
+}

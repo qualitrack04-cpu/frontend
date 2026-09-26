@@ -59,7 +59,13 @@ const router = createBrowserRouter([
           { path: 'findings/:id', element: <FindingDetailPage /> },
           { path: 'findings/:id/edit', element: <FindingFormPage mode="edit" /> },        
           { path: 'capa', element: <CapaPage /> },
-          { path: 'capa/new', element: <CreateCapaPage /> },
+          {
+            // Create CAPA hanya untuk Admin, Quality Manager, dan Auditor Internal (Auditee tidak bisa bikin CAPA)
+            element: <RoleRoute allow={[ROLES.Admin, ROLES.QualityManager, ROLES.AuditorInternal]} redirectTo="/capa" />,
+            children: [
+              { path: 'capa/new', element: <CreateCapaPage /> },
+            ],
+          },
           { path: 'capa/:id', element: <CapaDetailPage /> },
           { path: 'spc-analysis', element: <SpcAnalysisPage /> },
           { path: 'spc-analysis/history', element: <SpcHistoryPage /> },

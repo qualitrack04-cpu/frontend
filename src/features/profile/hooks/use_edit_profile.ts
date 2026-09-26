@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { updateProfile, changePassword, uploadProfilePhoto } from '../../auth/api/auth_api';
+import { updateProfile, changePassword, uploadProfilePhoto, removeProfilePhoto } from '../../auth/api/auth_api';
 
 export function useEditProfile() {
   const [saving, setSaving] = useState(false);
@@ -44,5 +44,18 @@ export function useEditProfile() {
     }
   }
 
-  return { saveProfile, savePhoto, saving, error, photoSaving, photoError };
+  async function deletePhoto() {
+    setPhotoSaving(true);
+    setPhotoError(null);
+    try {
+      await removeProfilePhoto();
+    } catch (err: any) {
+      setPhotoError(err.response?.data?.message || 'Gagal menghapus foto.');
+      throw err;
+    } finally {
+      setPhotoSaving(false);
+    }
+  }
+
+  return { saveProfile, savePhoto, deletePhoto, saving, error, photoSaving, photoError };
 }

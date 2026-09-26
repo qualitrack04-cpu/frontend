@@ -66,7 +66,6 @@ export interface FindingListParams {
 export const categoryOptions: { value: FindingCategory; label: string }[] = [
   { value: 'MajorNC', label: 'Major NC' },
   { value: 'MinorNC', label: 'Minor NC' },
-  { value: 'Observation', label: 'Observation' },
   { value: 'OFI', label: 'OFI' },
 ];
 

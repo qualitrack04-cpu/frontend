@@ -188,7 +188,7 @@ export default function FindingFormPage({ mode }: Props) {
         <ArrowLeft size={18} /> Back to Finding
       </Link>
       <h1 className="fd-title fd-title--form">{isEdit ? 'Edit Finding' : 'New Finding'}</h1>
-      <p className="fd-subtitle">Record details of a non-conformance or observation.</p>
+      <p className="fd-subtitle">Record details of a non-conformance.</p>
 
       <form className="fd-form-grid" onSubmit={handleSubmit} noValidate>
         {/* ---------- Kolom kiri ---------- */}

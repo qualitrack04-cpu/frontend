@@ -43,7 +43,7 @@ export async function verifyEmail(payload: VerifyEmailPayload) {
   return response.data;
 }
 
-export async function resendOtp(payload: ResendOtpPayload ) {
+export async function resendOtp(payload: ResendOtpPayload) {
   const response = await axios_instance.post('/Auth/resend-otp', payload);
   return response.data;
 }
@@ -75,8 +75,8 @@ export async function forgotPasswordVerifyOtp(payload: { email: string; otp: str
   return response.data;
 }
 
-export async function forgotPasswordReset(payload: { 
-  email: string; 
+export async function forgotPasswordReset(payload: {
+  email: string;
   resetToken: string;
   newPassword: string;
   confirmPassword: string;
@@ -119,6 +119,11 @@ export async function uploadProfilePhoto(file: File) {
   const response = await axios_instance.post('/Auth/upload-profile-photo', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
+  return response.data;
+}
+
+export async function removeProfilePhoto() {
+  const response = await axios_instance.delete('/Auth/profile-photo');
   return response.data;
 }
 

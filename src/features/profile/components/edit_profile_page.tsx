@@ -1,4 +1,4 @@
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { KeyRound, Pencil } from 'lucide-react';
 import ChangePhotoModal from './change_photo_modal';
@@ -11,6 +11,7 @@ export default function EditProfilePage() {
   const {
     saveProfile,
     savePhoto,
+    deletePhoto,
     saving,
     error: saveError,
     photoSaving,
@@ -21,6 +22,7 @@ export default function EditProfilePage() {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showRemovePhotoConfirm, setShowRemovePhotoConfirm] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
 
@@ -70,6 +72,16 @@ export default function EditProfilePage() {
     }
   };
 
+  const handleConfirmRemovePhoto = async () => {
+    setShowRemovePhotoConfirm(false);
+    try {
+      await deletePhoto();
+      await refetch();
+    } catch {
+      // photoError akan muncul di kartu avatar
+    }
+  };
+
   return (
     <div className="page-container">
       <button className="back-btn" onClick={() => navigate('/profile')}>← Back</button>
@@ -78,20 +90,27 @@ export default function EditProfilePage() {
 
       <div className="edit-profile-grid">
         {/* ---- Kartu Avatar (kiri) ---- */}
-        <div className="profile-card center">
+        <div className="profile-card edit-avatar-card">
+          {/* Klik foto → ganti foto */}
           <button className="avatar-edit-btn" onClick={() => setShowPhotoModal(true)} disabled={photoSaving}>
             {profile.profilePhotoUrl ? (
-              <img src={fileUrl(profile.profilePhotoUrl)} alt={profile.fullName} className="avatar-placeholder large" />
+              <img src={fileUrl(profile.profilePhotoUrl)} alt={profile.fullName} className="avatar-img large" />
             ) : (
-              <div className="avatar-placeholder large">{fullName.charAt(0).toUpperCase()}</div>
+              <div className="avatar-initials large">{fullName.charAt(0).toUpperCase()}</div>
             )}
             <span className="edit-icon"><Pencil size={12} /></span>
           </button>
-          <h3 className="profile-name">{fullName}</h3>
-          <span className="role-badge">{profile.role}</span>
-          <p className="text-muted" style={{ marginTop: 8, fontSize: 13 }}>
-            Klik foto untuk mengganti
-          </p>
+          <h3 className="edit-avatar-name">{fullName}</h3>
+          <span className="role-badge edit-role-badge">{profile.role.toUpperCase()}</span>
+
+          {/* Klik "Remove Photo" → modal konfirmasi hapus, BUKAN ganti foto */}
+          <button
+            className="btn-remove-photo"
+            onClick={() => setShowRemovePhotoConfirm(true)}
+            disabled={photoSaving}
+          >
+            Remove Photo
+          </button>
 
           {photoError && <p className="error-text">{photoError}</p>}
         </div>
@@ -104,7 +123,7 @@ export default function EditProfilePage() {
           <div className="form-row">
             <div className="form-group">
               <label>Full Name</label>
-              <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+              <input type="text" value={fullName} maxLength={100} onChange={(e) => setFullName(e.target.value)} />
             </div>
             <div className="form-group">
               <label>Email Address</label>
@@ -116,6 +135,7 @@ export default function EditProfilePage() {
           <h3 className="form-section-title">Security</h3>
           <hr className="form-section-divider" />
 
+
           <div className="form-row">
             <div className="form-group">
               <label>New Password</label>
@@ -123,7 +143,7 @@ export default function EditProfilePage() {
                 <KeyRound size={16} className="input-icon-left" />
                 <input
                   type="password"
-                  placeholder="New password (kosongkan jika tidak diganti)"
+                  placeholder="New password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                 />
@@ -154,15 +174,18 @@ export default function EditProfilePage() {
         </div>
       </div>
 
+      {/* Modal ganti foto */}
       {showPhotoModal && (
         <ChangePhotoModal
           currentName={fullName}
           currentRole={profile.role}
+          currentPhotoUrl={profile.profilePhotoUrl}
           onClose={() => setShowPhotoModal(false)}
           onSave={handleSavePhoto}
         />
       )}
 
+      {/* Modal konfirmasi Save Changes */}
       {showConfirmModal && (
         <div className="modal-overlay">
           <div className="modal-box">
@@ -171,6 +194,25 @@ export default function EditProfilePage() {
               {saving ? 'Saving...' : '✎ Save'}
             </button>
             <button className="btn-cancel-text" onClick={() => setShowConfirmModal(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal konfirmasi Remove Photo */}
+      {showRemovePhotoConfirm && (
+        <div className="modal-overlay">
+          <div className="modal-box">
+            <p style={{ fontWeight: 700, color: '#0f2c52', marginBottom: 6 }}>Remove Profile Photo</p>
+            <p style={{ color: '#64748b', fontSize: 14, marginBottom: 4 }}>Are You Sure to remove photo?</p>
+            <button
+              className="btn-confirm-save"
+              style={{ background: '#dc2626' }}
+              onClick={handleConfirmRemovePhoto}
+              disabled={photoSaving}
+            >
+              {photoSaving ? 'Removing...' : 'Remove'}
+            </button>
+            <button className="btn-cancel-text" onClick={() => setShowRemovePhotoConfirm(false)}>Cancel</button>
           </div>
         </div>
       )}

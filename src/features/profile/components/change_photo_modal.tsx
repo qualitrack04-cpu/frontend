@@ -1,14 +1,16 @@
 import { useState } from 'react';
 import { X, UploadCloud, HardDrive, Camera, Link2, Cloud } from 'lucide-react';
+import { fileUrl } from '../../../shared/utils/file_url';
 
 interface ChangePhotoModalProps {
   currentName: string;
   currentRole: string;
+  currentPhotoUrl?: string | null;
   onClose: () => void;
   onSave: (file: File | null) => void;
 }
 
-export default function ChangePhotoModal({ currentName, currentRole, onClose, onSave }: ChangePhotoModalProps) {
+export default function ChangePhotoModal({ currentName, currentRole, currentPhotoUrl, onClose, onSave }: ChangePhotoModalProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -33,6 +35,7 @@ export default function ChangePhotoModal({ currentName, currentRole, onClose, on
   return (
     <div className="modal-overlay">
       <div className="photo-modal-box">
+        {/* Header — judul lebih gelap agar terbaca */}
         <div className="photo-modal-header">
           <h3>Change Profile Picture</h3>
           <button className="modal-close-btn" onClick={onClose} aria-label="Tutup">
@@ -40,14 +43,20 @@ export default function ChangePhotoModal({ currentName, currentRole, onClose, on
           </button>
         </div>
 
+        {/* Preview baris atas: foto (atau inisial) + nama + role */}
         <div className="photo-preview-row">
-          <div className="avatar-placeholder">{currentName.charAt(0)}</div>
+          {currentPhotoUrl ? (
+            <img src={fileUrl(currentPhotoUrl)} alt={currentName} className="modal-avatar-img" />
+          ) : (
+            <div className="modal-avatar-initials">{currentName.charAt(0)}</div>
+          )}
           <div>
             <strong>{currentName}</strong>
             <p className="text-muted">{currentRole}</p>
           </div>
         </div>
 
+        {/* Grid sumber foto */}
         <div className="photo-source-grid">
           <button className="photo-source-btn" disabled title="Belum tersedia">
             <Cloud size={16} />
@@ -68,6 +77,7 @@ export default function ChangePhotoModal({ currentName, currentRole, onClose, on
           </button>
         </div>
 
+        {/* Dropzone */}
         <div
           className="dropzone"
           onDragOver={(e) => e.preventDefault()}
@@ -77,8 +87,10 @@ export default function ChangePhotoModal({ currentName, currentRole, onClose, on
             <img src={previewUrl} alt="Preview" className="dropzone-preview" />
           ) : (
             <>
-              <UploadCloud size={28} className="dropzone-icon" />
-              <strong>Drag & drop image here</strong>
+              <div className="dropzone-icon">
+                <UploadCloud size={26} />
+              </div>
+              <strong>Drag &amp; drop image here</strong>
               <p className="text-muted">or use Local Device button above</p>
               <p className="text-muted small">JPG, PNG, GIF up to 5MB</p>
             </>
@@ -92,7 +104,7 @@ export default function ChangePhotoModal({ currentName, currentRole, onClose, on
             disabled={!selectedFile}
             onClick={() => onSave(selectedFile)}
           >
-            Save & Apply Photo
+            Save &amp; Apply Photo
           </button>
         </div>
       </div>

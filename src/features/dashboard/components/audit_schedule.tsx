@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { Calendar, Clock } from 'lucide-react';
 import { useFetch } from '../../../shared/hooks/use_fetch';
 import { getAuditSchedule } from '../api/dashboard_api';
 
@@ -52,10 +53,10 @@ export default function AuditSchedule() {
           ...dept,
         }))
       )
-      .filter((item) =>{
+      .filter((item) => {
         const target = new Date(year, month - 1, item.day);
         const today = new Date();
-        today.setHours(0,0,0,0);
+        today.setHours(0, 0, 0, 0);
         return target >= today;
       })
       .sort((a, b) => a.day - b.day);
@@ -90,9 +91,16 @@ export default function AuditSchedule() {
           >
             <strong>{audit.planTitle}</strong>
             <div className="audit-meta">
-              <span>📅 {formatDate(year, month, audit.day)}</span>
-              <span style={{ color: colorFor(audit.department) }}>
-                🕒 {daysLeftLabel(year, month, audit.day)}
+              <span className="audit-meta-item">
+                <Calendar size={14} strokeWidth={2} />
+                {formatDate(year, month, audit.day)}
+              </span>
+              <span
+                className="audit-meta-item"
+                style={{ color: colorFor(audit.department) }}
+              >
+                <Clock size={14} strokeWidth={2} />
+                {daysLeftLabel(year, month, audit.day)}
               </span>
             </div>
             <p className="text-muted small">

@@ -2,7 +2,7 @@ import axios_instance from '../../../shared/api/axios_instance';
 
 export interface ChecklistItem {
   id: string;
-  question: string; // ⚠️ backend pakai "Question", BUKAN "title"
+  question: string;
   description: string | null;
   clauseRef: string;
   orderIndex: number;

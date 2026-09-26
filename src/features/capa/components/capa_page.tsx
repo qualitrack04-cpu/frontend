@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus } from 'lucide-react';
+import { canCreateCapa } from '../../../shared/utils/role';
 import { useCapas } from '../hooks/use_capas';
 import { updateCapaStatus, type Capa, type CapaStatus } from '../api/capa_api';
 import CapaCard from './capa_card';
@@ -10,6 +11,7 @@ export default function CapaPage() {
   const [items, setItems] = useState<Capa[]>([]);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [statusError, setStatusError] = useState<string | null>(null);
+  const allowCreate = canCreateCapa();
 
   // Salin ke state lokal supaya perubahan status (dropdown di card) bisa
   // langsung tampil (optimistic update) tanpa refetch seluruh list.
@@ -36,9 +38,11 @@ export default function CapaPage() {
     <div className="page-container capa-page">
       <div className="capa-list-header">
         <h1 className="capa-title">CAPA</h1>
-        <Link to="/capa/new" className="capa-btn-primary">
-          <Plus size={18} /> New CAPA
-        </Link>
+        {allowCreate && (
+          <Link to="/capa/new" className="capa-btn-primary">
+            <Plus size={18} /> New CAPA
+          </Link>
+        )}
       </div>
 
       {loading && <p className="text-muted">Memuat CAPA...</p>}

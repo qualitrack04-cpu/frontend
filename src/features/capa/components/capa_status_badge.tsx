@@ -16,8 +16,8 @@ interface CapaStatusBadgeProps {
 }
 
 export default function CapaStatusBadge({ status, onChange, disabled }: CapaStatusBadgeProps) {
-  if (!onChange) {
-    // Varian statis, dipakai di sidebar Detail CAPA.
+  if (!onChange || status === 'Closed') {
+    // Varian statis, dipakai di sidebar Detail CAPA atau jika status sudah Closed (selesai).
     return (
       <span className={statusClass(status)}>
         <span className="capa-status-dot" />

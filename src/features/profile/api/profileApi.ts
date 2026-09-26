@@ -27,16 +27,29 @@ export interface RecentActivityItem {
 export async function getProfileKpi(): Promise<ProfileKpi> {
   const response = await axiosInstance.get('/Profile/kpi'); // baseURL sudah termasuk /api
   const data = response.data ?? {};
-  // Default 0 kalau ada field yang tidak dikirim backend (mis. backend versi lama) supaya tidak NaN
+  const totalAssigned = data.totalCapaAssigned ?? data.totalAssigned ?? 0;
+  const totalCompleted = data.totalCapaClosed ?? data.totalCompleted ?? 0;
+  const totalCompletedOnTime = data.totalCapaClosedOnTime ?? data.totalCompletedOnTime ?? 0;
+  const totalOverdue = data.totalOverdue ?? data.totalCapaOpenInProgress ?? 0;
+
+  const qualityScore =
+    data.qualityScore ??
+    data.onTimeCompletionRate ??
+    (totalCompleted > 0 ? totalCompletedOnTime / totalCompleted : 0);
+
+  const successRate =
+    data.successRate ??
+    (totalAssigned > 0 ? totalCompleted / totalAssigned : 0);
+
   return {
     ...data,
     kpiBasis: data.kpiBasis ?? 'Audit',
-    totalAssigned: data.totalAssigned ?? 0,
-    totalCompleted: data.totalCompleted ?? 0,
-    totalCompletedOnTime: data.totalCompletedOnTime ?? 0,
-    totalOverdue: data.totalOverdue ?? 0,
-    qualityScore: data.qualityScore ?? 0,
-    successRate: data.successRate ?? 0,
+    totalAssigned,
+    totalCompleted,
+    totalCompletedOnTime,
+    totalOverdue,
+    qualityScore,
+    successRate,
   };
 }
 

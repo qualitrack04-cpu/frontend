@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Clock, AlertTriangle, Users } from 'lucide-react';
 import { useProfileKpi } from '../hooks/useProfileKpi';
 import { useProfile } from '../hooks/use_profile';
 import RecentActivity from './recent_activity';
@@ -7,8 +8,6 @@ import { hasRole, ROLES } from '../../../shared/utils/role';
 import type { ProfileData } from '../../auth/api/auth_api';
 
 export default function ProfilePage() {
-  // Quality Score, Success Rate, On Time/Overdue & Recent Activity hanya untuk Auditor Internal.
-  // (Auditee cuma ada di mobile; KPI berbasis CAPA-nya dihitung di backend.)
   const showKpi = hasRole(ROLES.AuditorInternal);
 
   const { data: kpi, loading: kpiLoading, error: kpiError } = useProfileKpi(showKpi);
@@ -47,10 +46,15 @@ export default function ProfilePage() {
       ? `Belum ada ${taskLabel}`
       : qualityPct >= 90 ? 'Excellent' : qualityPct >= 75 ? 'Good' : 'Needs Attention';
 
+  // Selisih success rate vs target 85%
+  const targetDiff = Math.round((successPct - 85) * 10) / 10;
+  const diffLabel = targetDiff >= 0 ? `+${targetDiff}%` : `${targetDiff}%`;
+
   return (
     <div className="page-container">
       <div className="profile-grid">
-        {/* Kolom kiri: foto + info dasar */}
+
+        {/* Kolom 1: Identity */}
         <ProfileIdentityCard profile={profile}>
           <div className="profile-quickstats">
             <div>
@@ -58,54 +62,74 @@ export default function ProfilePage() {
               <span>{kpi.kpiBasis === 'Capa' ? 'CAPA' : 'Audits'}</span>
             </div>
             <div>
-              <strong>{kpi.totalFindingsReported}</strong>
-              <span>Findings</span>
+              <strong>{(Math.min(qualityPct / 20, 5)).toFixed(1)}</strong>
+              <span>Rating</span>
             </div>
           </div>
         </ProfileIdentityCard>
 
-        {/* Quality Score: selesai tepat waktu / yang sudah dikerjakan */}
+        {/* Kolom 2: Quality Score */}
         <div className="profile-card center">
           <p className="card-label">QUALITY SCORE</p>
-          <div className="score-circle">{qualityPct}%</div>
+          <div className="score-circle">{qualityPct}<span className="score-pct">%</span></div>
           <span className="score-tag">{qualityLabel}</span>
           <p className="target-text">
             {kpi.totalCompletedOnTime}/{kpi.totalCompleted} {taskLabel} tepat waktu
           </p>
         </div>
 
-        {/* Success Rate: selesai / seluruh tugas yang diberikan */}
+        {/* Kolom 3: Success Rate */}
         <div className="profile-card dark">
-          <p className="card-label">SUCCESS RATE</p>
+          <p className="card-label-light">SUCCESS RATE</p>
           <p className="stat-big-number">
             {successPct}%{' '}
-            <small>
-              ({kpi.totalCompleted}/{kpi.totalAssigned})
-            </small>
+            <small>({kpi.totalCompleted}/{kpi.totalAssigned})</small>
           </p>
           <div className="progress-bar">
-            <div className="progress-fill" style={{ width: `${successPct}%` }} />
+            <div className="progress-fill" style={{ width: `${Math.min(successPct, 100)}%` }} />
           </div>
-          <p className="target-text">Target: 85%</p>
+          <div className="success-rate-footer">
+            <span className="target-text">Target: 85%</span>
+            <span className={`diff-badge ${targetDiff >= 0 ? 'diff-positive' : 'diff-negative'}`}>
+              {diffLabel}
+            </span>
+          </div>
+          <p className="success-volume-target">
+            Volume: {kpi.totalCompleted}/{kpi.totalAssigned} {taskLabel}
+          </p>
         </div>
 
-        {/* On Time / Overdue */}
+        {/* Kolom 4: On Time + Overdue */}
         <div className="profile-stats">
           <div className="stat-box">
-            <p className="stat-number">{kpi.totalCompletedOnTime}</p>
-            <p>ON TIME</p>
+            <div className="stat-box-row">
+              <div>
+                <p className="stat-number">{kpi.totalCompletedOnTime}</p>
+                <p className="stat-box-label">ON TIME</p>
+              </div>
+              <span className="stat-icon stat-icon-green">
+                <Clock size={18} strokeWidth={2} />
+              </span>
+            </div>
           </div>
           <div className="stat-box">
-            <p className="stat-number stat-danger">{kpi.totalOverdue}</p>
-            <p>OVERDUE</p>
+            <div className="stat-box-row">
+              <div>
+                <p className="stat-number stat-danger">{kpi.totalOverdue}</p>
+                <p className="stat-box-label">OVERDUE</p>
+              </div>
+              <span className="stat-icon stat-icon-red">
+                <AlertTriangle size={18} strokeWidth={2} />
+              </span>
+            </div>
           </div>
         </div>
+
       </div>
 
       {/* Baris bawah: Account Details + Recent Activity */}
       <div className="profile-bottom-grid">
         <AccountDetailsCard profile={profile} />
-
         <RecentActivity />
       </div>
     </div>
@@ -114,16 +138,16 @@ export default function ProfilePage() {
 
 function ProfileIdentityCard({ profile, children }: { profile: ProfileData; children?: React.ReactNode }) {
   return (
-    <div className="profile-card">
-      <div className="profile-avatar">
+    <div className="profile-card profile-identity-card">
+      <div className="profile-avatar-wrapper">
         {profile.profilePhotoUrl ? (
           <img
             src={fileUrl(profile.profilePhotoUrl)}
             alt={profile.fullName}
-            className="avatar-placeholder"
+            className="avatar-img"
           />
         ) : (
-          <div className="avatar-placeholder">{profile.fullName.charAt(0)}</div>
+          <div className="avatar-initials">{profile.fullName.charAt(0)}</div>
         )}
       </div>
       <h2 className="profile-name">{profile.fullName}</h2>
@@ -136,9 +160,12 @@ function ProfileIdentityCard({ profile, children }: { profile: ProfileData; chil
 function AccountDetailsCard({ profile }: { profile: ProfileData }) {
   return (
     <div className="profile-card">
-      <h3 className="profile-detail">Account Details</h3>
+      <h3 className="profile-detail">
+        <Users size={16} style={{ display: 'inline', marginRight: 6, verticalAlign: 'middle' }} />
+        Account Details
+      </h3>
       <div className="detail-row">
-        <label>Full Name</label>
+        <label>Username</label>
         <div className="detail-value">{profile.fullName}</div>
       </div>
       <div className="detail-row">

@@ -2189,6 +2189,8 @@ label.photo-source-btn {
   min-width: 0;
   word-wrap: break-word;
   overflow-wrap: anywhere;
+  min-height: 185px;
+  height: 100%;
 }
 
 .audit-date-block {
@@ -2251,6 +2253,7 @@ label.photo-source-btn {
   justify-content: space-between;
   align-items: flex-start;
   gap: 12px;
+  min-height: 48px;
 }
 
 .audit-plan-title-row h3 {
@@ -2303,6 +2306,8 @@ label.photo-source-btn {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+  min-height: 28px;
+  align-items: center;
 }
 
 .tag-badge {
