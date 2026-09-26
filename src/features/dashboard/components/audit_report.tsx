@@ -49,7 +49,9 @@ export default function AuditReport() {
     }
   };
 
-  const reportCards = data ? data.schedules.filter((row) => row.sessionId) : [];
+  const reportCards = Array.isArray(data?.schedules)
+    ? data.schedules.filter((row) => row.sessionId)
+    : [];
 
   return (
     <div className="audit-report-section">

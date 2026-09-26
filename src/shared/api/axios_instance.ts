@@ -2,7 +2,11 @@ import axios from 'axios';
 import type{ AxiosError } from 'axios';
 
 const axios_instance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL_PRIORITAS || import.meta.env.VITE_API_BASE_URL_SECOND,
+  baseURL:
+    import.meta.env.VITE_API_BASE_URL_PRIORITAS ||
+    import.meta.env.VITE_API_BASE_URL_SECOND ||
+    import.meta.env.VITE_API_BASE_URL ||
+    '/api',
   headers: {
     'Content-Type': 'application/json',
   },

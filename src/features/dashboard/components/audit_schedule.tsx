@@ -44,10 +44,11 @@ export default function AuditSchedule() {
 
   // Ratakan struktur per-hari jadi satu daftar, urut menaik
   const audits = useMemo(() => {
-    if (!data) return [];
-    return data.data
+    const list = data?.data ?? [];
+    if (!Array.isArray(list)) return [];
+    return list
       .flatMap((entry) =>
-        entry.departments.map((dept) => ({
+        (entry?.departments ?? []).map((dept) => ({
           key: dept.scheduleId,
           day: entry.day,
           ...dept,
