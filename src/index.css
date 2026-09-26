@@ -439,7 +439,8 @@ code {
   margin-bottom: 16px;
 }
 
-.auth-card .input-with-icon input {
+.auth-card .input-with-icon input,
+.auth-card .input-with-icon select {
   margin-bottom: 0;
 }
 
@@ -923,9 +924,10 @@ code {
    ============================================================ */
 .profile-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr auto;
+  grid-template-columns: 280px 1fr 1.3fr 1fr;
   gap: 16px;
   margin-bottom: 16px;
+  align-items: stretch;
 }
 
 .profile-card {
@@ -944,10 +946,64 @@ code {
   color: white;
 }
 
-.profile-avatar img,
-
+/* Profile name — biru tua seperti di UX */
 .profile-name {
-  color: black;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f2c52;
+  margin: 8px 0 4px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+/* Identity card: foto + nama + role selalu di tengah */
+.profile-identity-card {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-avatar-wrapper {
+  margin-bottom: 12px;
+}
+
+.avatar-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+}
+
+.avatar-img.large {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 0;
+}
+
+.avatar-initials {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: bold;
+  color: #475569;
+  margin: 0 auto;
+}
+
+.avatar-initials.large {
+  width: 120px;
+  height: 120px;
+  font-size: 40px;
+  margin: 0 auto 0;
 }
 
 .avatar-placeholder {
@@ -957,45 +1013,54 @@ code {
   object-fit: cover;
 }
 
-.avatar-placeholder {
-  background: #cbd5e1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  font-weight: bold;
-  color: #475569;
-}
-
 .role-badge {
   background: #dbeafe;
   color: #1e40af;
   font-weight: 700;
   letter-spacing: 0.5px;
-  font-size: 12px;
+  font-size: 10px;
   text-transform: uppercase;
-  padding: 6px 14px;
+  padding: 4px 12px;
   border-radius: 999px;
 }
 
 .card-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.6px;
-  color: #475569;
+  letter-spacing: 0.8px;
+  color: #64748b;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+
+/* card-label di atas dark card (Success Rate) */
+.card-label-light {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 4px;
+  text-transform: uppercase;
 }
 
 .score-circle {
-  width: 100px;
-  height: 100px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
-  border: 8px solid #f59e0b;
+  border: 10px solid #f59e0b;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  font-weight: bold;
-  margin: 8px auto;
+  font-size: 26px;
+  font-weight: 800;
+  color: #0f2c52;
+  margin: 12px auto;
+  position: relative;
+}
+
+.score-pct {
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .score-tag {
@@ -1029,33 +1094,92 @@ code {
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
-  padding: 16px;
-  text-align: center;
+  padding: 16px 20px;
 }
 
-/* Angka besar di kartu "Success Rate" — dulu salah pakai <h1> global,
-   sekarang class sendiri supaya tidak ikut ukuran 56px */
+.stat-box-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-box-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  margin: 4px 0 0;
+}
+
+/* Ikon bulat di stat-box On Time / Overdue */
+.stat-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.stat-icon-green {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.stat-icon-red {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* Angka besar di kartu "Success Rate" */
 .stat-big-number {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 8px 0;
+  font-size: 36px;
+  font-weight: 800;
+  margin: 6px 0 4px;
   color: #ffffff;
-  /* .profile-card.dark backgroundnya gelap */
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .stat-big-number small {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 400;
-  opacity: 0.8;
+  opacity: 0.75;
 }
 
-/* Angka On Time / Overdue — dulu pakai <h2> global, sekarang class sendiri */
-.stat-number {
-  font-size: 26px;
+/* Footer target + diff badge di Success Rate */
+.success-rate-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+.diff-badge {
+  font-size: 12px;
   font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.diff-positive {
+  background: rgba(22, 163, 74, 0.25);
+  color: #4ade80;
+}
+
+.diff-negative {
+  background: rgba(220, 38, 38, 0.25);
+  color: #f87171;
+}
+
+/* Angka On Time / Overdue */
+.stat-number {
+  font-size: 30px;
+  font-weight: 800;
   color: #0f2c52;
-  margin: 0 0 4px;
+  margin: 0;
+  line-height: 1;
 }
 
 .detail-row {
@@ -1065,7 +1189,8 @@ code {
 .detail-row label {
   display: block;
   font-size: 13px;
-  color: #64748b;
+  font-weight: 600;
+  color: #1e293b;
   margin-bottom: 4px;
 }
 
@@ -1073,6 +1198,10 @@ code {
   background: #f1f5f9;
   padding: 10px;
   border-radius: 8px;
+  color: #0f2c52;
+  font-weight: 500;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .btn-edit-profile {
@@ -1089,9 +1218,17 @@ code {
 /* Baris bawah: Account Details (kiri) + Recent Activity (kanan) */
 .profile-bottom-grid {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 280px 1fr;
   gap: 16px;
   align-items: start;
+}
+
+/* Volume target di bawah Success Rate */
+.success-volume-target {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 8px;
+  margin-bottom: 0;
 }
 
 .profile-quickstats {
@@ -1115,7 +1252,13 @@ code {
 }
 
 .profile-detail {
-  color: black;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f2c52;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .profile-quickstats span {
@@ -1219,18 +1362,56 @@ code {
   align-items: start;
 }
 
-.avatar-placeholder.large {
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  background: #cbd5e1;
+/* Kartu avatar di edit profile — selalu center */
+.edit-avatar-card {
+  text-align: center;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: 40px;
-  font-weight: bold;
-  color: #475569;
-  margin: 0 auto 16px;
+  padding: 32px 20px;
+}
+
+.edit-avatar-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0f2c52;
+  margin: 14px 0 6px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.edit-role-badge {
+  background: #dbeafe;
+  color: #1e40af;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-bottom: 4px;
+}
+
+.btn-remove-photo {
+  background: none;
+  border: none;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 14px;
+  padding: 0;
+  font-family: inherit;
+}
+
+.btn-remove-photo:hover {
+  text-decoration: underline;
+}
+
+.btn-remove-photo:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .avatar-edit-btn {
@@ -1307,6 +1488,31 @@ code {
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
+
+/* Label teks form (Full Name, Email Address, dll) — warna gelap */
+.edit-profile-grid label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 6px;
+}
+
+/* Row label + input */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Dua input berdampingan */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
 
 .edit-profile-grid input::placeholder {
   color: #94a3b8;
@@ -1467,13 +1673,54 @@ code {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.photo-modal-header h3 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f2c52;
+  margin: 0;
 }
 
 .modal-close-btn {
-  background: none;
-  border: none;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 18px;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  color: #475569;
+}
+
+.modal-close-btn:hover {
+  background: #e2e8f0;
+}
+
+/* Avatar dalam preview row modal */
+.modal-avatar-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.modal-avatar-initials {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #1e3a5f;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  flex-shrink: 0;
 }
 
 .photo-preview-row {
@@ -1484,6 +1731,18 @@ code {
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 16px;
+}
+
+.photo-preview-row > div {
+  min-width: 0;
+  flex: 1;
+}
+
+.photo-preview-row strong {
+  display: block;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .text-muted {
@@ -1545,15 +1804,28 @@ label.photo-source-btn {
 }
 
 .dropzone {
-  border: 2px dashed #cbd5e1;
+  border: 2px dashed #b8c9e8;
   border-radius: 12px;
   padding: 32px;
   text-align: center;
   margin-bottom: 20px;
+  background: #eef3fb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
 }
 
 .dropzone-icon {
-  font-size: 28px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #1e3a5f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  margin-bottom: 4px;
 }
 
 .dropzone-preview {
@@ -1767,6 +2039,12 @@ label.photo-source-btn {
   margin-top: 6px;
   font-size: 13px;
   color: #64748b;
+}
+
+.audit-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 /* Wrapper dari SummaryCards.tsx & ComplianceScore.tsx — belum ada
