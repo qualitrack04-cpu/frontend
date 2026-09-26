@@ -7,7 +7,7 @@ import AuthBrandPanel from './auth_brand_panel';
 const ROLE_OPTIONS = [
   { value: 'AuditorInternal', label: 'Auditor Internal' },
   { value: 'QualityManager', label: 'Quality Manager' },
-  { value: 'Auditee', label: 'Auditee' },
+  // { value: 'Auditee', label: 'Auditee' }, // Auditee didaftarkan secara manual oleh admin
   // { value: 'Admin', label: 'Admin' }, // Admin didaftarkan secara manual oleh sysadmin
 ] as const;
 
