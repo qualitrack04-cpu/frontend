@@ -2,7 +2,7 @@ import axios from 'axios';
 import type{ AxiosError } from 'axios';
 
 const axios_instance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api',
+  baseURL: import.meta.env.VITE_API_BASE_URL_PRIORITAS || import.meta.env.VITE_API_BASE_URL_SECOND,
   headers: {
     'Content-Type': 'application/json',
   },
