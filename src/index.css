@@ -2172,6 +2172,7 @@ label.photo-source-btn {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
+  align-items: stretch;
 }
 
 @media (max-width: 900px) {
@@ -2190,7 +2191,7 @@ label.photo-source-btn {
   word-wrap: break-word;
   overflow-wrap: anywhere;
   min-height: 185px;
-  height: 100%;
+  align-self: stretch; /* pastikan card stretch ke tinggi row grid */
 }
 
 .audit-date-block {
