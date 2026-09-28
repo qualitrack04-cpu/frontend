@@ -153,6 +153,22 @@ code {
   flex-shrink: 0;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-mobile-menu {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #0f2c52;
+  padding: 4px;
+}
+
+
 .logo {
   display: flex;
   align-items: center;
@@ -198,6 +214,31 @@ code {
   flex-direction: column;
   overflow-y: auto;
   flex-shrink: 0;
+  transition: transform 0.3s ease;
+  z-index: 200;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 150;
+}
+
+.sidebar-mobile-header {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.btn-close-sidebar {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px;
 }
 
 .btn-new-audit {
@@ -4149,5 +4190,78 @@ label.photo-source-btn {
 
   .capa-meta {
     position: static;
+  }
+}
+
+/* ============================================================
+   MOBILE RESPONSIVE (MAX-WIDTH: 768px)
+   ============================================================ */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    width: 250px;
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .sidebar-overlay {
+    display: block;
+  }
+  
+  .sidebar-mobile-header {
+    display: flex;
+  }
+  
+  .btn-mobile-menu {
+    display: block;
+  }
+  
+  /* Tables */
+  .table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Grid Layouts */
+  .audit-report-grid,
+  .dashboard-top-grid,
+  .compliance-grid,
+  .summary-cards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .report-layout {
+    flex-direction: column;
+  }
+  
+  .report-sidebar {
+    width: 100%;
+  }
+  
+  /* Auth */
+  .auth-left {
+    display: none;
+  }
+  
+  .auth-right {
+    padding: 20px;
+  }
+  
+  /* Form Layouts */
+  .form-row, 
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .page-container {
+    padding: 16px;
   }
 }

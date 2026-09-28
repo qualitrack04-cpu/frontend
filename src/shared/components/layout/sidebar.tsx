@@ -7,6 +7,7 @@ import {
   TrendingUp,
   LogOut,
   Plus,
+  X,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { canManageAuditPlans } from '../../utils/role';
@@ -19,7 +20,12 @@ const menuItems:  {label: string; path: string; icon: LucideIcon}[] = [
   { label: 'SPC Analysis', path: '/spc-analysis', icon: TrendingUp },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -30,8 +36,17 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="sidebar">
-      {canManageAuditPlans() && (
+    <>
+      {isOpen && <div className="sidebar-overlay" onClick={onClose} />}
+      <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+        <div className="sidebar-mobile-header">
+          <span className="logo-text">QualiTrack</span>
+          <button className="btn-close-sidebar" onClick={onClose}>
+            <X size={24} />
+          </button>
+        </div>
+
+        {canManageAuditPlans() && (
         <button className="btn-new-audit" onClick={() => navigate('/audits/new')}>
           <Plus size={16} /> New Audit
         </button>
@@ -42,6 +57,7 @@ export default function Sidebar() {
           <NavLink
             key={path}
             to={path}
+            onClick={onClose}
             className={({ isActive }) =>
               isActive ? 'sidebar-item active' : 'sidebar-item'
             }
@@ -57,5 +73,6 @@ export default function Sidebar() {
         <span>Logout</span>
       </button>
     </aside>
+    </>
   );
 }
