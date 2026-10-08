@@ -34,7 +34,7 @@ interface SaveProgressResult {
 }
 
 export async function getResponsesBySession(sessionId: string): Promise<AuditResponseRecord[]> {
-  const response = await axios_instance.get<GetBySessionEnvelope>(`/AuditResponse/by-session/${sessionId}`);
+  const response = await axios_instance.get<GetBySessionEnvelope>(`/audit-responses/by-session/${sessionId}`);
   return response.data.data;
 }
 
@@ -42,7 +42,7 @@ export async function submitResponseBatch(
   sessionId: string,
   responses: BatchResponseItem[]
 ): Promise<BatchSaveResult> {
-  const res = await axios_instance.post<BatchSaveResult>('/AuditResponse/batch', {
+  const res = await axios_instance.post<BatchSaveResult>('/audit-responses/batch', {
     sessionId,
     responses,
   });
@@ -55,7 +55,7 @@ export async function saveResponseProgress(
   isPassed: boolean,
   notes?: string
 ): Promise<SaveProgressResult> {
-  const res = await axios_instance.post<SaveProgressResult>('/AuditResponse/progress', {
+  const res = await axios_instance.post<SaveProgressResult>('/audit-responses/progress', {
     sessionId,
     checklistItemId,
     isPassed,

@@ -124,7 +124,7 @@ export default function DatePicker({ value, onChange, min, max, placeholder = 'd
   const todayIso = toIso(now.getFullYear(), now.getMonth(), now.getDate());
 
   return (
-    <div className="date-picker" ref={wrapperRef}>
+    <div className="relative w-full" ref={wrapperRef}>
       <input
         type="text"
         inputMode="numeric"
@@ -133,10 +133,11 @@ export default function DatePicker({ value, onChange, min, max, placeholder = 'd
         onChange={(e) => handleTextChange(e.target.value)}
         onFocus={openCalendar}
         onBlur={handleBlur}
+        className="w-full pl-[36px] pr-[12px] py-[12px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] box-border font-inherit placeholder:text-[#94a3b8]"
       />
       <button
         type="button"
-        className="date-picker-toggle"
+        className="absolute left-[10px] top-1/2 -translate-y-1/2 bg-transparent border-none p-[6px] text-[#64748b] cursor-pointer flex items-center justify-center hover:text-[#0f2c52]"
         onClick={() => (open ? setOpen(false) : openCalendar())}
         aria-label="Buka kalender"
       >
@@ -144,32 +145,38 @@ export default function DatePicker({ value, onChange, min, max, placeholder = 'd
       </button>
 
       {open && (
-        <div className="date-picker-popup">
-          <div className="date-picker-header">
-            <button type="button" onClick={() => shiftMonth(-1)} aria-label="Bulan sebelumnya">
+        <div className="absolute top-[calc(100%+6px)] left-0 z-[40] w-[300px] bg-white border border-[#e2e8f0] rounded-[12px] shadow-[0_10px_25px_rgba(15,44,82,0.12)] p-[12px]">
+          <div className="flex items-center justify-between mb-[8px] font-semibold text-[#0f2c52] text-[14px]">
+            <button type="button" onClick={() => shiftMonth(-1)} aria-label="Bulan sebelumnya" className="bg-transparent border-none p-[4px] rounded-[6px] cursor-pointer text-[#475569] flex hover:bg-[#f1f5f9]">
               <ChevronLeft size={18} />
             </button>
             <span>{MONTHS[viewMonth]} {viewYear}</span>
-            <button type="button" onClick={() => shiftMonth(1)} aria-label="Bulan berikutnya">
+            <button type="button" onClick={() => shiftMonth(1)} aria-label="Bulan berikutnya" className="bg-transparent border-none p-[4px] rounded-[6px] cursor-pointer text-[#475569] flex hover:bg-[#f1f5f9]">
               <ChevronRight size={18} />
             </button>
           </div>
 
-          <div className="date-picker-grid">
+          <div className="grid grid-cols-7 gap-[2px]">
             {WEEKDAYS.map((w) => (
-              <span key={w} className="date-picker-weekday">{w}</span>
+              <span key={w} className="text-center text-[11px] font-semibold text-[#94a3b8] py-[4px]">{w}</span>
             ))}
             {cells.map((day, i) => {
               if (day === null) return <span key={`empty-${i}`} />;
               const iso = toIso(viewYear, viewMonth, day);
-              const classes = ['date-picker-day'];
-              if (iso === value) classes.push('selected');
-              if (iso === todayIso) classes.push('today');
+              
+              let baseClasses = "bg-transparent border-none rounded-[6px] py-[8px] text-[13px] text-[#1e293b] cursor-pointer hover:not(:disabled):bg-[#e0e7ff] disabled:text-[#cbd5e1] disabled:cursor-not-allowed";
+              
+              if (iso === value) {
+                baseClasses = "bg-[#0f2c52] border-none rounded-[6px] py-[8px] text-[13px] text-white cursor-pointer disabled:text-[#cbd5e1] disabled:cursor-not-allowed";
+              } else if (iso === todayIso) {
+                baseClasses = "bg-transparent border-none rounded-[6px] py-[8px] text-[13px] font-bold text-[#0f2c52] cursor-pointer [box-shadow:inset_0_0_0_1px_#0f2c52] hover:not(:disabled):bg-[#e0e7ff] disabled:text-[#cbd5e1] disabled:cursor-not-allowed";
+              }
+              
               return (
                 <button
                   key={iso}
                   type="button"
-                  className={classes.join(' ')}
+                  className={baseClasses}
                   disabled={isDisabled(iso)}
                   onClick={() => pickDay(iso)}
                 >
@@ -180,7 +187,7 @@ export default function DatePicker({ value, onChange, min, max, placeholder = 'd
           </div>
 
           {!isDisabled(todayIso) && (
-            <button type="button" className="date-picker-today-btn" onClick={() => pickDay(todayIso)}>
+            <button type="button" className="w-full mt-[8px] bg-[#f1f5f9] border-none rounded-[8px] py-[8px] text-[13px] text-[#0f2c52] font-semibold cursor-pointer hover:bg-[#e2e8f0]" onClick={() => pickDay(todayIso)}>
               Hari ini
             </button>
           )}

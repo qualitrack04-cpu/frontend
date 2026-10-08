@@ -13,45 +13,45 @@ const colorFor = (dept: string) => departmentColors[dept] ?? '#64748b';
 export default function ComplianceScore() {
   const { data, loading, error } = useFetch(getComplianceScore);
 
-  console.log('compliance-score response', data)
+  console.log('compliance-score response', data);
 
   const departments = data?.data ?? [];
 
   return (
-    <div className="compliance-section">
-      <div className="compliance-header">
-        <p className="card-label">COMPLIANCE SCORE</p>
+    <div className="mt-[8px]">
+      <div className="flex justify-between items-center mb-[8px]">
+        <p className="text-[11px] font-bold tracking-[0.8px] text-slate-500 uppercase m-0">COMPLIANCE SCORE</p>
         {typeof data?.overallScore === 'number' && (
-          <span className="compliance-overall">
-            Overall: <strong>{data.overallScore.toFixed(1)}%</strong>
+          <span className="text-[13px] text-slate-500">
+            Overall: <strong className="text-[#0f2c52]">{data.overallScore.toFixed(1)}%</strong>
           </span>
         )}
       </div>
 
-      <div className="compliance-grid">
-        {loading && <p className="text-muted">Memuat compliance score...</p>}
-        {error && <p className="error-text">{error}</p>}
+      <div className="grid grid-cols-4 gap-[16px] max-[900px]:grid-cols-2 max-[600px]:grid-cols-1">
+        {loading && <p className="text-slate-500">Memuat compliance score...</p>}
+        {error && <p className="text-red-600">{error}</p>}
         {!loading && !error && departments.length === 0 && (
-          <p className="text-muted">Belum ada data compliance.</p>
+          <p className="text-slate-500">Belum ada data compliance.</p>
         )}
 
         {departments.map((item) => (
           <div
             key={item.department}
-            className="compliance-box"
+            className="bg-white border border-[#e2e8f0] border-l-[4px] rounded-[8px] p-[16px]"
             style={{ borderLeftColor: colorFor(item.department) }}
           >
-            <div className="compliance-top">
-              <strong>{item.department}</strong>
+            <div className="flex justify-between mb-[10px]">
+              <strong className="text-[#0f2c52] text-[15px]">{item.department}</strong>
               <span style={{ color: colorFor(item.department) }}>{(item.score ?? 0).toFixed(1)}%</span>
             </div>
-            <div className="compliance-bar">
+            <div className="bg-[#f1f5f9] h-[8px] rounded-full overflow-hidden">
               <div
-                className="compliance-fill"
+                className="h-full rounded-full"
                 style={{ width: `${item.score ?? 0}%`, backgroundColor: colorFor(item.department) }}
               />
             </div>
-            <p className="text-muted small">
+            <p className="text-slate-500 text-[13px] m-0 mt-[6px]">
               {item.conformResponses}/{item.totalResponses} sesuai · {item.totalAudit} audit
             </p>
           </div>

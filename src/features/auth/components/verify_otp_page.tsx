@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect} from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { useForgotPasswordFlow } from '../hooks/use_forgot_password_flow';
@@ -11,7 +11,7 @@ const RESEND_SECONDS = 60;
 export default function VerifyOtpPage() {
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(''));
   const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS);
-  const [localLoading, setLocalLoading] = useState(false)
+  const [localLoading, setLocalLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -22,37 +22,28 @@ export default function VerifyOtpPage() {
   const email = location.state?.email ?? '';
   const fromSignup: boolean = location.state?.fromSignup ?? false;
 
-
-  useEffect(() =>{
-    if (!email) navigate(fromSignup ? '/signup' : '/forgot-password', {replace: true});
+  useEffect(() => {
+    if (!email) navigate(fromSignup ? '/signup' : '/forgot-password', { replace: true });
   }, [email, fromSignup, navigate]);
 
-  // Countdown "Resend code in 00:59"
   useEffect(() => {
     if (secondsLeft <= 0) return;
     const timer = setInterval(() => setSecondsLeft((s) => s - 1), 1000);
     return () => clearInterval(timer);
   }, [secondsLeft]);
 
-  const formattedTime = `${String(Math.floor(secondsLeft / 60)).padStart(2, '0')}:${String(
-    secondsLeft % 60
-  ).padStart(2, '0')}`;
+  const formattedTime = `${String(Math.floor(secondsLeft / 60)).padStart(2, '0')}:${String(secondsLeft % 60).padStart(2, '0')}`;
 
   const handleDigitChange = (index: number, value: string) => {
     const digit = value.replace(/[^0-9]/g, '').slice(-1);
     const next = [...digits];
     next[index] = digit;
     setDigits(next);
-
-    if (digit && index < OTP_LENGTH - 1) {
-      inputsRef.current[index + 1]?.focus();
-    }
+    if (digit && index < OTP_LENGTH - 1) inputsRef.current[index + 1]?.focus();
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && !digits[index] && index > 0) {
-      inputsRef.current[index - 1]?.focus();
-    }
+    if (e.key === 'Backspace' && !digits[index] && index > 0) inputsRef.current[index - 1]?.focus();
   };
 
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
@@ -71,16 +62,16 @@ export default function VerifyOtpPage() {
     try {
       if (fromSignup) {
         setLocalLoading(true);
-        await resendSignupOtp ({email});
-      }else {
+        await resendSignupOtp({ email });
+      } else {
         await sendOtp(email);
       }
       setSecondsLeft(RESEND_SECONDS);
       setDigits(Array(OTP_LENGTH).fill(''));
       inputsRef.current[0]?.focus();
-    } catch (err: any){
-      setLocalError(err.response?.data?.message ?? 'gagal mengirim ualng otp.');
-    } finally{
+    } catch (err: any) {
+      setLocalError(err.response?.data?.message ?? 'Gagal mengirim ulang OTP.');
+    } finally {
       setLocalLoading(false);
     }
   };
@@ -97,75 +88,70 @@ export default function VerifyOtpPage() {
     try {
       if (fromSignup) {
         setLocalLoading(true);
-        await verifyEmail({email, otp});
-        navigate('/login', {replace: true});
+        await verifyEmail({ email, otp });
+        navigate('/login', { replace: true });
       } else {
         const resetToken = await submitOtp(email, otp);
-        navigate('/reset-password', { state: { email, resetToken}});
+        navigate('/reset-password', { state: { email, resetToken } });
       }
-    } catch (err: any){
+    } catch (err: any) {
       setLocalError(err.response?.data?.message ?? 'Kode OTP salah atau kadaluarsa.');
-    }finally{
+    } finally {
       setLocalLoading(false);
     }
-
   };
 
   const isBusy = loading || localLoading;
   const shownError = localError ?? error;
 
   return (
-    <div className="auth-page auth-page--reversed">
+    <div className="flex min-h-screen bg-white flex-row-reverse">
       <AuthBrandPanel />
 
-      <div className="auth-card">
-        <div className="auth-intro">
-          <h2>Enter Verification Code</h2>
-          <p>
-            We have sent a {OTP_LENGTH}-digit verification code to your registered work email{' '}
-            <strong>{email}</strong>
-          </p>
-        </div>
+      <div className="flex flex-col justify-center w-full max-w-sm mx-auto px-8 py-10">
+        <h2 className="text-[#0f2c52] text-[28px] font-bold mb-2 text-left">Enter Verification Code</h2>
+        <p className="text-[#64748b] text-sm mb-6 text-left">
+          We have sent a {OTP_LENGTH}-digit verification code to your registered work email{' '}
+          <strong className="text-[#1f2937]">{email}</strong>
+        </p>
 
-        <form onSubmit={handleSubmit}>
-          <div className="otp-inputs">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-1">
+          <div className="flex gap-3 justify-center mb-5">
             {digits.map((digit, index) => (
               <input
                 key={index}
-                ref={(el) => {
-                  inputsRef.current[index] = el;
-                }}
+                ref={(el) => { inputsRef.current[index] = el; }}
                 type="text"
                 inputMode="numeric"
                 maxLength={1}
-                className="otp-box"
                 value={digit}
                 onChange={(e) => handleDigitChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
                 onPaste={handlePaste}
+                className="w-14 h-14 text-center text-xl font-bold border-2 border-[#cbd5e1] rounded-xl bg-white text-[#0f2c52] outline-none transition-all focus:border-[#1e6fd9] focus:ring-2 focus:ring-[#1e6fd9]/20"
               />
             ))}
           </div>
 
-          <p className="resend-text">
+          <p className="text-center text-sm text-[#64748b] mb-4">
             {secondsLeft > 0 ? (
               `Resend code in ${formattedTime}`
             ) : (
-              <button type="button" className="resend-link" onClick={handleResend}>
+              <button type="button" onClick={handleResend} className="text-[#1e6fd9] font-semibold bg-transparent border-none cursor-pointer hover:underline p-0 text-sm">
                 Resend code
               </button>
             )}
           </p>
 
-          {shownError && <p className="error-text">{shownError}</p>}
+          {shownError && <p className="text-red-600 text-sm mb-2 text-left">{shownError}</p>}
 
-          <button type="submit" className="btn-auth-submit" disabled={isBusy}>
+          <button type="submit" disabled={isBusy} className="w-full bg-[#0f2c52] hover:bg-[#0c2444] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm tracking-wide">
             {isBusy ? 'Verifying...' : 'VERIFY & PROCEED'}
           </button>
         </form>
 
-        <hr className="auth-divider" />
-        <Link to="/login" className="back-link">
+        <hr className="border-t border-[#e2e8f0] my-5" />
+        <Link to="/login" className="flex items-center gap-1.5 text-[#475569] text-sm font-medium no-underline hover:text-[#0f2c52]">
           <ArrowLeft size={14} /> Back
         </Link>
       </div>

@@ -13,8 +13,6 @@ export default function CapaPage() {
   const [statusError, setStatusError] = useState<string | null>(null);
   const allowCreate = canCreateCapa();
 
-  // Salin ke state lokal supaya perubahan status (dropdown di card) bisa
-  // langsung tampil (optimistic update) tanpa refetch seluruh list.
   useEffect(() => {
     setItems(capas);
   }, [capas]);
@@ -35,24 +33,24 @@ export default function CapaPage() {
   }
 
   return (
-    <div className="page-container capa-page">
-      <div className="capa-list-header">
-        <h1 className="capa-title">CAPA</h1>
+    <div className="max-w-full m-0 text-left">
+      <div className="flex justify-between items-center mb-[20px] flex-wrap gap-[12px]">
+        <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 tracking-[-0.5px] leading-[1.25]">CAPA</h1>
         {allowCreate && (
-          <Link to="/capa/new" className="capa-btn-primary">
+          <Link to="/capa/new" className="flex items-center gap-[8px] bg-[#0f2c52] text-white px-[16px] py-[10px] rounded-[8px] no-underline text-[14px] font-semibold hover:bg-[#0c2444]">
             <Plus size={18} /> New CAPA
           </Link>
         )}
       </div>
 
-      {loading && <p className="text-muted">Memuat CAPA...</p>}
-      {error && <p className="error-text">{error}</p>}
-      {statusError && <p className="error-text">{statusError}</p>}
+      {loading && <p className="text-slate-500">Memuat CAPA...</p>}
+      {error && <p className="text-red-600">{error}</p>}
+      {statusError && <p className="text-red-600">{statusError}</p>}
       {!loading && !error && items.length === 0 && (
-        <p className="text-muted">Belum ada CAPA. Tambahkan lewat tombol New CAPA.</p>
+        <p className="text-slate-500">Belum ada CAPA. Tambahkan lewat tombol New CAPA.</p>
       )}
 
-      <div className="capa-card-grid">
+      <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-[20px]">
         {items.map((capa) => (
           <CapaCard
             key={capa.id}

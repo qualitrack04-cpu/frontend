@@ -26,54 +26,54 @@ export default function AuditChecklistEditPage() {
     ? DEPARTMENTS
     : [...DEPARTMENTS, department];
 
-  if (loading) return <div className="page-container"><p className="text-muted">Memuat checklist...</p></div>;
+  if (loading) return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Memuat checklist...</p></div>;
   if (loadError) {
     return (
-      <div className="page-container">
+      <div className="max-w-full m-0 text-left">
         <button className="back-btn" onClick={() => navigate(-1)}>← Back</button>
-        <p className="error-text">{loadError}</p>
+        <p className="text-red-600">{loadError}</p>
       </div>
     );
   }
 
   return (
-    <div className="page-container">
-      <button className="back-btn" onClick={() => navigate(-1)}>← Back</button>
-      <h1>Edit Audit Checklist</h1>
+    <div className="max-w-full m-0 text-left">
+      <button className="inline-flex items-center gap-[8px] bg-transparent border-none text-[#64748b] text-[14px] font-semibold cursor-pointer p-0 mb-[16px] hover:text-[#1e293b]" onClick={() => navigate(-1)}>← Back</button>
+      <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 mb-[20px] tracking-[-0.5px] leading-[1.25]">Edit Audit Checklist</h1>
 
-      <form onSubmit={handleSubmit} className="create-audit-form">
-        <div className="form-section-title">Checklist Details</div>
-        <hr className="form-section-divider" />
+      <form onSubmit={handleSubmit} className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] max-w-[760px]">
+        <div className="text-[14px] font-bold text-[#0f2c52] uppercase tracking-[0.5px] m-0 mb-[16px]">Checklist Details</div>
+        <hr className="border-t border-[#e2e8f0] m-0 mb-[24px]" />
 
-        <div className="form-group">
-          <label>Checklist Title *</label>
+        <div className="flex flex-col gap-[8px] mb-[20px]">
+          <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Checklist Title *</label>
           <input
             type="text"
             placeholder="e.g., ISO 9001 - Warehouse"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className={titleError ? 'input-error' : ''}
+            className={`p-[12px_14px] border-[1.5px] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none w-full box-border placeholder:text-[#94a3b8] font-inherit ${titleError ? 'border-[#dc2626] focus:border-[#dc2626] focus:ring-[3px] focus:ring-[rgba(220,38,38,0.1)]' : 'border-[#e2e8f0] focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)]'}`}
           />
           {titleError && (
-            <p className="error-text">
+            <p className="text-[#dc2626] text-[13px] mt-[4px] flex items-center gap-[4px] m-0">
               <CircleAlert size={14} /> {titleError}
             </p>
           )}
         </div>
 
-        <div className="form-row">
-          <div className="form-group">
-            <label>Standard</label>
-            <select value={standard} onChange={(e) => setStandard(e.target.value)}>
+        <div className="flex flex-col md:flex-row gap-[16px] mb-[20px]">
+          <div className="flex-1 flex flex-col gap-[8px]">
+            <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Standard</label>
+            <select value={standard} onChange={(e) => setStandard(e.target.value)} className="p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border font-inherit">
               <option value="">Select Standard</option>
               {standardOptions.map((s) => (
                 <option key={s.value} value={s.value}>{s.label}</option>
               ))}
             </select>
           </div>
-          <div className="form-group">
-            <label>Department</label>
-            <select value={department} onChange={(e) => setDepartment(e.target.value)}>
+          <div className="flex-1 flex flex-col gap-[8px]">
+            <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Department</label>
+            <select value={department} onChange={(e) => setDepartment(e.target.value)} className="p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border font-inherit">
               <option value="">Select Department</option>
               {departmentOptions.map((d) => (
                 <option key={d} value={d}>{d}</option>
@@ -82,26 +82,26 @@ export default function AuditChecklistEditPage() {
           </div>
         </div>
 
-        <div className="form-section-title checklist-edit-section">
-          Checklist Items <span className="checklist-edit-count">{items.length}</span>
+        <div className="flex justify-between items-center text-[14px] font-bold text-[#0f2c52] uppercase tracking-[0.5px] m-0 mb-[16px] mt-[32px]">
+          Checklist Items <span className="bg-[#f1f5f9] text-[#0f2c52] p-[4px_10px] rounded-[12px] text-[13px] normal-case">{items.length}</span>
         </div>
-        <hr className="form-section-divider" />
+        <hr className="border-t border-[#e2e8f0] m-0 mb-[24px]" />
 
         {items.length === 0 && (
-          <p className="text-muted small">Belum ada item. Klik "Add Item" untuk menambahkan.</p>
+          <p className="text-[12px] text-[#94a3b8]">Belum ada item. Klik "Add Item" untuk menambahkan.</p>
         )}
 
-        <div className="checklist-edit-list">
+        <div className="flex flex-col gap-[24px]">
           {items.map((item, index) => {
             const questionMissing = isQuestionMissing(item);
             return (
-              <div className="checklist-edit-item" key={item.key}>
-                <div className="checklist-edit-item-header">
-                  <span className="checklist-edit-number">{index + 1}</span>
-                  <div className="checklist-edit-item-actions">
+              <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] p-[20px] relative" key={item.key}>
+                <div className="flex justify-between items-center mb-[16px] pb-[12px] border-b border-dashed border-[#cbd5e1]">
+                  <span className="bg-[#0f2c52] text-white w-[28px] h-[28px] rounded-full flex items-center justify-center text-[14px] font-bold">{index + 1}</span>
+                  <div className="flex gap-[8px]">
                     <button
                       type="button"
-                      className="audit-icon-btn"
+                      className="bg-white border border-[#e2e8f0] text-[#64748b] w-[32px] h-[32px] rounded-[6px] flex items-center justify-center cursor-pointer transition-all duration-200 hover:not(:disabled):border-[#94a3b8] hover:not(:disabled):text-[#0f2c52] disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-[#f1f5f9]"
                       onClick={() => moveItem(item.key, -1)}
                       disabled={index === 0}
                       aria-label="Naikkan item"
@@ -110,7 +110,7 @@ export default function AuditChecklistEditPage() {
                     </button>
                     <button
                       type="button"
-                      className="audit-icon-btn"
+                      className="bg-white border border-[#e2e8f0] text-[#64748b] w-[32px] h-[32px] rounded-[6px] flex items-center justify-center cursor-pointer transition-all duration-200 hover:not(:disabled):border-[#94a3b8] hover:not(:disabled):text-[#0f2c52] disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-[#f1f5f9]"
                       onClick={() => moveItem(item.key, 1)}
                       disabled={index === items.length - 1}
                       aria-label="Turunkan item"
@@ -119,7 +119,7 @@ export default function AuditChecklistEditPage() {
                     </button>
                     <button
                       type="button"
-                      className="audit-icon-btn audit-icon-btn--danger"
+                      className="bg-white border border-[#e2e8f0] text-[#64748b] w-[32px] h-[32px] rounded-[6px] flex items-center justify-center cursor-pointer transition-all duration-200 hover:not(:disabled):border-[#fca5a5] hover:not(:disabled):text-[#dc2626] hover:not(:disabled):bg-[#fef2f2] disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-[#f1f5f9]"
                       onClick={() => removeItem(item.key)}
                       aria-label="Hapus item"
                     >
@@ -128,40 +128,42 @@ export default function AuditChecklistEditPage() {
                   </div>
                 </div>
 
-                <div className="form-row">
-                  <div className="form-group checklist-edit-question">
-                    <label>Question *</label>
+                <div className="flex flex-col md:flex-row gap-[16px] mb-[20px]">
+                  <div className="flex-[3] flex flex-col gap-[8px]">
+                    <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Question *</label>
                     <input
                       type="text"
                       placeholder="e.g., Warehouse area is clean and tidy"
                       value={item.question}
                       onChange={(e) => updateItem(item.key, 'question', e.target.value)}
-                      className={questionMissing ? 'input-error' : ''}
+                      className={`p-[12px_14px] border-[1.5px] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none w-full box-border placeholder:text-[#94a3b8] font-inherit ${questionMissing ? 'border-[#dc2626] focus:border-[#dc2626] focus:ring-[3px] focus:ring-[rgba(220,38,38,0.1)]' : 'border-[#e2e8f0] focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)]'}`}
                     />
                     {questionMissing && (
-                      <p className="error-text">
+                      <p className="text-[#dc2626] text-[13px] mt-[4px] flex items-center gap-[4px] m-0">
                         <CircleAlert size={14} /> Pertanyaan wajib diisi
                       </p>
                     )}
                   </div>
-                  <div className="form-group checklist-edit-clause">
-                    <label>Clause Ref</label>
+                  <div className="flex-[1] flex flex-col gap-[8px]">
+                    <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Clause Ref</label>
                     <input
                       type="text"
                       placeholder="e.g., 7.1.4"
                       value={item.clauseRef}
                       onChange={(e) => updateItem(item.key, 'clauseRef', e.target.value)}
+                      className="p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border placeholder:text-[#94a3b8] font-inherit"
                     />
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label>Description</label>
+                <div className="flex flex-col gap-[8px] mb-[20px]">
+                  <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Description</label>
                   <textarea
                     rows={2}
                     placeholder="Explain what the auditor should check for this item..."
                     value={item.description}
                     onChange={(e) => updateItem(item.key, 'description', e.target.value)}
+                    className="p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border placeholder:text-[#94a3b8] font-inherit resize-y"
                   />
                 </div>
               </div>
@@ -169,17 +171,17 @@ export default function AuditChecklistEditPage() {
           })}
         </div>
 
-        <button type="button" className="btn-add-checklist-item" onClick={addItem}>
+        <button type="button" className="w-full mt-[24px] p-[16px] bg-[#f8fafc] border-[2px] border-dashed border-[#cbd5e1] rounded-[8px] text-[#64748b] text-[14.5px] font-semibold cursor-pointer flex items-center justify-center gap-[8px] transition-all duration-200 hover:bg-[#f1f5f9] hover:border-[#94a3b8] hover:text-[#0f2c52]" onClick={addItem}>
           <Plus size={16} /> Add Item
         </button>
 
-        {submitError && <p className="error-text">{submitError}</p>}
+        {submitError && <p className="text-[#dc2626] text-[13px] mt-[4px]">{submitError}</p>}
 
-        <div className="form-actions">
-          <button type="button" className="btn-secondary" onClick={() => navigate(-1)}>
+        <div className="flex items-center justify-end gap-[12px] mt-[32px] pt-[20px] border-t border-[#e2e8f0]">
+          <button type="button" className="bg-[#f1f5f9] text-[#475569] border-none p-[12px_24px] rounded-[8px] text-[14px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#e2e8f0]" onClick={() => navigate(-1)}>
             Cancel
           </button>
-          <button type="submit" className="btn-primary" disabled={submitting}>
+          <button type="submit" className="bg-[#0f2c52] text-white border-none p-[12px_24px] rounded-[8px] text-[14px] font-semibold cursor-pointer flex items-center gap-[8px] transition-colors duration-200 hover:bg-[#0c2444] disabled:opacity-50 disabled:cursor-not-allowed" disabled={submitting}>
             <Save size={16} /> {submitting ? 'Saving...' : 'Save Changes'}
           </button>
         </div>

@@ -13,6 +13,6 @@ interface ListEnvelope<T> {
 }
 
 export async function getAuditors(): Promise<Auditor[]> {
-  const response = await axios_instance.get<ListEnvelope<Auditor>>('/Auth/auditors');
+  const response = await axios_instance.get<ListEnvelope<Auditor>>('/auth/auditors');
   return response.data.data;
 }

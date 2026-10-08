@@ -53,7 +53,7 @@ export interface SpcHistoryResponse {
 // ─── API Calls ────────────────────────────────────────────────────────────────
 
 /**
- * POST /api/Spc/analyze
+ * POST /api/spc/analyze
  * Upload Excel file + parameter, terima hasil analisis langsung.
  */
 export async function analyzeSpc(payload: SpcAnalyzePayload): Promise<SpcResult> {
@@ -66,28 +66,28 @@ export async function analyzeSpc(payload: SpcAnalyzePayload): Promise<SpcResult>
   if (payload.unit)        formData.append('unit', payload.unit);
   if (payload.description) formData.append('description', payload.description);
 
-  const res = await axios_instance.post<SpcResult>('/Spc/analyze', formData, {
+  const res = await axios_instance.post<SpcResult>('/spc/analyze', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
   return res.data;
 }
 
 /**
- * GET /api/Spc/history?period=3m&productName=xxx&status=xxx
+ * GET /api/spc/history?period=3m&productName=xxx&status=xxx
  */
 export async function getSpcHistory(params?: {
   period?: string;
   productName?: string;
   status?: string;
 }): Promise<SpcHistoryResponse> {
-  const res = await axios_instance.get<SpcHistoryResponse>('/Spc/history', { params });
+  const res = await axios_instance.get<SpcHistoryResponse>('/spc/history', { params });
   return res.data;
 }
 
 /**
- * GET /api/Spc/{id}
+ * GET /api/spc/{id}
  */
 export async function getSpcById(id: string): Promise<SpcResult> {
-  const res = await axios_instance.get<SpcResult>(`/Spc/${id}`);
+  const res = await axios_instance.get<SpcResult>(`/spc/${id}`);
   return res.data;
 }

@@ -6,7 +6,6 @@ import SuccessToast from './success_toast';
 import AuditSummaryModal from './audit_summary_modal';
 import { getFindings } from '../../findings/api/findings_api';
 import { getSessionSummary } from '../api/audit_session_api';
-// import { createCapaFromFinding } from '../../capa/api/capa_api';
 import { useState, useEffect } from 'react';
 
 export default function AuditChecklistPage() {
@@ -30,7 +29,6 @@ export default function AuditChecklistPage() {
     if (!session || completionPercent !== 100 || items.length === 0) return;
     let cancelled = false;
 
-    // Summary cuma boleh dibuat sekali per sesi — cek dulu sebelum buka modal
     getSessionSummary(session.id)
       .then(() => {
         if (!cancelled) setSummaryExists(true);
@@ -50,7 +48,7 @@ export default function AuditChecklistPage() {
     setSubmittingCapa(true);
     setCapaError(null);
     try {
-      const findings = await getFindings({ sessionId: session.id} as any);
+      const findings = await getFindings({ sessionId: session.id } as any);
       const withoutCapa = findings.filter((f) => f.status === 'Open');
 
       if (withoutCapa.length === 0) {
@@ -65,34 +63,34 @@ export default function AuditChecklistPage() {
     }
   };
 
-  if (loading) return <div className="page-container"><p className="text-muted">Memuat checklist...</p></div>;
-  if (error) return <div className="page-container"><p className="error-text">{error}</p></div>;
+  if (loading) return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Memuat checklist...</p></div>;
+  if (error) return <div className="max-w-full m-0 text-left"><p className="text-red-600">{error}</p></div>;
 
   if (needsChecklistSelection) {
     return (
-      <div className="page-container">
-        <button className="back-btn" onClick={() => navigate('/audits')}>← Back to Audits</button>
-        <h1>Pilih Checklist</h1>
-        <p className="page-subtitle">
+      <div className="max-w-full m-0 text-left">
+        <button className="inline-flex items-center gap-[8px] bg-transparent border-none text-[#64748b] text-[14px] font-semibold cursor-pointer p-0 mb-[16px] hover:text-[#1e293b]" onClick={() => navigate('/audits')}>← Back to Audits</button>
+        <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 mb-[20px] tracking-[-0.5px] leading-[1.25]">Pilih Checklist</h1>
+        <p className="text-slate-500 mt-[-6px] mb-[16px] text-[13px]">
           Jadwal {schedule?.clauseRef} ({schedule?.department}) belum punya sesi audit.
           Pilih checklist yang akan dipakai untuk memulai.
         </p>
 
         {checklistOptions.length === 0 && (
-          <p className="text-muted">Belum ada checklist yang tersedia.</p>
+          <p className="text-slate-500">Belum ada checklist yang tersedia.</p>
         )}
 
-        <div className="iso-template-list">
+        <div className="flex flex-col gap-[12px] mt-[16px]">
           {checklistOptions.map((c) => (
             <button
               key={c.id}
               type="button"
-              className="iso-template-option"
+              className="bg-white border-[2px] border-[#e2e8f0] rounded-[8px] p-[16px_20px] flex items-center justify-between cursor-pointer transition-all duration-200 text-left w-full hover:border-[#0f2c52] hover:bg-[#f8fafc]"
               onClick={() => selectChecklist(c.id)}
             >
-              <div className="iso-template-text">
-                <strong>{c.title}</strong>
-                <span>{c.standard} · {c.department}</span>
+              <div className="flex flex-col gap-[4px]">
+                <strong className="text-[15px] font-bold text-[#0f2c52]">{c.title}</strong>
+                <span className="text-[13px] text-[#64748b]">{c.standard} · {c.department}</span>
               </div>
             </button>
           ))}
@@ -102,16 +100,16 @@ export default function AuditChecklistPage() {
   }
 
   return (
-    <div className="page-container">
-      <button className="back-btn" onClick={() => navigate('/audits')}>← Back to Audits</button>
+    <div className="max-w-full m-0 text-left">
+      <button className="inline-flex items-center gap-[8px] bg-transparent border-none text-[#64748b] text-[14px] font-semibold cursor-pointer p-0 mb-[16px] hover:text-[#1e293b]" onClick={() => navigate('/audits')}>← Back to Audits</button>
 
-      <div className="checklist-header-row">
-        <h1>Audit Checklist</h1>
-        <span className="pending-badge">{pendingCount} Pending Items</span>
+      <div className="flex justify-between items-center mb-[24px]">
+        <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 mb-[0] tracking-[-0.5px] leading-[1.25]">Audit Checklist</h1>
+        <span className="bg-[#fef3c7] text-[#92400e] p-[6px_16px] rounded-[20px] text-[14px] font-bold">{pendingCount} Pending Items</span>
       </div>
 
-      <div className="checklist-layout">
-        <div className="checklist-items-column">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_340px] gap-[32px] items-start">
+        <div className="flex flex-col gap-[24px]">
           {items.map((item) => (
             <ChecklistItemCard
               key={item.id}
@@ -123,24 +121,24 @@ export default function AuditChecklistPage() {
           ))}
         </div>
 
-        <div className="checklist-sidebar">
-          <div className="profile-card audit-details-card">
-            <h3>Audit Details</h3>
-            <div className="audit-detail-row">
-              <span>Dept</span>
-              <strong>{schedule?.department}</strong>
+        <div className="sticky top-[24px] flex flex-col gap-[20px]">
+          <div className="bg-white rounded-[12px] p-[24px] border border-[#e2e8f0] flex flex-col">
+            <h3 className="text-[16px] m-0 mb-[20px] text-[#0f2c52] font-bold">Audit Details</h3>
+            <div className="flex justify-between mb-[12px] text-[14px]">
+              <span className="text-[#64748b]">Dept</span>
+              <strong className="text-[#0f2c52] text-right">{schedule?.department}</strong>
             </div>
-            <div className="audit-detail-row">
-              <span>Standard</span>
-              <strong>{plan?.standard}</strong>
+            <div className="flex justify-between mb-[12px] text-[14px]">
+              <span className="text-[#64748b]">Standard</span>
+              <strong className="text-[#0f2c52] text-right">{plan?.standard}</strong>
             </div>
-            <div className="audit-detail-row">
-              <span>Clause</span>
-              <strong>{schedule?.clauseRef}</strong>
+            <div className="flex justify-between mb-[12px] text-[14px]">
+              <span className="text-[#64748b]">Clause</span>
+              <strong className="text-[#0f2c52] text-right">{schedule?.clauseRef}</strong>
             </div>
-            <div className="audit-detail-row">
-              <span>Due Date</span>
-              <strong>
+            <div className="flex justify-between mb-[12px] text-[14px]">
+              <span className="text-[#64748b]">Due Date</span>
+              <strong className="text-[#0f2c52] text-right">
                 {schedule?.scheduledDate &&
                   new Date(schedule.scheduledDate).toLocaleDateString('en-US', {
                     month: 'short', day: '2-digit', year: 'numeric',
@@ -148,36 +146,36 @@ export default function AuditChecklistPage() {
               </strong>
             </div>
 
-            <p className="completion-label">
-              COMPLETION <span>{completionPercent}%</span>
+            <p className="flex justify-between text-[12px] font-bold text-[#64748b] m-[24px_0_8px_0] pt-[20px] border-t border-[#e2e8f0]">
+              COMPLETION <span className="text-[#0f2c52] text-[14px]">{completionPercent}%</span>
             </p>
-            <div className="compliance-bar">
-              <div className="compliance-fill" style={{ width: `${completionPercent}%`, background: '#0f2c52' }} />
+            <div className="w-full h-[8px] bg-[#f1f5f9] rounded-[4px] overflow-hidden">
+              <div className="h-full rounded-[4px] transition-[width] duration-500 ease-out" style={{ width: `${completionPercent}%`, background: '#0f2c52' }} />
             </div>
           </div>
 
-          <div className="instructions-box">
-            <p className="instructions-title"><Info size={16} /> Instructions</p>
-            <p>
+          <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-[12px] p-[20px]">
+            <p className="flex items-center gap-[8px] text-[14px] font-bold text-[#0f2c52] m-0 mb-[8px]"><Info size={16} /> Instructions</p>
+            <p className="text-[13.5px] text-[#475569] leading-[1.5] m-0">
               Review each item carefully. Provide photographic evidence for failed items.
               All items must be marked before submission.
             </p>
           </div>
 
-          {capaError && <p className="error-text">{capaError}</p>}
+          {capaError && <p className="text-[#dc2626] text-[13px] mt-[4px]">{capaError}</p>}
 
           {summaryExists && (
-            <button className="btn-save-progress" onClick={() => navigate(reportPath)}>
+            <button className="bg-white text-[#0f2c52] border-[2px] border-[#0f2c52] p-[14px] rounded-[8px] text-[15px] font-bold w-full cursor-pointer transition-all duration-200 text-center hover:bg-[#f8fafc]" onClick={() => navigate(reportPath)}>
               View Audit Report →
             </button>
           )}
           {!summaryExists && completionPercent === 100 && items.length > 0 && !showSummaryModal && (
-            <button className="btn-save-progress" onClick={() => setShowSummaryModal(true)}>
+            <button className="bg-white text-[#0f2c52] border-[2px] border-[#0f2c52] p-[14px] rounded-[8px] text-[15px] font-bold w-full cursor-pointer transition-all duration-200 text-center hover:bg-[#f8fafc]" onClick={() => setShowSummaryModal(true)}>
               Isi Audit Summary
             </button>
           )}
 
-          <button className="btn-submit-capa" onClick={handleSubmitCapa} disabled={submittingCapa}>
+          <button className="bg-[#0f2c52] text-white border-none p-[14px] rounded-[8px] text-[15px] font-bold w-full cursor-pointer transition-colors duration-200 hover:bg-[#0c2444] disabled:opacity-70 disabled:cursor-not-allowed" onClick={handleSubmitCapa} disabled={submittingCapa}>
             {submittingCapa ? 'Submitting...' : 'Submit CAPA →'}
           </button>
         </div>

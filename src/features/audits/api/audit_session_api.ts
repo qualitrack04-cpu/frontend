@@ -27,7 +27,7 @@ export async function createAuditSession(
   checklistId: string,
   notes?: string
 ): Promise<AuditSession> {
-  const response = await axios_instance.post<ApiEnvelope<AuditSession>>('/AuditSession', {
+  const response = await axios_instance.post<ApiEnvelope<AuditSession>>('/audit-sessions', {
     scheduleId,
     checklistId,
     notes,
@@ -38,7 +38,7 @@ export async function createAuditSession(
 export async function getAuditSessionByScheduleId(scheduleId: string): Promise<AuditSession | null> {
   try {
     const response = await axios_instance.get<ApiEnvelope<AuditSession>>(
-      `/AuditSession/by-schedule/${scheduleId}`
+      `/audit-sessions/by-schedule/${scheduleId}`
     );
     return response.data.data;
   } catch (err: any) {
@@ -48,25 +48,25 @@ export async function getAuditSessionByScheduleId(scheduleId: string): Promise<A
 }
 
 export async function getAuditSessionById(id: string): Promise<AuditSession> {
-  const response = await axios_instance.get<ApiEnvelope<AuditSession>>(`/AuditSession/${id}`);
+  const response = await axios_instance.get<ApiEnvelope<AuditSession>>(`/audit-sessions/${id}`);
   return response.data.data;
 }
 
 export async function completeAuditSession(id: string): Promise<AuditSession> {
-  const response = await axios_instance.patch<ApiEnvelope<AuditSession>>(`/AuditSession/${id}/complete`);
+  const response = await axios_instance.patch<ApiEnvelope<AuditSession>>(`/audit-sessions/${id}/complete`);
   return response.data.data;
 }
 
 
 export async function cancelAuditSession(id: string): Promise<AuditSession> {
-  const response = await axios_instance.patch<ApiEnvelope<AuditSession>>(`/AuditSession/${id}/cancel`);
+  const response = await axios_instance.patch<ApiEnvelope<AuditSession>>(`/audit-sessions/${id}/cancel`);
   return response.data.data;
 }
 
 
 export async function submitSessionSummary(sessionId: string, content: string): Promise<AuditSummary> {
   const response = await axios_instance.post<ApiEnvelope<AuditSummary>>(
-    `/AuditSession/${sessionId}/summary`,
+    `/audit-sessions/${sessionId}/summary`,
     { content }
   );
   return response.data.data;
@@ -74,6 +74,6 @@ export async function submitSessionSummary(sessionId: string, content: string): 
 
 
 export async function getSessionSummary(sessionId: string): Promise<AuditSummary> {
-  const response = await axios_instance.get<ApiEnvelope<AuditSummary>>(`/AuditSession/${sessionId}/summary`);
+  const response = await axios_instance.get<ApiEnvelope<AuditSummary>>(`/audit-sessions/${sessionId}/summary`);
   return response.data.data;
 }

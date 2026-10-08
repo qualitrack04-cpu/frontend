@@ -76,26 +76,26 @@ export default function UploadPhotoModal({ open, onClose, onUpload }: Props) {
 
   return (
     <div
-      className="fd-modal-overlay"
+      className="fixed inset-0 bg-[rgba(15,44,82,0.4)] backdrop-blur-[2px] z-[9000] flex items-end sm:items-center justify-center animate-[fadein_0.2s_ease-out]"
       role="presentation"
       onClick={() => !uploading && onClose()}
     >
       <div
-        className="fd-modal"
+        className="bg-white w-full max-w-[400px] rounded-t-[20px] sm:rounded-[16px] p-[24px] flex flex-col animate-[slideup_0.2s_ease-out]"
         role="dialog"
         aria-modal="true"
         aria-labelledby="fd-upload-title"
         onClick={(e) => e.stopPropagation()}
       >
-        <span className="fd-modal-handle" aria-hidden="true" />
-        <h3 id="fd-upload-title">Upload Photo</h3>
+        <span className="block w-[40px] h-[4px] bg-[#cbd5e1] rounded-[2px] mx-auto mb-[16px] sm:hidden" aria-hidden="true" />
+        <h3 id="fd-upload-title" className="text-[16px] font-bold text-[#0f2c52] m-0 mb-[20px] text-center">Upload Photo</h3>
 
         {previewUrl ? (
-          <div className="fd-modal-preview">
-            <img src={previewUrl} alt="Preview foto yang dipilih" />
+          <div className="relative w-full aspect-[4/3] rounded-[12px] overflow-hidden mb-[24px]">
+            <img src={previewUrl} alt="Preview foto yang dipilih" className="w-full h-full object-cover" />
             <button
               type="button"
-              className="fd-modal-trash"
+              className="absolute top-[12px] right-[12px] w-[36px] h-[36px] bg-[rgba(0,0,0,0.6)] text-white border-none rounded-full flex items-center justify-center cursor-pointer transition-colors duration-200 hover:bg-[#dc2626]"
               aria-label="Hapus foto"
               onClick={() => setFile(null)}
               disabled={uploading}
@@ -106,24 +106,24 @@ export default function UploadPhotoModal({ open, onClose, onUpload }: Props) {
         ) : (
           <button
             type="button"
-            className="fd-modal-dropzone"
+            className="flex flex-col items-center justify-center gap-[12px] h-[160px] bg-[#f8fafc] border-[2px] border-dashed border-[#cbd5e1] rounded-[12px] cursor-pointer transition-all duration-200 text-[#64748b] text-[14px] p-0 hover:bg-[#f1f5f9] hover:border-[#94a3b8] hover:text-[#0f2c52] mb-[24px]"
             onClick={() => inputRef.current?.click()}
           >
-            <span className="fd-modal-dropzone-icon">
+            <span className="w-[48px] h-[48px] bg-white rounded-full flex items-center justify-center shadow-[0_2px_8px_rgba(15,44,82,0.05)]">
               <ImagePlus size={24} />
             </span>
-            <strong>Select Image</strong>
+            <strong className="font-bold">Select Image</strong>
           </button>
         )}
 
         <input ref={inputRef} type="file" accept="image/*" hidden onChange={handleChange} />
 
-        {error && <p className="error-text">{error}</p>}
+        {error && <p className="text-[#dc2626] text-[13px] mt-[4px]">{error}</p>}
 
         {file && (
           <button
             type="button"
-            className="fd-btn-primary fd-modal-upload"
+            className="w-full mb-[12px] bg-[#0f2c52] text-white border-none p-[16px_24px] rounded-[8px] text-[15px] font-bold cursor-pointer inline-flex items-center justify-center gap-[12px] transition-all duration-200 shadow-[0_4px_12px_rgba(15,44,82,0.1)] hover:bg-[#0c2444] hover:-translate-y-[1px] hover:shadow-[0_6px_16px_rgba(15,44,82,0.15)] disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
             onClick={handleUpload}
             disabled={uploading}
           >
@@ -134,7 +134,7 @@ export default function UploadPhotoModal({ open, onClose, onUpload }: Props) {
 
         <button
           type="button"
-          className="fd-modal-cancel"
+          className="bg-transparent border-none text-[#64748b] text-[14.5px] font-semibold cursor-pointer p-[12px] hover:text-[#1e293b]"
           onClick={onClose}
           disabled={uploading}
         >

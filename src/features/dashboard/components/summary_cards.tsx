@@ -14,16 +14,16 @@ export default function SummaryCards() {
     : [];
 
   return (
-    <div className="summary-cards">
-      <p className="card-label">SUMMARY CARD</p>
-      <div className="summary-grid">
-        {loading && <p className="text-muted">Memuat ringkasan...</p>}
-        {error && <p className="error-text">{error}</p>}
+    <div className="flex flex-col">
+      <p className="text-[11px] font-bold tracking-[0.8px] text-slate-500 mb-[4px] uppercase m-0">SUMMARY CARD</p>
+      <div className="grid grid-cols-[1fr_1fr] gap-[12px]">
+        {loading && <p className="text-slate-500 col-span-2">Memuat ringkasan...</p>}
+        {error && <p className="text-red-600 bg-red-50 border border-red-200 rounded-[8px] p-[10px_14px] my-[8px] text-[14px] col-span-2">{error}</p>}
 
         {items.map((item) => (
-          <div key={item.label} className="summary-box" style={{ borderTopColor: item.color }}>
-            <span className="summary-value">{item.value}</span>
-            <span className="summary-label">{item.label}</span>
+          <div key={item.label} className="bg-white border border-slate-200 border-t-[3px] rounded-[8px] p-[16px] text-center aspect-[3/4] flex flex-col items-center justify-center" style={{ borderTopColor: item.color }}>
+            <span className="block text-[32px] font-bold text-[#0f2c52] my-[12px]">{item.value}</span>
+            <span className="text-[14px] text-slate-600">{item.label}</span>
           </div>
         ))}
       </div>

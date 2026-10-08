@@ -16,7 +16,7 @@ interface LoginResponse {
 }
 
 export async function login(payload: LoginPayload): Promise<LoginResponse> {
-  const response = await axios_instance.post('/Auth/login', payload);
+  const response = await axios_instance.post('/auth/login', payload);
   return response.data;
 }
 
@@ -29,7 +29,7 @@ interface RegisterPayload {
 }
 
 export async function register(payload: RegisterPayload) {
-  const response = await axios_instance.post('/Auth/register', payload);
+  const response = await axios_instance.post('/auth/register', payload);
   return response.data;
 }
 
@@ -39,29 +39,29 @@ interface VerifyEmailPayload {
 }
 
 export async function verifyEmail(payload: VerifyEmailPayload) {
-  const response = await axios_instance.post('/Auth/verify-email', payload);
+  const response = await axios_instance.post('/auth/verify-email', payload);
   return response.data;
 }
 
 export async function resendOtp(payload: ResendOtpPayload) {
-  const response = await axios_instance.post('/Auth/resend-otp', payload);
+  const response = await axios_instance.post('/auth/resend-otp', payload);
   return response.data;
 }
 
 // ---------- Login & Session ----------
 export async function logout() {
-  const response = await axios_instance.post('/Auth/logout');
+  const response = await axios_instance.post('/auth/logout');
   return response.data;
 }
 
 export async function whoami() {
-  const response = await axios_instance.get('/Auth/whoami');
+  const response = await axios_instance.get('/auth/whoami');
   return response.data;
 }
 
 // ---------- Forgot Password Flow ----------
 export async function forgotPasswordRequestOtp(payload: { email: string }) {
-  const response = await axios_instance.post('/Auth/forgot-password/request-otp', payload);
+  const response = await axios_instance.post('/auth/forgot-password/request-otp', payload);
   return response.data;
 }
 
@@ -71,7 +71,7 @@ interface VerifyOtpResponse {
 }
 
 export async function forgotPasswordVerifyOtp(payload: { email: string; otp: string }): Promise<VerifyOtpResponse> {
-  const response = await axios_instance.post('/Auth/forgot-password/verify-otp', payload);
+  const response = await axios_instance.post('/auth/forgot-password/verify-otp', payload);
   return response.data;
 }
 
@@ -81,7 +81,7 @@ export async function forgotPasswordReset(payload: {
   newPassword: string;
   confirmPassword: string;
 }) {
-  const response = await axios_instance.post('/Auth/forgot-password/reset', payload);
+  const response = await axios_instance.post('/auth/forgot-password/reset', payload);
   return response.data;
 }
 
@@ -95,7 +95,7 @@ export interface ProfileData {
 }
 
 export async function getProfile(): Promise<ProfileData> {
-  const response = await axios_instance.get('/Auth/profile');
+  const response = await axios_instance.get('/profile');
   return response.data;
 }
 
@@ -104,48 +104,48 @@ interface UpdateProfilePayload {
 }
 
 export async function updateProfile(payload: UpdateProfilePayload) {
-  const response = await axios_instance.put('/Auth/update-profile', payload);
+  const response = await axios_instance.put('/profile', payload);
   return response.data;
 }
 
 export async function changePassword(payload: { newPassword: string; confirmPassword: string }) {
-  const response = await axios_instance.post('/Auth/change-password', payload);
+  const response = await axios_instance.post('/auth/change-password', payload);
   return response.data;
 }
 
 export async function uploadProfilePhoto(file: File) {
   const formData = new FormData();
   formData.append('file', file);
-  const response = await axios_instance.post('/Auth/upload-profile-photo', formData, {
+  const response = await axios_instance.post('/profile/photo', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
   return response.data;
 }
 
 export async function removeProfilePhoto() {
-  const response = await axios_instance.delete('/Auth/profile-photo');
+  const response = await axios_instance.delete('/profile/photo');
   return response.data;
 }
 
 // ---------- Email Change ----------
 export async function requestEmailChangeOtp(payload: { newEmail: string }) {
-  const response = await axios_instance.post('/Auth/request-email-change-otp', payload);
+  const response = await axios_instance.post('/auth/request-email-change-otp', payload);
   return response.data;
 }
 
 export async function verifyEmailChange(payload: { newEmail: string; otp: string }) {
-  const response = await axios_instance.post('/Auth/verify-email-change', payload);
+  const response = await axios_instance.post('/auth/verify-email-change', payload);
   return response.data;
 }
 
 // ---------- Data referensi lain ----------
 export async function getAuditors() {
-  const response = await axios_instance.get('/Auth/auditors');
+  const response = await axios_instance.get('/users/auditors');
   return response.data;
 }
 
 export async function getUsers() {
-  const response = await axios_instance.get('/Auth/users');
+  const response = await axios_instance.get('/users');
   return response.data;
 }
 
@@ -155,6 +155,6 @@ export interface PicCandidate {
 }
 
 export async function getPicCandidates(): Promise<PicCandidate[]> {
-  const response = await axios_instance.get<{ data: PicCandidate[] }>('/Auth/pic-candidates');
+  const response = await axios_instance.get<{ data: PicCandidate[] }>('/users/pic-candidates');
   return response.data.data;
 }

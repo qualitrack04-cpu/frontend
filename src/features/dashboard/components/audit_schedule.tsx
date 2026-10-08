@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Calendar, Clock } from 'lucide-react';
 import { useFetch } from '../../../shared/hooks/use_fetch';
 import { getAuditSchedule } from '../api/dashboard_api';
@@ -36,13 +36,13 @@ export default function AuditSchedule() {
   const now = new Date();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
+  const [visibleCount, setVisibleCount] = useState(5);
 
   const { data, loading, error } = useFetch(
     () => getAuditSchedule(month, year),
     [month, year]
   );
 
-  // Ratakan struktur per-hari jadi satu daftar, urut menaik
   const audits = useMemo(() => {
     const list = data?.data ?? [];
     if (!Array.isArray(list)) return [];
@@ -64,51 +64,60 @@ export default function AuditSchedule() {
   }, [data, year, month]);
 
   return (
-    <div className="profile-card audit-schedule-card">
-      <div className="audit-schedule-header">
-        <h3>Upcoming Audits</h3>
-        <div className="legend">
+    <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-[24px]">
+      <div className="flex justify-between items-center mb-[16px] flex-wrap gap-[8px]">
+        <h3 className="text-[22px] font-bold text-[#0f2c52] m-0">Upcoming Audits</h3>
+        <div className="flex gap-[12px] text-[13px] text-[#475569]">
           {Object.entries(departmentColors).map(([label, color]) => (
-            <span key={label} className="legend-item">
-              <span className="legend-dot" style={{ backgroundColor: color }} />
+            <span key={label} className="flex items-center gap-[4px]">
+              <span className="w-[8px] h-[8px] rounded-full inline-block" style={{ backgroundColor: color }} />
               {label}
             </span>
           ))}
         </div>
       </div>
 
-      <div className="audit-list">
-        {loading && <p className="text-muted">Memuat jadwal audit...</p>}
-        {error && <p className="error-text">{error}</p>}
+      <div className="flex flex-col gap-[12px]">
+        {loading && <p className="text-slate-500">Memuat jadwal audit...</p>}
+        {error && <p className="text-red-600">{error}</p>}
         {!loading && !error && audits.length === 0 && (
-          <p className="text-muted">Belum ada audit yang dijadwalkan bulan ini.</p>
+          <p className="text-slate-500">Belum ada audit yang dijadwalkan bulan ini.</p>
         )}
 
-        {audits.map((audit) => (
+        {audits.slice(0, visibleCount).map((audit) => (
           <div
             key={audit.key}
-            className="audit-item"
+            className="bg-[#f8fafc] p-[14px_16px] rounded-[8px] border-l-[4px]"
             style={{ borderLeftColor: colorFor(audit.department) }}
           >
-            <strong>{audit.planTitle}</strong>
-            <div className="audit-meta">
-              <span className="audit-meta-item">
+            <strong className="text-[#0f2c52] text-[15px]">{audit.planTitle}</strong>
+            <div className="flex gap-[16px] mt-[6px] text-[13px] text-[#64748b]">
+              <span className="inline-flex items-center gap-[6px]">
                 <Calendar size={14} strokeWidth={2} />
                 {formatDate(year, month, audit.day)}
               </span>
               <span
-                className="audit-meta-item"
+                className="inline-flex items-center gap-[6px]"
                 style={{ color: colorFor(audit.department) }}
               >
                 <Clock size={14} strokeWidth={2} />
                 {daysLeftLabel(year, month, audit.day)}
               </span>
             </div>
-            <p className="text-muted small">
+            <p className="text-slate-500 text-[13px] m-0 mt-[2px]">
               {audit.department} · {audit.standard}
             </p>
           </div>
         ))}
+        
+        {visibleCount < audits.length && (
+          <button 
+            onClick={() => setVisibleCount(c => c + 5)}
+            className="mt-[8px] bg-transparent border border-[#cbd5e1] text-[#475569] p-[8px_16px] rounded-[8px] font-semibold text-[13px] cursor-pointer hover:bg-[#f8fafc] hover:text-[#0f2c52] transition-colors self-center"
+          >
+            Load More
+          </button>
+        )}
       </div>
     </div>
   );

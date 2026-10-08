@@ -3,28 +3,31 @@ import { ChevronRight } from 'lucide-react';
 import { categoryBadgeLabel, type Finding } from '../api/findings_api';
 
 export default function FindingCard({ finding }: { finding: Finding }) {
+  const borderColor = finding.category === 'minor' ? 'border-t-[#f59e0b]' : finding.category === 'major' ? 'border-t-[#f97316]' : finding.category === 'critical' ? 'border-t-[#dc2626]' : 'border-t-[#3b82f6]';
+  const dotColor = finding.category === 'minor' ? 'bg-[#f59e0b]' : finding.category === 'major' ? 'bg-[#f97316]' : finding.category === 'critical' ? 'bg-[#dc2626]' : 'bg-[#3b82f6]';
+
   return (
-    <article className={`fd-card fd-card--${finding.category}`}>
-      <div className="fd-card-head">
-        <h2>{finding.title}</h2>
-        <span className="fd-badge">
-          <span className="fd-badge-dot" />
+    <article className={`bg-white border border-[#e2e8f0] border-t-[4px] rounded-[12px] p-[24px] flex flex-col transition-all duration-200 hover:shadow-[0_4px_12px_rgba(15,44,82,0.05)] hover:border-[#cbd5e1] ${borderColor}`}>
+      <div className="flex justify-between items-start gap-[16px] mb-[8px]">
+        <h2 className="text-[16px] text-[#0f2c52] m-0 leading-[1.4] font-bold">{finding.title}</h2>
+        <span className="inline-flex items-center gap-[6px] bg-[#f8fafc] border border-[#e2e8f0] p-[4px_10px] rounded-[20px] text-[11px] font-bold text-[#475569] uppercase shrink-0">
+          <span className={`w-[6px] h-[6px] rounded-full ${dotColor}`} />
           {categoryBadgeLabel[finding.category] ?? finding.category}
         </span>
       </div>
 
       {finding.clauseRef ? (
-        <p className="fd-card-clause">{finding.clauseRef}</p>
+        <p className="text-[13px] text-[#64748b] font-semibold m-0 mb-[16px]">{finding.clauseRef}</p>
       ) : (
-        <p className="fd-card-clause fd-card-clause--empty">No clause reference</p>
+        <p className="text-[13px] text-[#94a3b8] italic font-normal m-0 mb-[16px]">No clause reference</p>
       )}
-      <p className="fd-card-desc">{finding.description}</p>
+      <p className="text-[14px] text-[#475569] leading-[1.5] m-0 mb-[24px] flex-1">{finding.description}</p>
 
-      <div className="fd-card-foot">
-        <Link to={`/findings/${finding.id}/edit`} className="fd-btn-outline">
+      <div className="flex justify-between items-center border-t border-[#f1f5f9] pt-[16px]">
+        <Link to={`/findings/${finding.id}/edit`} className="inline-block bg-white text-[#0f2c52] border border-[#e2e8f0] p-[6px_16px] rounded-[6px] text-[13px] font-semibold no-underline transition-all duration-200 hover:bg-[#f8fafc] hover:border-[#cbd5e1]">
           Edit
         </Link>
-        <Link to={`/findings/${finding.id}`} className="fd-link">
+        <Link to={`/findings/${finding.id}`} className="inline-flex items-center gap-[4px] text-[#0f2c52] text-[14px] font-bold no-underline transition-opacity duration-200 hover:opacity-80">
           Details <ChevronRight size={16} />
         </Link>
       </div>

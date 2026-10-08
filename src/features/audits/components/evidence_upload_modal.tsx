@@ -41,35 +41,35 @@ export default function EvidenceUploadModal({ responseId, onClose, onSuccess }: 
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="evidence-modal-box">
-        <div className="evidence-drag-handle" />
-        <h3 className="evidence-modal-title">Upload Evidence</h3>
+    <div className="fixed inset-0 bg-[rgba(15,44,82,0.4)] backdrop-blur-[2px] flex items-end sm:items-center justify-center z-[1000] animate-[fadein_0.2s_ease-out]">
+      <div className="bg-white w-full max-w-[400px] rounded-t-[20px] sm:rounded-[16px] p-[24px] flex flex-col animate-[slideup_0.2s_ease-out]">
+        <div className="w-[40px] h-[4px] bg-[#cbd5e1] rounded-[2px] mx-auto mb-[16px] sm:hidden" />
+        <h3 className="text-center text-[16px] text-[#0f2c52] m-0 mb-[20px] font-bold">Upload Evidence</h3>
 
         {!previewUrl ? (
-          <label className="evidence-dropzone">
+          <label className="flex flex-col items-center justify-center gap-[12px] h-[140px] border-[2px] border-dashed border-[#cbd5e1] rounded-[12px] bg-[#f8fafc] text-[#64748b] font-semibold text-[14px] cursor-pointer transition-all duration-200 hover:bg-[#f1f5f9] hover:border-[#94a3b8] hover:text-[#0f2c52]">
             <ImagePlus size={22} />
             <span>Select Image</span>
             <input type="file" accept="image/*" hidden onChange={handleSelect} />
           </label>
         ) : (
-          <div className="evidence-preview-wrapper">
-            <img src={previewUrl} alt="Preview" className="evidence-preview-img" />
-            <button className="evidence-delete-btn" onClick={handleRemove} aria-label="Hapus">
+          <div className="relative w-full h-[200px] rounded-[12px] overflow-hidden mb-[20px]">
+            <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+            <button className="absolute top-[8px] right-[8px] w-[32px] h-[32px] bg-[rgba(0,0,0,0.6)] text-white border-none rounded-full flex items-center justify-center cursor-pointer transition-colors duration-200 hover:bg-[#dc2626]" onClick={handleRemove} aria-label="Hapus">
               <Trash2 size={16} />
             </button>
           </div>
         )}
 
-        {error && <p className="error-text">{error}</p>}
+        {error && <p className="text-[#dc2626] text-[13px] mt-[4px]">{error}</p>}
 
         {previewUrl && (
-          <button className="btn-evidence-upload" onClick={handleUpload} disabled={uploading}>
+          <button className="bg-[#0f2c52] text-white border-none p-[14px] rounded-[8px] text-[14px] font-semibold flex items-center justify-center gap-[8px] cursor-pointer w-full disabled:opacity-60 disabled:cursor-not-allowed" onClick={handleUpload} disabled={uploading}>
             <UploadCloud size={16} /> {uploading ? 'Uploading...' : 'Upload'}
           </button>
         )}
 
-        <button className="evidence-cancel" onClick={onClose}>Cancel</button>
+        <button className="bg-transparent text-[#64748b] border-none text-[14px] font-semibold mt-[16px] cursor-pointer hover:text-[#1e293b]" onClick={onClose}>Cancel</button>
       </div>
     </div>
   );

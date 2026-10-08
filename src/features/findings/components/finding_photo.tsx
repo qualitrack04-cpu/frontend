@@ -17,21 +17,22 @@ export default function FindingPhotoView({ url, alt }: Props) {
   const src = fileUrl(url);
 
   if (failed || !src) {
-    return <div className="fd-thumb fd-thumb--empty">Gagal memuat</div>;
+    return <div className="relative w-full aspect-[4/3] rounded-[8px] overflow-hidden bg-[#f1f5f9] flex items-center justify-center text-[13px] text-[#94a3b8] italic">Gagal memuat</div>;
   }
 
   return (
     <>
-      <div className="fd-thumb">
+      <div className="relative w-full aspect-[4/3] rounded-[8px] overflow-hidden bg-[#f1f5f9]">
         <button
           type="button"
-          className="fd-thumb-open"
+          className="w-full h-full p-0 border-none bg-none cursor-pointer block"
           aria-label={`Preview ${alt}`}
           onClick={() => setOpen(true)}
         >
           <img
             src={src}
             alt={alt}
+            className="w-full h-full object-cover"
             onError={() => {
               console.error(`[findings] foto ${url} gagal dimuat`);
               setFailed(true);

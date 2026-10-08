@@ -25,7 +25,7 @@ export interface RecentActivityItem {
 }
 
 export async function getProfileKpi(): Promise<ProfileKpi> {
-  const response = await axiosInstance.get('/Profile/kpi'); // baseURL sudah termasuk /api
+  const response = await axiosInstance.get('/profile/kpi'); // baseURL sudah termasuk /api
   const data = response.data ?? {};
   const totalAssigned = data.totalCapaAssigned ?? data.totalAssigned ?? 0;
   const totalCompleted = data.totalCapaClosed ?? data.totalCompleted ?? 0;
@@ -54,7 +54,7 @@ export async function getProfileKpi(): Promise<ProfileKpi> {
 }
 
 export async function getRecentActivity(limit = 10): Promise<RecentActivityItem[]> {
-  const response = await axiosInstance.get('/Profile/recent-activity', {
+  const response = await axiosInstance.get('/profile/recent-activity', {
     params: { limit },
   });
   return response.data;

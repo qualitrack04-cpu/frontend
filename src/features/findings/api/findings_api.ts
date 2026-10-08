@@ -5,7 +5,7 @@ export type FindingCategory = 'MajorNC' | 'MinorNC' | 'Observation' | 'OFI';
 export type FindingStatus = 'Open' | 'InProgress' | 'Closed';
 
 // ⚠️ Field selain yang ada di UpdateFindingRequest (id, status, sessionId,
-// createdAt) masih ASUMSI. Cocokkan dengan response GET /api/Finding.
+// createdAt) masih ASUMSI. Cocokkan dengan response GET /api/findings.
 export interface Finding {
   id: string;
   title: string;
@@ -21,7 +21,7 @@ export interface Finding {
   foundAt?: string;
 }
 
-// Bentuk response GET /api/Upload/finding/{findingId} (lihat UploadController.GetFindingFiles):
+// Bentuk response GET /api/uploads/finding/{findingId} (lihat UploadController.GetFindingFiles):
 // backend sudah mengirim `url` langsung (hasil storage.GetPresignedUrl), jadi
 // foto bisa dipakai langsung sebagai <img src> tanpa perlu fetch terpisah.
 export interface FindingPhoto {
@@ -30,7 +30,7 @@ export interface FindingPhoto {
   url: string;
 }
 
-// Body POST /api/Finding (dari Swagger).
+// Body POST /api/findings (dari Swagger).
 export interface CreateFindingPayload {
   title: string;
   department?: string;
@@ -43,7 +43,7 @@ export interface CreateFindingPayload {
   clauseRef?: string;
 }
 
-// Body PUT /api/Finding/{id} (UpdateFindingRequest).
+// Body PUT /api/findings/{id} (UpdateFindingRequest).
 export interface UpdateFindingPayload {
   title: string;
   department?: string | null;
@@ -87,56 +87,56 @@ export const statusLabel: Record<FindingStatus, string> = {
 // Ganti sesuai nilai department yang dipakai backend.
 export const departmentOptions = ['Production', 'Packaging', 'Warehouse', 'QC'];
 
-// GET /api/Finding?status=&category=&from=&to=
+// GET /api/findings?status=&category=&from=&to=
 export async function getFindings(params: FindingListParams = {}): Promise<Finding[]> {
-  const res = await axios_instance.get<Finding[]>('/Finding', { params });
+  const res = await axios_instance.get<Finding[]>('/findings', { params });
   return res.data;
 }
 
-// GET /api/Finding/{id}
+// GET /api/findings/{id}
 export async function getFinding(id: string): Promise<Finding> {
-  const res = await axios_instance.get<Finding>(`/Finding/${id}`);
+  const res = await axios_instance.get<Finding>(`/findings/${id}`);
   return res.data;
 }
 
-// POST /api/Finding
+// POST /api/findings
 export async function createFinding(payload: CreateFindingPayload): Promise<Finding> {
-  const res = await axios_instance.post<Finding>('/Finding', payload);
+  const res = await axios_instance.post<Finding>('/findings', payload);
   return res.data;
 }
 
-// PUT /api/Finding/{id}
+// PUT /api/findings/{id}
 export async function updateFinding(id: string, payload: UpdateFindingPayload) {
-  const res = await axios_instance.put(`/Finding/${id}`, payload);
+  const res = await axios_instance.put(`/findings/${id}`, payload);
   return res.data;
 }
 
-// PATCH /api/Finding/{id}/status (body = string enum polos)
+// PATCH /api/findings/{id}/status (body = string enum polos)
 export async function updateFindingStatus(id: string, status: FindingStatus) {
   // JSON.stringify wajib: axios mengirim string apa adanya, sedangkan
   // backend mengharapkan JSON valid, yaitu "Closed" dengan tanda kutip.
-  const res = await axios_instance.patch(`/Finding/${id}/status`, JSON.stringify(status));
+  const res = await axios_instance.patch(`/findings/${id}/status`, JSON.stringify(status));
   return res.data;
 }
 
-// GET /api/Upload/finding/{findingId}
+// GET /api/uploads/finding/{findingId}
 export async function getFindingPhotos(findingId: string): Promise<FindingPhoto[]> {
-  const res = await axios_instance.get<FindingPhoto[]>(`/Upload/finding/${findingId}`);
+  const res = await axios_instance.get<FindingPhoto[]>(`/uploads/finding/${findingId}`);
   return res.data;
 }
 
-// POST /api/Upload/finding/{findingId}  (multipart/form-data)
+// POST /api/uploads/finding/{findingId}  (multipart/form-data)
 export async function uploadFindingPhoto(findingId: string, file: File) {
   const form = new FormData();
   form.append('file', file); // ⚠️ cek nama field yang diminta backend
-  const res = await axios_instance.post(`/Upload/finding/${findingId}`, form, {
+  const res = await axios_instance.post(`/uploads/finding/${findingId}`, form, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
   return res.data;
 }
 
 // Catatan: sebelumnya ada fungsi fetchFileBlob() yang mengambil foto lewat
-// GET /api/Upload/file/{fileId} sebagai blob. Itu salah asumsi — endpoint
+// GET /api/uploads/file/{fileId} sebagai blob. Itu salah asumsi — endpoint
 // itu ternyata mengembalikan JSON metadata (bukan file mentah), sehingga
 // hasilnya selalu gagal di-parse sebagai gambar ("Gagal memuat" di UI).
 // GetFindingFiles (di bawah, dipanggil lewat getFindingPhotos) sudah
@@ -150,15 +150,15 @@ interface ListEnvelope<T> {
 
 export type FindingRecord = Finding;
 
-// GET /api/Finding/without-capa
+// GET /api/findings/without-capa
 export async function getFindingsWithoutCapa(): Promise<Finding[]> {
-  const res = await axios_instance.get<ListEnvelope<Finding>>('/Finding/without-capa');
+  const res = await axios_instance.get<ListEnvelope<Finding>>('/findings/without-capa');
   return res.data.data;
 }
 
-// GET /api/Finding/by-session/{sessionId}
+// GET /api/findings/by-session/{sessionId}
 export async function getFindingsBySession(sessionId: string): Promise<Finding[]> {
-  const res = await axios_instance.get<ListEnvelope<Finding>>(`/Finding/by-session/${sessionId}`);
+  const res = await axios_instance.get<ListEnvelope<Finding>>(`/findings/by-session/${sessionId}`);
   return res.data.data;
 }
 

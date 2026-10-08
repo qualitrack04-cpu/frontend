@@ -37,7 +37,7 @@ export interface ChecklistItemsResponse {
 }
 
 export async function getChecklists(standard?: string, department?: string): Promise<ChecklistListItem[]> {
-  const response = await axios_instance.get<ChecklistListItem[]>('/Checklist', {
+  const response = await axios_instance.get<ChecklistListItem[]>('/checklists', {
     params: { standard, department },
   });
   return response.data;
@@ -45,17 +45,17 @@ export async function getChecklists(standard?: string, department?: string): Pro
 
 
 export async function getChecklistById(id: string): Promise<ChecklistDetail> {
-  const response = await axios_instance.get<ChecklistDetail>(`/Checklist/${id}`);
+  const response = await axios_instance.get<ChecklistDetail>(`/checklists/${id}`);
   return response.data;
 }
 
 export async function getChecklistItems(checklistId: string): Promise<ChecklistItemsResponse> {
-  const response = await axios_instance.get<ChecklistItemsResponse>(`/Checklist/${checklistId}/items`);
+  const response = await axios_instance.get<ChecklistItemsResponse>(`/checklists/${checklistId}/items`);
   return response.data;
 }
 
 export async function deleteChecklist(id: string): Promise<void> {
-  await axios_instance.delete(`/Checklist/${id}`);
+  await axios_instance.delete(`/checklists/${id}`);
 }
 
 export interface CreateChecklistItemPayload {
@@ -73,7 +73,7 @@ export interface CreateChecklistPayload {
 }
 
 export async function createChecklist(payload: CreateChecklistPayload): Promise<ChecklistDetail> {
-  const response = await axios_instance.post<ChecklistDetail>('/Checklist', payload);
+  const response = await axios_instance.post<ChecklistDetail>('/checklists', payload);
   return response.data;
 }
 
@@ -92,6 +92,6 @@ export interface UpdateChecklistPayload {
 }
 
 export async function updateChecklist(id: string, payload: UpdateChecklistPayload): Promise<ChecklistDetail> {
-  const response = await axios_instance.put<ChecklistDetail>(`/Checklist/${id}`, payload);
+  const response = await axios_instance.put<ChecklistDetail>(`/checklists/${id}`, payload);
   return response.data;
 }

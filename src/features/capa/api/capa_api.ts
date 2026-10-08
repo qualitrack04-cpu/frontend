@@ -22,7 +22,7 @@ export interface CapaCloseOut {
   verifiedAt: string;
 }
 
-// Response DTO dari GET /api/Capa, /api/Capa/{id}, /api/Capa/overdue.
+// Response DTO dari GET /api/capas, /api/capas/{id}, /api/capas/overdue.
 export interface Capa {
   id: string;
   findingId: string;
@@ -42,7 +42,7 @@ export interface Capa {
   closeOut?: CapaCloseOut | null;
 }
 
-// Body POST /api/Capa/finding/{findingId} (CreateCapaRequest).
+// Body POST /api/capas/finding/{findingId} (CreateCapaRequest).
 // Catatan: form "Create CAPA" di desain punya field Title, Description, Action
 // Plan. Title tidak ada di backend (dipakai lokal saja di form). Description
 // -> rootCause, Action Plan -> correctiveAction. Lihat catatan di
@@ -56,7 +56,7 @@ export interface CreateCapaPayload {
   picName?: string;
 }
 
-// Body PUT /api/Capa/{id} (UpdateCapaRequestDto).
+// Body PUT /api/capas/{id} (UpdateCapaRequestDto).
 export interface UpdateCapaPayload {
   rootCause: string;
   correctiveAction: string;
@@ -66,13 +66,13 @@ export interface UpdateCapaPayload {
   picName?: string;
 }
 
-// Body POST /api/Capa/{id}/actions (AddCapaActionRequest).
+// Body POST /api/capas/{id}/actions (AddCapaActionRequest).
 export interface AddCapaActionPayload {
   description: string;
   doneById: string;
 }
 
-// Body POST /api/Capa/{id}/closeout (CloseOutVerificationRequest).
+// Body POST /api/capas/{id}/closeout (CloseOutVerificationRequest).
 export interface CloseOutPayload {
   isEffective: boolean;
   verificationNotes: string;
@@ -91,56 +91,56 @@ export const capaStatusLabel: Record<CapaStatus, string> = {
   Closed: 'Done',
 };
 
-// GET /api/Capa?status=
+// GET /api/capas?status=
 export async function getCapas(params: CapaListParams = {}): Promise<Capa[]> {
-  const res = await axios_instance.get<Capa[]>('/Capa', { params });
+  const res = await axios_instance.get<Capa[]>('/capas', { params });
   return res.data;
 }
 
-// GET /api/Capa/overdue
+// GET /api/capas/overdue
 export async function getOverdueCapas(): Promise<Capa[]> {
-  const res = await axios_instance.get<Capa[]>('/Capa/overdue');
+  const res = await axios_instance.get<Capa[]>('/capas/overdue');
   return res.data;
 }
 
-// GET /api/Capa/{id}
+// GET /api/capas/{id}
 export async function getCapa(id: string): Promise<Capa> {
-  const res = await axios_instance.get<Capa>(`/Capa/${id}`);
+  const res = await axios_instance.get<Capa>(`/capas/${id}`);
   return res.data;
 }
 
-// POST /api/Capa/finding/{findingId}
+// POST /api/capas/finding/{findingId}
 export async function createCapaFromFinding(findingId: string, payload: CreateCapaPayload): Promise<Capa> {
-  const res = await axios_instance.post<Capa>(`/Capa/finding/${findingId}`, payload);
+  const res = await axios_instance.post<Capa>(`/capas/finding/${findingId}`, payload);
   return res.data;
 }
 
-// PUT /api/Capa/{id}
+// PUT /api/capas/{id}
 export async function updateCapa(id: string, payload: UpdateCapaPayload) {
-  const res = await axios_instance.put(`/Capa/${id}`, payload);
+  const res = await axios_instance.put(`/capas/${id}`, payload);
   return res.data;
 }
 
-// PATCH /api/Capa/{id}/status (body = string enum polos, sama seperti Finding).
+// PATCH /api/capas/{id}/status (body = string enum polos, sama seperti Finding).
 export async function updateCapaStatus(id: string, status: CapaStatus) {
-  const res = await axios_instance.patch(`/Capa/${id}/status`, JSON.stringify(status));
+  const res = await axios_instance.patch(`/capas/${id}/status`, JSON.stringify(status));
   return res.data;
 }
 
-// POST /api/Capa/{id}/actions
+// POST /api/capas/{id}/actions
 export async function addCapaAction(id: string, payload: AddCapaActionPayload): Promise<CapaAction> {
-  const res = await axios_instance.post<CapaAction>(`/Capa/${id}/actions`, payload);
+  const res = await axios_instance.post<CapaAction>(`/capas/${id}/actions`, payload);
   return res.data;
 }
 
-// POST /api/Capa/{id}/closeout
+// POST /api/capas/{id}/closeout
 export async function closeOutCapa(id: string, payload: CloseOutPayload): Promise<CapaCloseOut> {
-  const res = await axios_instance.post<CapaCloseOut>(`/Capa/${id}/closeout`, payload);
+  const res = await axios_instance.post<CapaCloseOut>(`/capas/${id}/closeout`, payload);
   return res.data;
 }
 
-// DELETE /api/Capa/{id}
+// DELETE /api/capas/{id}
 export async function deleteCapa(id: string) {
-  const res = await axios_instance.delete(`/Capa/${id}`);
+  const res = await axios_instance.delete(`/capas/${id}`);
   return res.data;
 }

@@ -7,9 +7,11 @@ import AuthBrandPanel from './auth_brand_panel';
 const ROLE_OPTIONS = [
   { value: 'AuditorInternal', label: 'Auditor Internal' },
   { value: 'QualityManager', label: 'Quality Manager' },
-  // { value: 'Auditee', label: 'Auditee' }, // Auditee didaftarkan secara manual oleh admin
-  // { value: 'Admin', label: 'Admin' }, // Admin didaftarkan secara manual oleh sysadmin
 ] as const;
+
+const inputClass = "w-full pl-10 pr-4 py-3 border border-[#cbd5e1] rounded-lg bg-white text-[#1f2937] text-sm outline-none transition-all focus:border-[#0f2c52] focus:ring-2 focus:ring-[#0f2c52]/10";
+const labelClass = "text-[#374151] text-sm font-medium mb-1.5 block text-left";
+const iconClass = "absolute left-3.5 text-[#64748b] pointer-events-none";
 
 export default function SignUpPage() {
   const [fullName, setFullName] = useState('');
@@ -35,7 +37,7 @@ export default function SignUpPage() {
     setLoading(true);
     try {
       await register({ fullName, email, password, role });
-      navigate('/verify-otp', { state: { email, fromSignup: true } }); // navigasi ke halaman verifikasi OTP
+      navigate('/verify-otp', { state: { email, fromSignup: true } });
     } catch (err: any) {
       setError(err.response?.data?.message || 'Pendaftaran gagal. Coba lagi.');
     } finally {
@@ -44,89 +46,67 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="auth-page">
+    <div className="flex min-h-screen bg-white">
       <AuthBrandPanel />
 
-      <div className="auth-card">
-        <h2>Sign Up</h2>
+      <div className="flex flex-col justify-center w-full max-w-sm mx-auto px-8 py-10">
+        <h2 className="text-[#0f2c52] text-[28px] font-bold mb-6 text-left">Sign Up</h2>
 
-        <form onSubmit={handleSubmit}>
-          <label className="auth-label-plain">Username</label>
-          <div className="input-with-icon">
-            <User size={16} className="input-icon-left" />
-            <input
-              type="text"
-              placeholder="Name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
-            />
+        <form onSubmit={handleSubmit} className="flex flex-col gap-1">
+          <label className={labelClass}>Username</label>
+          <div className="relative flex items-center mb-4">
+            <User size={16} className={iconClass} />
+            <input type="text" placeholder="Name" value={fullName} onChange={(e) => setFullName(e.target.value)} required className={inputClass} />
           </div>
 
-          <label className="auth-label-plain">Work Email</label>
-          <div className="input-with-icon">
-            <Mail size={16} className="input-icon-left" />
-            <input
-              type="email"
-              placeholder="name@gmail.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
+          <label className={labelClass}>Work Email</label>
+          <div className="relative flex items-center mb-4">
+            <Mail size={16} className={iconClass} />
+            <input type="email" placeholder="name@gmail.com" value={email} onChange={(e) => setEmail(e.target.value)} required className={inputClass} />
           </div>
 
-          <label className="auth-label-plain">Password</label>
-          <div className="input-with-icon">
-            <Lock size={16} className="input-icon-left" />
+          <label className={labelClass}>Password</label>
+          <div className="relative flex items-center mb-4">
+            <Lock size={16} className={iconClass} />
             <input
               type={showPassword ? 'text' : 'password'}
-              placeholder='******'
+              placeholder="******"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              className="w-full pl-10 pr-10 py-3 border border-[#cbd5e1] rounded-lg bg-white text-[#1f2937] text-sm outline-none transition-all focus:border-[#0f2c52] focus:ring-2 focus:ring-[#0f2c52]/10"
             />
-            <button
-              type="button"
-              className="input-icon-right"
-              onClick={() => setShowPassword((v) => !v)}
-              aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
-            >
+            <button type="button" className="absolute right-3.5 text-[#64748b] hover:text-[#0f2c52] bg-transparent border-none cursor-pointer p-0 flex items-center" onClick={() => setShowPassword((v) => !v)} aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}>
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
           </div>
 
-          <label className="auth-label-plain">Password Verification</label>
-          <div className="input-with-icon">
-            <Lock size={16} className="input-icon-left" />
-            <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder='******'
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
+          <label className={labelClass}>Password Verification</label>
+          <div className="relative flex items-center mb-4">
+            <Lock size={16} className={iconClass} />
+            <input type={showPassword ? 'text' : 'password'} placeholder="******" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required className={inputClass} />
           </div>
 
-          <label className="auth-label-plain">Role</label>
-          <div className="input-with-icon">
-            <Briefcase size={16} className="input-icon-left" />
-            <select value={role} onChange={(e) => setRole(e.target.value)}>
+          <label className={labelClass}>Role</label>
+          <div className="relative flex items-center mb-4">
+            <Briefcase size={16} className={iconClass} />
+            <select value={role} onChange={(e) => setRole(e.target.value)} className={inputClass}>
               {ROLE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
             </select>
           </div>
 
-          {error && <p className="error-text">{error}</p>}
+          {error && <p className="text-red-600 text-sm mb-2 text-left">{error}</p>}
 
-          <button type="submit" className="btn-auth-submit" disabled={loading}>
+          <button type="submit" disabled={loading} className="w-full bg-[#0f2c52] hover:bg-[#0c2444] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-lg mt-2 flex items-center justify-center gap-2 transition-colors text-sm tracking-wide">
             {loading ? 'Signing up...' : 'SIGN UP'}
           </button>
         </form>
 
-        <Link to="/login" className="back-link">← Back</Link>
+        <Link to="/login" className="flex items-center gap-1.5 mt-5 text-[#475569] text-sm font-medium no-underline hover:text-[#0f2c52]">
+          ← Back
+        </Link>
       </div>
     </div>
   );

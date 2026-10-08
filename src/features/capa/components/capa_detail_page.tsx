@@ -25,69 +25,69 @@ export default function CapaDetailPage() {
   const { capa, loading, error } = useCapaDetail(id);
 
   return (
-    <div className="page-container capa-page">
-      <Link to="/capa" className="capa-back">
+    <div className="max-w-full m-0 text-left">
+      <Link to="/capa" className="inline-flex items-center gap-[8px] text-[#64748b] text-[14px] font-semibold no-underline mb-[24px] transition-colors duration-200 hover:text-[#0f2c52]">
         <ArrowLeft size={18} /> Back to CAPA List
       </Link>
-      <h1 className="capa-title">CAPA Detail</h1>
+      <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 mb-[20px] tracking-[-0.5px] leading-[1.25]">CAPA Detail</h1>
 
-      {loading && <p className="text-muted">Memuat CAPA...</p>}
-      {error && <p className="error-text">{error}</p>}
+      {loading && <p className="text-slate-500">Memuat CAPA...</p>}
+      {error && <p className="text-[#dc2626] text-[13px] mt-[4px]">{error}</p>}
 
       {capa && (
-        <div className="capa-detail-grid">
-          <div className="capa-detail-main">
-            <section className="capa-panel">
+        <div className="grid grid-cols-1 md:grid-cols-[1fr_340px] gap-[32px] items-start">
+          <div className="flex flex-col gap-[24px]">
+            <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px]">
               {/* ⚠️ ASUMSI: tidak ada field "title" di CAPA, jadi rootCause
                   dipakai sebagai ringkasan utama di bagian atas. */}
-              <span className="capa-label">Root Cause</span>
-              <h2 className="capa-detail-heading">{capa.rootCause || '-'}</h2>
+              <span className="block text-[11px] font-bold text-[#64748b] uppercase mb-[4px]">Root Cause</span>
+              <h2 className="text-[20px] text-[#0f2c52] m-0 mb-[32px] leading-[1.4] font-bold">{capa.rootCause || '-'}</h2>
 
-              <span className="capa-section-title">FINDINGS</span>
-              <Link to={`/findings/${capa.findingId}`} className="capa-finding-chip">
+              <span className="block text-[14px] font-bold text-[#0f2c52] m-0 mb-[16px] uppercase tracking-[0.5px]">FINDINGS</span>
+              <Link to={`/findings/${capa.findingId}`} className="inline-flex items-center gap-[8px] bg-[#f1f5f9] text-[#0f2c52] p-[8px_16px] rounded-[8px] text-[14px] font-semibold no-underline transition-all duration-200 border border-transparent hover:bg-[#e2e8f0] hover:border-[#cbd5e1]">
                 <ClipboardList size={16} />
                 {capa.findingTitle || 'Finding tidak diketahui'}
               </Link>
             </section>
 
-            <section className="capa-panel">
-              <div className="capa-panel-head">
-                <span className="capa-section-title">ACTION PLAN</span>
+            <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px]">
+              <div className="flex items-center mb-[24px]">
+                <span className="block text-[14px] font-bold text-[#0f2c52] m-0 uppercase tracking-[0.5px]">ACTION PLAN</span>
               </div>
-              <div className="capa-desc-box">{capa.correctiveAction || '-'}</div>
+              <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] p-[20px] text-[14.5px] text-[#1e293b] leading-[1.6]">{capa.correctiveAction || '-'}</div>
             </section>
 
             {capa.preventiveAction && (
-              <section className="capa-panel">
-                <div className="capa-panel-head">
-                  <span className="capa-section-title">PREVENTIVE ACTION</span>
+              <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px]">
+                <div className="flex items-center mb-[24px]">
+                  <span className="block text-[14px] font-bold text-[#0f2c52] m-0 uppercase tracking-[0.5px]">PREVENTIVE ACTION</span>
                 </div>
-                <div className="capa-desc-box">{capa.preventiveAction}</div>
+                <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] p-[20px] text-[14.5px] text-[#1e293b] leading-[1.6]">{capa.preventiveAction}</div>
               </section>
             )}
           </div>
 
-          <aside className="capa-panel capa-meta">
-            <span className="capa-section-title">EXECUTION METADATA</span>
+          <aside className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] flex flex-col gap-[32px]">
+            <span className="block text-[14px] font-bold text-[#0f2c52] m-0 uppercase tracking-[0.5px] border-b border-[#e2e8f0] pb-[16px]">EXECUTION METADATA</span>
 
-            <div className="capa-meta-block">
-              <span className="capa-label">Assignee</span>
-              <div className="capa-meta-assignee">
-                <span className="capa-avatar capa-avatar--lg">{initials(capa.picName)}</span>
+            <div className="flex flex-col gap-[8px]">
+              <span className="block text-[11px] font-bold text-[#64748b] uppercase mb-[4px]">Assignee</span>
+              <div className="flex items-center gap-[12px] text-[15px] font-semibold text-[#0f2c52]">
+                <span className="w-[40px] h-[40px] bg-[#f1f5f9] rounded-full flex items-center justify-center text-[14px] font-bold text-[#475569]">{initials(capa.picName)}</span>
                 <span>{capa.picName || 'Belum ditugaskan'}</span>
               </div>
             </div>
 
-            <div className="capa-meta-block">
-              <span className="capa-label">Due Date</span>
-              <div className="capa-meta-chip">
+            <div className="flex flex-col gap-[8px]">
+              <span className="block text-[11px] font-bold text-[#64748b] uppercase mb-[4px]">Due Date</span>
+              <div className="inline-flex items-center gap-[8px] bg-white border border-[#e2e8f0] p-[8px_12px] rounded-[8px] text-[14px] font-semibold text-[#1e293b]">
                 <Calendar size={16} />
                 {formatDate(capa.deadline)}
               </div>
             </div>
 
-            <div className="capa-meta-block">
-              <span className="capa-label">Status</span>
+            <div className="flex flex-col gap-[8px]">
+              <span className="block text-[11px] font-bold text-[#64748b] uppercase mb-[4px]">Status</span>
               <CapaStatusBadge status={capa.status} />
             </div>
           </aside>

@@ -16,6 +16,9 @@ export function useAuth() {
       if (!result?.token) {
         throw new Error('Response login tidak berisi token.')
       }
+      if (result.role === 'Auditee') {
+        throw new Error('Role Auditee tidak diizinkan untuk login/masuk ke sistem web.');
+      }
 
       localStorage.setItem('token', result.token);
       localStorage.setItem('role', result.role ?? '');

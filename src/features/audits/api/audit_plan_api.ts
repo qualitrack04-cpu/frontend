@@ -38,12 +38,12 @@ interface ListEnvelope<T> {
 }
 
 export async function getAuditPlans(): Promise<AuditPlan[]> {
-  const response = await axios_instance.get<ListEnvelope<AuditPlan>>('/AuditPlan');
+  const response = await axios_instance.get<ListEnvelope<AuditPlan>>('/audit-plans');
   return response.data.data;
 }
 
 export async function getAuditPlanById(id: string): Promise<AuditPlan> {
-  const response = await axios_instance.get<ApiEnvelope<AuditPlan>>(`/AuditPlan/${id}`);
+  const response = await axios_instance.get<ApiEnvelope<AuditPlan>>(`/audit-plans/${id}`);
   return response.data.data;
 }
 
@@ -69,7 +69,7 @@ interface CreatePlanResult {
 }
 
 export async function createAuditPlan(payload: CreateAuditPlanPayload): Promise<CreatePlanResult> {
-  const response = await axios_instance.post<CreatePlanResult>('/AuditPlan', payload);
+  const response = await axios_instance.post<CreatePlanResult>('/audit-plans', payload);
   return response.data;
 }
 
@@ -83,10 +83,10 @@ export interface UpdateAuditPlanPayload {
 }
 
 export async function updateAuditPlan(id: string, payload: UpdateAuditPlanPayload): Promise<AuditPlan> {
-  const response = await axios_instance.put<ApiEnvelope<AuditPlan>>(`/AuditPlan/${id}`, payload);
+  const response = await axios_instance.put<ApiEnvelope<AuditPlan>>(`/audit-plans/${id}`, payload);
   return response.data.data;
 }
 
 export async function deleteAuditPlan(id: string): Promise<void> {
-  await axios_instance.delete(`/AuditPlan/${id}`);
+  await axios_instance.delete(`/audit-plans/${id}`);
 }

@@ -16,6 +16,7 @@ export default function AuditReport() {
   const now = new Date();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
+  const [visibleCount, setVisibleCount] = useState(4);
 
   const { data, loading, error } = useFetch(
     () => getMonthlyReport(month, year),
@@ -54,60 +55,71 @@ export default function AuditReport() {
     : [];
 
   return (
-    <div className="audit-report-section">
-      <div className="audit-report-header">
-        <p className="card-label">AUDIT REPORT</p>
+    <div className="mt-[24px]">
+      <div className="mb-[12px]">
+        <p className="text-[11px] font-bold tracking-[0.8px] text-slate-500 uppercase m-0">AUDIT REPORT</p>
       </div>
 
-      {loading && <p className="text-muted">Memuat laporan...</p>}
-      {error && <p className="error-text">{error}</p>}
-      {downloadError && <p className="error-text">{downloadError}</p>}
+      {loading && <p className="text-slate-500">Memuat laporan...</p>}
+      {error && <p className="text-red-600">{error}</p>}
+      {downloadError && <p className="text-red-600">{downloadError}</p>}
 
       {data && reportCards.length === 0 && (
-        <p className="text-muted">Belum ada audit report bulan ini.</p>
+        <p className="text-slate-500">Belum ada audit report bulan ini.</p>
       )}
 
       {data && reportCards.length > 0 && (
-        <div className="audit-report-grid">
-          {reportCards.map((row, i) => (
-            <div key={`${row.department}-${row.scheduledDate}-${i}`} className="audit-report-card">
-              <div className="audit-report-thumbnail">
-                <span className="skeleton-line w-60" />
-                <span className="skeleton-line w-80" />
-                <span className="skeleton-line w-50" />
-              </div>
-
-              <div className="audit-report-info">
-                <div className="audit-report-icon">
-                  <FileText size={18} />
+        <div className="flex flex-col gap-[16px]">
+          <div className="grid grid-cols-4 gap-[16px] max-[1100px]:grid-cols-2 max-[600px]:grid-cols-1">
+            {reportCards.slice(0, visibleCount).map((row, i) => (
+              <div key={`${row.department}-${row.scheduledDate}-${i}`} className="bg-white border border-[#e2e8f0] rounded-[12px] p-[16px] flex flex-col gap-[14px]">
+                <div className="bg-[#eef1fb] rounded-[8px] p-[16px] flex flex-col gap-[8px]">
+                  <span className="block h-[8px] rounded-full bg-[#d6dcf5] w-[60%]" />
+                  <span className="block h-[8px] rounded-full bg-[#d6dcf5] w-[80%]" />
+                  <span className="block h-[8px] rounded-full bg-[#d6dcf5] w-[50%]" />
                 </div>
-                <div>
-                  <strong>{row.department} Audit Report</strong>
-                  <p className="text-muted small">
-                    {formatDate(row.scheduledDate)} · {row.status}
-                    {row.totalFindings > 0 && ` · ${row.totalFindings} temuan`}
-                  </p>
+
+                <div className="flex items-start gap-[10px] text-[#08060d]">
+                  <div className="w-[36px] h-[36px] rounded-[8px] bg-[#dbeafe] text-[#1e40af] flex items-center justify-center shrink-0">
+                    <FileText size={18} />
+                  </div>
+                  <div>
+                    <strong className="text-[#0f2c52] text-[14px] leading-[1.3] block">{row.department} Audit Report</strong>
+                    <p className="text-slate-500 text-[12px] m-0">
+                      {formatDate(row.scheduledDate)} · {row.status}
+                      {row.totalFindings > 0 && ` · ${row.totalFindings} temuan`}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex gap-[8px]">
+                  <button
+                    className="flex-1 bg-[#0f2c52] text-white border-none rounded-[8px] p-[10px] text-[13px] font-semibold cursor-pointer flex items-center justify-center gap-[6px] hover:bg-[#0c2444]"
+                    onClick={() => handleDownload(row.sessionId!, row.department)}
+                    disabled={downloadingId === row.sessionId}
+                  >
+                    <Download size={14} />
+                    {downloadingId === row.sessionId ? 'Mengunduh...' : 'Download'}
+                  </button>
+                  <Link
+                    to={`/audits/${row.planId}/schedule/${row.scheduleId}/report`}
+                    className="flex-1 bg-[#dbeafe] text-[#1e40af] rounded-[8px] p-[10px] text-[13px] font-semibold no-underline flex items-center justify-center gap-[6px] hover:bg-[#bfdbfe]"
+                  >
+                    <FileCheck size={14} /> View Report
+                  </Link>
                 </div>
               </div>
-
-              <div className="audit-report-actions">
-                <button
-                  className="btn-download"
-                  onClick={() => handleDownload(row.sessionId!, row.department)}
-                  disabled={downloadingId === row.sessionId}
-                >
-                  <Download size={14} />
-                  {downloadingId === row.sessionId ? 'Mengunduh...' : 'Download'}
-                </button>
-                <Link
-                  to={`/audits/${row.planId}/schedule/${row.scheduleId}/report`}
-                  className="btn-view-report"
-                >
-                  <FileCheck size={14} /> View Report
-                </Link>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          
+          {visibleCount < reportCards.length && (
+            <button 
+              onClick={() => setVisibleCount(c => c + 4)}
+              className="bg-transparent border border-[#cbd5e1] text-[#475569] p-[8px_16px] rounded-[8px] font-semibold text-[13px] cursor-pointer hover:bg-[#f8fafc] hover:text-[#0f2c52] transition-colors self-center"
+            >
+              Load More
+            </button>
+          )}
         </div>
       )}
     </div>
