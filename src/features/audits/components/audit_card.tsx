@@ -65,9 +65,15 @@ export default function AuditCard({ audit, onDelete }: AuditCardProps) {
         </div>
 
         {schedule ? (
-          <Link to={`/audits/${audit.id}/schedule/${schedule.id}/checklist`} className={`inline-flex items-center gap-[8px] text-[14px] font-semibold px-[18px] py-[10px] rounded-[8px] no-underline w-fit mt-auto self-end text-white ${isFinished ? 'bg-[#94a3b8] hover:bg-[#7c8aa0]' : 'bg-[#0f2c52] hover:bg-[#0c2444]'}`}>
-            <ClipboardCheck size={16} /> Audit Checklist
-          </Link>
+          isFinished ? (
+            <span className="inline-flex items-center gap-[8px] text-[14px] font-semibold px-[18px] py-[10px] rounded-[8px] w-fit mt-auto self-end text-white bg-[#94a3b8] cursor-not-allowed opacity-80">
+              <ClipboardCheck size={16} /> Audit Checklist
+            </span>
+          ) : (
+            <Link to={`/audits/${audit.id}/schedule/${schedule.id}/checklist`} className="inline-flex items-center gap-[8px] text-[14px] font-semibold px-[18px] py-[10px] rounded-[8px] no-underline w-fit mt-auto self-end text-white bg-[#0f2c52] hover:bg-[#0c2444]">
+              <ClipboardCheck size={16} /> Audit Checklist
+            </Link>
+          )
         ) : (
           <span className="text-slate-500">Belum ada jadwal</span>
         )}

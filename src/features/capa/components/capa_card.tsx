@@ -28,27 +28,31 @@ interface CapaCardProps {
 
 export default function CapaCard({ capa, onStatusChange, updatingStatus }: CapaCardProps) {
   const statusColor = capa.status.toLowerCase();
-  const borderColor = statusColor === 'open' ? 'border-l-[#3b82f6]' : statusColor === 'in_progress' ? 'border-l-[#f59e0b]' : statusColor === 'under_review' ? 'border-l-[#8b5cf6]' : 'border-l-[#10b981]';
+  const borderColor = statusColor === 'open' ? 'border-red-500' : statusColor === 'in_progress' || statusColor === 'inprogress' ? 'border-blue-400' : 'border-emerald-600';
 
   return (
-    <article className={`bg-white border border-[#e2e8f0] border-l-[4px] rounded-[12px] p-[24px] flex flex-col transition-all duration-200 relative overflow-hidden hover:shadow-[0_4px_12px_rgba(15,44,82,0.05)] hover:border-[#cbd5e1] ${borderColor}`}>
+    <article className={`bg-white border-2 rounded-[12px] p-6 flex flex-col transition-all duration-200 relative overflow-hidden ${borderColor}`}>
       <div className="flex justify-between items-start gap-[16px] mb-[8px]">
         {/* ⚠️ ASUMSI: CAPA tidak punya field title sendiri, jadi pakai
             findingTitle (judul finding terkait) sebagai judul kartu. */}
-        <h2 className="text-[16px] text-[#0f2c52] m-0 leading-[1.4] font-bold">{capa.findingTitle || 'Untitled Finding'}</h2>
-        <CapaStatusBadge
-          status={capa.status}
-          onChange={(status) => onStatusChange(capa.id, status)}
-          disabled={updatingStatus}
-        />
+        <h2 className="text-[18px] text-[#0f2c52] m-0 leading-tight font-bold line-clamp-2 break-words flex-1 pr-4">
+          {capa.findingTitle || 'Untitled Finding'}
+        </h2>
+        <div className="shrink-0">
+          <CapaStatusBadge
+            status={capa.status}
+            onChange={(status) => onStatusChange(capa.id, status)}
+            disabled={updatingStatus}
+          />
+        </div>
       </div>
 
-      <p className="text-[13px] text-[#64748b] m-0 mb-[16px]">Initiated: {formatDate(capa.createdAt)}</p>
+      <p className="text-[14px] text-[#64748b] m-0 mb-5">Initiated: {formatDate(capa.createdAt)}</p>
 
-      <div className="bg-[#f8fafc] rounded-[8px] p-[12px] mb-[24px] flex-1">
-        <span className="block text-[11px] font-bold text-[#64748b] uppercase mb-[4px]">Observation Summary</span>
+      <div className="bg-[#f8fafc] rounded-lg p-4 mb-6 flex-1">
+        <span className="block text-[11px] font-bold tracking-widest text-[#475569] uppercase mb-2">Observation Summary</span>
         {/* ⚠️ ASUMSI: "Observation Summary" di desain dipetakan ke rootCause. */}
-        <p className="text-[13.5px] text-[#475569] m-0 leading-[1.5] line-clamp-2">{capa.rootCause || '-'}</p>
+        <p className="text-[15px] text-[#0f2c52] m-0 leading-relaxed line-clamp-3 break-all">{capa.rootCause || '-'}</p>
       </div>
 
       <div className="flex justify-between items-center border-t border-[#f1f5f9] pt-[16px]">

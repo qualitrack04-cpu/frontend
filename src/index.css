@@ -79,29 +79,29 @@ body {
 h1,
 h2 {
   font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+  font-weight: 700;
+  color: #0f2c52;
 }
 
 h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
+  font-size: 40px;
+  letter-spacing: normal;
+  margin: 0 0 24px 0;
 
   @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+    font-size: 24px;
+    margin:16px 0;
   }
 }
 
 h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
+  font-size: 20px;
+  line-height: 1.2;
+  letter-spacing: normal;
+  margin: 0 0 16px;
 
   @media (max-width: 1024px) {
-    font-size: 20px;
+    font-size: 18px;
   }
 }
 
@@ -332,32 +332,31 @@ code {
     transform: translateX(-100%);
     width: 250px;
   }
-  
+
   .sidebar.open {
     transform: translateX(0);
   }
-  
+
   .sidebar-overlay {
     display: block;
   }
-  
+
   .sidebar-mobile-header {
     display: flex;
   }
-  
+
   .btn-mobile-menu {
     display: block;
   }
-  
+
   .table-responsive {
     display: block;
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
-  
+
   .page-container {
     padding: 16px;
   }
 }
-

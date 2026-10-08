@@ -36,7 +36,6 @@ export default function AuditSchedule() {
   const now = new Date();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
-  const [visibleCount, setVisibleCount] = useState(5);
 
   const { data, loading, error } = useFetch(
     () => getAuditSchedule(month, year),
@@ -84,7 +83,7 @@ export default function AuditSchedule() {
           <p className="text-slate-500">Belum ada audit yang dijadwalkan bulan ini.</p>
         )}
 
-        {audits.slice(0, visibleCount).map((audit) => (
+        {audits.slice(0, 5).map((audit) => (
           <div
             key={audit.key}
             className="bg-[#f8fafc] p-[14px_16px] rounded-[8px] border-l-[4px]"
@@ -109,15 +108,6 @@ export default function AuditSchedule() {
             </p>
           </div>
         ))}
-        
-        {visibleCount < audits.length && (
-          <button 
-            onClick={() => setVisibleCount(c => c + 5)}
-            className="mt-[8px] bg-transparent border border-[#cbd5e1] text-[#475569] p-[8px_16px] rounded-[8px] font-semibold text-[13px] cursor-pointer hover:bg-[#f8fafc] hover:text-[#0f2c52] transition-colors self-center"
-          >
-            Load More
-          </button>
-        )}
       </div>
     </div>
   );

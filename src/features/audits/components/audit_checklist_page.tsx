@@ -70,7 +70,7 @@ export default function AuditChecklistPage() {
     return (
       <div className="max-w-full m-0 text-left">
         <button className="inline-flex items-center gap-[8px] bg-transparent border-none text-[#64748b] text-[14px] font-semibold cursor-pointer p-0 mb-[16px] hover:text-[#1e293b]" onClick={() => navigate('/audits')}>← Back to Audits</button>
-        <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 mb-[20px] tracking-[-0.5px] leading-[1.25]">Pilih Checklist</h1>
+        <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Pilih Checklist</h1>
         <p className="text-slate-500 mt-[-6px] mb-[16px] text-[13px]">
           Jadwal {schedule?.clauseRef} ({schedule?.department}) belum punya sesi audit.
           Pilih checklist yang akan dipakai untuk memulai.
@@ -104,7 +104,7 @@ export default function AuditChecklistPage() {
       <button className="inline-flex items-center gap-[8px] bg-transparent border-none text-[#64748b] text-[14px] font-semibold cursor-pointer p-0 mb-[16px] hover:text-[#1e293b]" onClick={() => navigate('/audits')}>← Back to Audits</button>
 
       <div className="flex justify-between items-center mb-[24px]">
-        <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 mb-[0] tracking-[-0.5px] leading-[1.25]">Audit Checklist</h1>
+        <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Audit Checklist</h1>
         <span className="bg-[#fef3c7] text-[#92400e] p-[6px_16px] rounded-[20px] text-[14px] font-bold">{pendingCount} Pending Items</span>
       </div>
 

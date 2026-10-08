@@ -50,7 +50,7 @@ export default function SpcResultDetailPage() {
       <button className="inline-flex items-center gap-[8px] bg-transparent border-none text-[#64748b] text-[14px] font-semibold cursor-pointer p-0 mb-[16px] hover:text-[#1e293b]" onClick={() => navigate('/spc-analysis/history')}>
         ← Back
       </button>
-      <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 mb-[20px] tracking-[-0.5px] leading-[1.25]">Analysis Result</h1>
+      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Analysis Result</h1>
 
       <div className="flex flex-col lg:flex-row gap-[24px] bg-white rounded-[12px] border border-[#e2e8f0] p-[24px]">
         <div className="flex-[0_0_auto] lg:flex-[0_0_320px] w-full lg:w-auto box-border bg-[#f8fafc] p-[20px] rounded-[8px] border border-[#e2e8f0]">

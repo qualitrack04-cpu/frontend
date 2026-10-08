@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, ArrowLeft } from 'lucide-react';
 import { useForgotPasswordFlow } from '../hooks/use_forgot_password_flow';
@@ -19,44 +19,54 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-white flex-row-reverse">
-      <AuthBrandPanel />
-
-      <div className="flex flex-col justify-center w-full max-w-sm mx-auto px-8 py-10">
-        <h2 className="text-[#0f2c52] text-[28px] font-bold mb-2 text-left">Forgot Password?</h2>
-        <p className="text-[#64748b] text-sm mb-6 text-left">
-          Enter your registered work email below. We will send you an OTP Code to reset your password.
-        </p>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-1">
-          <div className="relative flex items-center mb-4">
-            <Mail size={16} className="absolute left-3.5 text-[#64748b] pointer-events-none" />
-            <input
-              type="email"
-              placeholder="name@company.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full pl-10 pr-4 py-3 border border-[#cbd5e1] rounded-lg bg-white text-[#1f2937] text-sm outline-none transition-all focus:border-[#0f2c52] focus:ring-2 focus:ring-[#0f2c52]/10"
-            />
+    <div className="relative flex min-h-screen w-full overflow-hidden bg-white [&_*]:box-border">
+      {/* ── Left: Form area ── */}
+      <div className="flex flex-1 flex-col items-center lg:items-start justify-center px-6 lg:pl-[85px] py-12 z-10">
+        <div className="w-full max-w-[444px] bg-white rounded-[20px] shadow-2xl p-8 text-left">
+          <div className="text-[#0f2c52] text-[25px] leading-8 font-bold !m-0 !mb-5 text-center !tracking-normal">
+            Forget Password?
           </div>
+          <p className="text-[14px] leading-[22px] text-[#64748b] text-center !m-0 !mb-[26px]">
+            Enter your registered work email below. We will send you a OTP Code to reset your password.
+          </p>
 
-          {error && <p className="text-red-600 text-sm mb-2 text-left">{error}</p>}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-0">
+            <div className="relative flex items-center mb-7">
+              <Mail size={16} className="absolute left-3.5 text-[#64748b] pointer-events-none" />
+              <input
+                type="email"
+                placeholder="name@company.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full h-[42px] pl-11 pr-4 py-0 border border-slate-200 rounded-lg bg-white text-[#1f2937] text-[15px] outline-none transition-all focus:border-[#0f2c52] focus:ring-2 focus:ring-[#0f2c52]/10"
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-[#0f2c52] hover:bg-[#0c2444] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm tracking-wide"
-          >
-            {loading ? 'Sending...' : 'SEND OTP CODE'}
-          </button>
-        </form>
+            {error && <p className="text-red-600 text-sm !m-0 !mb-3 text-left">{error}</p>}
 
-        <hr className="border-t border-[#e2e8f0] my-5" />
-        <Link to="/login" className="flex items-center gap-1.5 text-[#475569] text-sm font-medium no-underline hover:text-[#0f2c52]">
-          <ArrowLeft size={14} /> Back to Sign In
-        </Link>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full h-[44px] p-0 bg-[#0f2c52] hover:bg-[#0c2444] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold rounded-lg border-none flex items-center justify-center transition-colors text-base tracking-wide"
+            >
+              {loading ? 'SENDING...' : 'SEND OTP CODE'}
+            </button>
+          </form>
+
+          <div className="border-t border-slate-100 !mt-5 pt-[15px] flex justify-center">
+            <Link
+              to="/login"
+              className="text-[#334155] hover:text-[#0f2c52] font-medium text-base leading-6 no-underline flex items-center gap-2 transition-colors"
+            >
+              <ArrowLeft size={16} /> Back to Sign In
+            </Link>
+          </div>
+        </div>
       </div>
+
+      {/* ── Right: Brand Panel ── */}
+      <AuthBrandPanel side="right" />
     </div>
   );
 }

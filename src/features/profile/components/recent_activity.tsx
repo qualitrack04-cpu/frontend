@@ -18,7 +18,6 @@ function relativeTime(iso: string) {
 
 export default function RecentActivity() {
   const { data, loading, error } = useRecentActivity();
-  const [visibleCount, setVisibleCount] = useState(5);
 
   return (
     <div className="bg-white rounded-[12px] p-[24px] border border-[#e2e8f0] flex flex-col h-full">
@@ -33,7 +32,7 @@ export default function RecentActivity() {
       )}
 
       <ul className="list-none p-0 m-0 flex flex-col gap-[20px]">
-        {data.slice(0, visibleCount).map((item, i) => {
+        {data.slice(0, 5).map((item, i) => {
           const meta = activityMeta(item.activityType);
           return (
             <li key={`${item.relatedId}-${item.timestamp}-${i}`} className="flex gap-[16px] relative before:absolute before:content-[''] before:top-[24px] before:bottom-[-20px] before:left-[5px] before:w-[2px] before:bg-[#e2e8f0] last:before:hidden">
@@ -58,15 +57,6 @@ export default function RecentActivity() {
           );
         })}
       </ul>
-      
-      {visibleCount < data.length && (
-        <button 
-          onClick={() => setVisibleCount(c => c + 5)}
-          className="mt-[20px] bg-transparent border border-[#cbd5e1] text-[#475569] p-[8px_16px] rounded-[8px] font-semibold text-[13px] cursor-pointer hover:bg-[#f8fafc] hover:text-[#0f2c52] transition-colors self-center"
-        >
-          Load More
-        </button>
-      )}
     </div>
   );
 }

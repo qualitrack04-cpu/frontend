@@ -55,7 +55,7 @@ export default function SpcHistoryPage() {
 
   return (
     <div className="max-w-full m-0 text-left">
-      <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 mb-[20px] tracking-[-0.5px] leading-[1.25]">Analyses History</h1>
+      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Analyses History</h1>
 
       <div className="flex gap-[16px] mb-[24px]">
         <div className="flex-1 max-w-[250px] mb-0 flex flex-col gap-[8px]">

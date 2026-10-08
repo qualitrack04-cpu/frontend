@@ -28,7 +28,7 @@ export default function ProfilePage() {
   if (!showKpi || !kpi) {
     return (
       <div className="max-w-full m-0 text-left">
-        <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-[24px]">
+        <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-[24px] items-start">
           <ProfileIdentityCard profile={profile} />
           <AccountDetailsCard profile={profile} />
         </div>
@@ -50,80 +50,89 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-full m-0 text-left">
-      <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr_1.2fr_240px] gap-[20px] mb-[24px]">
-
-        <ProfileIdentityCard profile={profile}>
-          <div className="flex gap-[24px] mt-[24px] pt-[20px] border-t border-[#e2e8f0] w-full justify-around">
-            <div className="flex flex-col gap-[4px] items-center">
-              <strong className="text-[20px] text-[#0f2c52] font-bold leading-none">{kpi.totalAssigned}</strong>
-              <span className="text-[12px] text-[#64748b] uppercase tracking-[0.5px] font-semibold">{kpi.kpiBasis === 'Capa' ? 'CAPA' : 'Audits'}</span>
-            </div>
-            <div className="flex flex-col gap-[4px] items-center">
-              <strong className="text-[20px] text-[#0f2c52] font-bold leading-none">{(Math.min(qualityPct / 20, 5)).toFixed(1)}</strong>
-              <span className="text-[12px] text-[#64748b] uppercase tracking-[0.5px] font-semibold">Rating</span>
-            </div>
-          </div>
-        </ProfileIdentityCard>
-
-        <div className="bg-white rounded-[12px] p-[24px] border border-[#e2e8f0] flex flex-col items-center text-center justify-center">
-          <p className="text-[12px] font-bold text-[#64748b] tracking-[1px] m-0 mb-[16px]">QUALITY SCORE</p>
-          <div className="w-[110px] h-[110px] rounded-full bg-[#f0fdf4] border-[4px] border-[#22c55e] flex items-center justify-center text-[32px] font-[800] text-[#166534] mb-[12px] shadow-[0_4px_12px_rgba(34,197,94,0.15)]">{qualityPct}<span className="text-[16px] font-bold text-[#15803d] ml-[2px]">%</span></div>
-          <span className="text-[14px] font-bold text-[#15803d] mb-[8px]">{qualityLabel}</span>
-          <p className="text-[13px] text-[#64748b] m-0">
-            {kpi.totalCompletedOnTime}/{kpi.totalCompleted} {taskLabel} tepat waktu
-          </p>
-        </div>
-
-        <div className="bg-[#0f2c52] text-white rounded-[12px] p-[24px] flex flex-col">
-          <p className="text-[12px] font-bold text-[#94a3b8] tracking-[1px] m-0 mb-[16px]">SUCCESS RATE</p>
-          <p className="text-[42px] font-[800] m-0 mb-[16px] text-white leading-none">
-            {successPct}%{' '}
-            <small className="text-[16px] font-normal text-[#94a3b8] ml-[8px]">({kpi.totalCompleted}/{kpi.totalAssigned})</small>
-          </p>
-          <div className="w-full h-[8px] bg-[rgba(255,255,255,0.1)] rounded-[4px] mb-[12px] overflow-hidden">
-            <div className="h-full bg-[#38bdf8] rounded-[4px] transition-[width] duration-500 ease-out" style={{ width: `${Math.min(successPct, 100)}%` }} />
-          </div>
-          <div className="flex justify-between items-center w-full mb-[24px]">
-            <span className="text-[13px] text-[#94a3b8] m-0">Target: 85%</span>
-            <span className={`p-[2px_8px] rounded-[12px] text-[12px] font-bold ${targetDiff >= 0 ? 'bg-[rgba(56,189,248,0.2)] text-[#38bdf8]' : 'bg-[rgba(239,68,68,0.2)] text-[#fca5a5]'}`}>
-              {diffLabel}
-            </span>
-          </div>
-          <p className="mt-auto mb-0 mx-0 text-[13px] text-[#94a3b8] pt-[16px] border-t border-[rgba(255,255,255,0.1)] w-full">
-            Volume: {kpi.totalCompleted}/{kpi.totalAssigned} {taskLabel}
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-[16px]">
-          <div className="bg-white rounded-[12px] border border-[#e2e8f0] p-[20px] flex-1 flex flex-col justify-center">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-[28px] font-[800] text-[#0f2c52] m-0 mb-[4px] leading-none">{kpi.totalCompletedOnTime}</p>
-                <p className="text-[12px] font-bold text-[#64748b] m-0 tracking-[0.5px]">ON TIME</p>
+      <div className="flex flex-col lg:flex-row gap-[24px] items-start">
+        {/* Kiri: Profile & Account Details */}
+        <div className="flex flex-col gap-[24px] w-full lg:w-[280px] shrink-0">
+          <ProfileIdentityCard profile={profile}>
+            <div className="flex gap-[24px] mt-[24px] pt-[20px] border-t border-[#e2e8f0] w-full justify-around">
+              <div className="flex flex-col gap-[4px] items-center">
+                <strong className="text-[20px] text-[#0f2c52] font-bold leading-none">{kpi.totalAssigned}</strong>
+                <span className="text-[12px] text-[#64748b] uppercase tracking-[0.5px] font-semibold">{kpi.kpiBasis === 'Capa' ? 'CAPA' : 'Audits'}</span>
               </div>
-              <span className="w-[44px] h-[44px] rounded-[12px] flex items-center justify-center bg-[#dcfce7] text-[#16a34a]">
-                <Clock size={18} strokeWidth={2} />
-              </span>
-            </div>
-          </div>
-          <div className="bg-white rounded-[12px] border border-[#e2e8f0] p-[20px] flex-1 flex flex-col justify-center">
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-[28px] font-[800] text-[#dc2626] m-0 mb-[4px] leading-none">{kpi.totalOverdue}</p>
-                <p className="text-[12px] font-bold text-[#64748b] m-0 tracking-[0.5px]">OVERDUE</p>
+              <div className="flex flex-col gap-[4px] items-center">
+                <strong className="text-[20px] text-[#0f2c52] font-bold leading-none">{(Math.min(qualityPct / 20, 5)).toFixed(1)}</strong>
+                <span className="text-[12px] text-[#64748b] uppercase tracking-[0.5px] font-semibold">Rating</span>
               </div>
-              <span className="w-[44px] h-[44px] rounded-[12px] flex items-center justify-center bg-[#fee2e2] text-[#dc2626]">
-                <AlertTriangle size={18} strokeWidth={2} />
-              </span>
             </div>
-          </div>
+          </ProfileIdentityCard>
+
+          <AccountDetailsCard profile={profile} />
         </div>
 
-      </div>
+        {/* Kanan: KPIs & Recent Activity */}
+        <div className="flex flex-col gap-[24px] flex-1 min-w-0">
+          {/* KPI Row */}
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_1.2fr_240px] gap-[20px]">
+            <div className="bg-white rounded-[12px] p-[24px] border border-[#e2e8f0] flex flex-col justify-between">
+              <p className="text-[12px] font-bold text-[#64748b] tracking-[1px] m-0 mb-[16px] text-left">QUALITY SCORE</p>
+              <div className="flex flex-col items-center justify-center mb-[8px]">
+                <div className="w-[120px] h-[120px] rounded-full bg-white border-[8px] border-[#f59e0b] flex items-center justify-center text-[36px] font-[800] text-[#0f2c52] mb-[16px] leading-none">
+                  {qualityPct}<span className="text-[18px] font-bold text-[#0f2c52] ml-[2px]">%</span>
+                </div>
+                <span className="bg-[#fef3c7] text-[#d97706] px-[16px] py-[4px] rounded-full text-[13px] font-bold">{qualityLabel}</span>
+              </div>
+            </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-[24px]">
-        <AccountDetailsCard profile={profile} />
-        <RecentActivity />
+            <div className="bg-[#0f2c52] text-white rounded-[12px] p-[24px] flex flex-col justify-between">
+              <div>
+                <p className="text-[12px] font-bold text-[#94a3b8] tracking-[1px] m-0 mb-[16px] text-left">SUCCESS RATE</p>
+                <p className="text-[48px] font-[800] m-0 text-white leading-none flex items-baseline gap-[8px]">
+                  {successPct}%
+                  <span className="text-[16px] font-normal text-[#94a3b8]">({kpi.totalCompleted}/{kpi.totalAssigned})</span>
+                </p>
+              </div>
+              <div className="mt-[24px]">
+                <div className="flex justify-between items-center w-full mb-[8px]">
+                  <span className="text-[13px] text-[#94a3b8] m-0">Target: 85%</span>
+                  <span className="text-[13px] font-bold text-[#94a3b8]">
+                    {diffLabel}
+                  </span>
+                </div>
+                <div className="w-full h-[8px] bg-[rgba(255,255,255,0.1)] rounded-[4px] overflow-hidden">
+                  <div className="h-full bg-[#f59e0b] rounded-[4px] transition-[width] duration-500 ease-out" style={{ width: `${Math.min(successPct, 100)}%` }} />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-[16px]">
+              <div className="bg-white rounded-[12px] border border-[#e2e8f0] p-[20px] flex-1 flex flex-col justify-center">
+                <div className="flex justify-between items-center">
+                  <div className="flex flex-col gap-[4px] text-left">
+                    <p className="text-[32px] font-[800] text-[#0f2c52] m-0 leading-none">{kpi.totalCompletedOnTime}</p>
+                    <p className="text-[12px] font-bold text-[#64748b] m-0 tracking-[0.5px]">ON TIME</p>
+                  </div>
+                  <span className="w-[48px] h-[48px] rounded-full flex items-center justify-center bg-[#ecfdf5] text-[#10b981]">
+                    <Clock size={20} strokeWidth={2} />
+                  </span>
+                </div>
+              </div>
+              <div className="bg-white rounded-[12px] border border-[#e2e8f0] p-[20px] flex-1 flex flex-col justify-center">
+                <div className="flex justify-between items-center">
+                  <div className="flex flex-col gap-[4px] text-left">
+                    <p className="text-[32px] font-[800] text-[#dc2626] m-0 leading-none">{kpi.totalOverdue}</p>
+                    <p className="text-[12px] font-bold text-[#64748b] m-0 tracking-[0.5px]">OVERDUE</p>
+                  </div>
+                  <span className="w-[48px] h-[48px] rounded-full flex items-center justify-center bg-[#fef2f2] text-[#ef4444]">
+                    <AlertTriangle size={20} strokeWidth={2} />
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Activity */}
+          <RecentActivity />
+        </div>
       </div>
     </div>
   );
@@ -165,11 +174,11 @@ function AccountDetailsCard({ profile }: { profile: ProfileData }) {
         <label className="text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px]">Email</label>
         <div className="text-[15px] text-[#1e293b] font-medium bg-[#f8fafc] p-[12px_14px] rounded-[8px] border border-[#f1f5f9]">{profile.email}</div>
       </div>
-      <div className="flex flex-col gap-[6px] mb-[16px]">
+      <div className="flex flex-col gap-[6px] mb-[24px]">
         <label className="text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px]">Role</label>
         <div className="text-[15px] text-[#1e293b] font-medium bg-[#f8fafc] p-[12px_14px] rounded-[8px] border border-[#f1f5f9]">{profile.role}</div>
       </div>
-      <Link to="/profile/edit" className="mt-auto bg-[#f1f5f9] text-[#475569] no-underline text-center p-[12px] rounded-[8px] text-[14px] font-semibold transition-all duration-200 hover:bg-[#e2e8f0] hover:text-[#1e293b]">
+      <Link to="/profile/edit" className="mt-[8px] bg-[#f1f5f9] text-[#475569] no-underline text-center p-[12px] rounded-[8px] text-[14px] font-semibold transition-all duration-200 hover:bg-[#e2e8f0] hover:text-[#1e293b]">
         Edit Profile
       </Link>
     </div>

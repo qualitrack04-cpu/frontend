@@ -10,7 +10,7 @@ export default function FindingsPage() {
   return (
     <div className="max-w-full m-0 text-left">
       <div className="flex justify-between items-center mb-[20px] flex-wrap gap-[12px]">
-        <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 tracking-[-0.5px] leading-[1.25]">Findings</h1>
+        <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Findings</h1>
         <Link to="/findings/new" className="flex items-center gap-[8px] bg-[#0f2c52] text-white px-[16px] py-[10px] rounded-[8px] no-underline text-[14px] font-semibold hover:bg-[#0c2444]">
           <Plus size={18} /> New Findings
         </Link>

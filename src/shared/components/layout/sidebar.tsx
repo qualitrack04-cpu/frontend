@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -27,14 +28,13 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  const handleLogout = () => {
-    if (window.confirm("Apakah Anda yakin ingin logout?")) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('role');
-      localStorage.removeItem('fullName');
-      navigate('/login', { replace: true });
-    }
+  const confirmLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    localStorage.removeItem('fullName');
+    navigate('/login', { replace: true });
   };
 
   return (
@@ -73,11 +73,23 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           ))}
         </nav>
 
-        <button className="flex items-center gap-[12px] bg-transparent border-none text-[#cbd5e1] text-[14px] font-medium p-[10px] cursor-pointer mt-auto hover:text-white" onClick={handleLogout}>
+        <button className="flex items-center gap-[12px] bg-transparent border-none text-[#cbd5e1] text-[14px] font-medium p-[10px] cursor-pointer mt-auto hover:text-white" onClick={() => setShowLogoutModal(true)}>
           <LogOut size={18} strokeWidth={1.75} />
           <span>Logout</span>
         </button>
       </aside>
+
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-[rgba(0,0,0,0.4)] flex items-center justify-center z-[1000] backdrop-blur-[2px]">
+          <div className="bg-white p-[30px] rounded-[12px] max-w-[400px] text-center shadow-[0_10px_25px_rgba(0,0,0,0.15)] animate-[slideUp_0.3s_ease]">
+            <p className="mb-[20px] text-[15px] text-[#475569] leading-[1.5]">Are you sure you want to logout? You will need to login again to access your account.</p>
+            <button className="bg-[#dc2626] text-white border-none p-[12px_24px] rounded-[8px] font-semibold cursor-pointer w-full mb-[12px] transition-colors hover:bg-[#b91c1c]" onClick={confirmLogout}>
+              <LogOut size={16} className="inline-block mr-[8px] align-text-bottom" /> Logout
+            </button>
+            <button className="bg-transparent border-none text-[#64748b] font-semibold cursor-pointer hover:text-[#334155] transition-colors" onClick={() => setShowLogoutModal(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

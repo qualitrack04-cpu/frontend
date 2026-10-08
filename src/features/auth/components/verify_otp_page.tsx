@@ -32,7 +32,9 @@ export default function VerifyOtpPage() {
     return () => clearInterval(timer);
   }, [secondsLeft]);
 
-  const formattedTime = `${String(Math.floor(secondsLeft / 60)).padStart(2, '0')}:${String(secondsLeft % 60).padStart(2, '0')}`;
+  const formattedTime = `${String(Math.floor(secondsLeft / 60)).padStart(2, '0')}:${String(
+    secondsLeft % 60
+  ).padStart(2, '0')}`;
 
   const handleDigitChange = (index: number, value: string) => {
     const digit = value.replace(/[^0-9]/g, '').slice(-1);
@@ -43,7 +45,8 @@ export default function VerifyOtpPage() {
   };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && !digits[index] && index > 0) inputsRef.current[index - 1]?.focus();
+    if (e.key === 'Backspace' && !digits[index] && index > 0)
+      inputsRef.current[index - 1]?.focus();
   };
 
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
@@ -84,7 +87,6 @@ export default function VerifyOtpPage() {
       return;
     }
     setLocalError(null);
-
     try {
       if (fromSignup) {
         setLocalLoading(true);
@@ -105,56 +107,79 @@ export default function VerifyOtpPage() {
   const shownError = localError ?? error;
 
   return (
-    <div className="flex min-h-screen bg-white flex-row-reverse">
-      <AuthBrandPanel />
-
-      <div className="flex flex-col justify-center w-full max-w-sm mx-auto px-8 py-10">
-        <h2 className="text-[#0f2c52] text-[28px] font-bold mb-2 text-left">Enter Verification Code</h2>
-        <p className="text-[#64748b] text-sm mb-6 text-left">
-          We have sent a {OTP_LENGTH}-digit verification code to your registered work email{' '}
-          <strong className="text-[#1f2937]">{email}</strong>
-        </p>
-
-        <form onSubmit={handleSubmit} className="flex flex-col gap-1">
-          <div className="flex gap-3 justify-center mb-5">
-            {digits.map((digit, index) => (
-              <input
-                key={index}
-                ref={(el) => { inputsRef.current[index] = el; }}
-                type="text"
-                inputMode="numeric"
-                maxLength={1}
-                value={digit}
-                onChange={(e) => handleDigitChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
-                onPaste={handlePaste}
-                className="w-14 h-14 text-center text-xl font-bold border-2 border-[#cbd5e1] rounded-xl bg-white text-[#0f2c52] outline-none transition-all focus:border-[#1e6fd9] focus:ring-2 focus:ring-[#1e6fd9]/20"
-              />
-            ))}
+    <div className="relative flex min-h-screen w-full overflow-hidden bg-[#f3f4f6]">
+      {/* ── Left: Form area ── */}
+      <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 z-10">
+        <div className="w-full max-w-[420px] bg-white rounded-2xl shadow-2xl border border-slate-100 p-8 sm:p-[40px]">
+          <div className="text-[#0f2c52] text-[28px] sm:text-[32px] font-bold !m-0 !mb-2 text-center !tracking-normal">
+            Verification Code
           </div>
-
-          <p className="text-center text-sm text-[#64748b] mb-4">
-            {secondsLeft > 0 ? (
-              `Resend code in ${formattedTime}`
-            ) : (
-              <button type="button" onClick={handleResend} className="text-[#1e6fd9] font-semibold bg-transparent border-none cursor-pointer hover:underline p-0 text-sm">
-                Resend code
-              </button>
-            )}
+          <p className="text-sm text-[#475569] text-center mb-8 leading-relaxed max-w-[280px] mx-auto !m-0 !mt-2">
+            We have sent a {OTP_LENGTH}-digit code to{' '}
+            <span className="font-semibold text-[#0f2c52]">{email}</span>
           </p>
 
-          {shownError && <p className="text-red-600 text-sm mb-2 text-left">{shownError}</p>}
+          <form onSubmit={handleSubmit} className="flex flex-col gap-0">
+            {/* OTP digit boxes */}
+            <div className="flex gap-4 justify-center mb-6 mt-2">
+              {digits.map((digit, index) => (
+                <input
+                  key={index}
+                  id={`otp-${index}`}
+                  ref={(el) => { inputsRef.current[index] = el; }}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={digit}
+                  onChange={(e) => handleDigitChange(index, e.target.value)}
+                  onKeyDown={(e) => handleKeyDown(index, e)}
+                  onPaste={handlePaste}
+                  className="w-[56px] h-[56px] text-center text-[22px] font-bold bg-slate-50 border border-slate-200 rounded-xl text-[#0f2c52] outline-none transition-all focus:border-[#0f2c52] focus:ring-2 focus:ring-[#0f2c52]/10 focus:bg-white shadow-sm"
+                />
+              ))}
+            </div>
 
-          <button type="submit" disabled={isBusy} className="w-full bg-[#0f2c52] hover:bg-[#0c2444] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm tracking-wide">
-            {isBusy ? 'Verifying...' : 'VERIFY & PROCEED'}
-          </button>
-        </form>
+            {/* Resend timer */}
+            <p className="text-sm text-[#475569] mb-5 text-center">
+              {secondsLeft > 0 ? (
+                <>Resend code in <span className="font-semibold">{formattedTime}</span></>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  className="text-[#1e6fd9] font-bold bg-transparent border-none cursor-pointer p-0 text-sm"
+                >
+                  Resend code
+                </button>
+              )}
+            </p>
 
-        <hr className="border-t border-[#e2e8f0] my-5" />
-        <Link to="/login" className="flex items-center gap-1.5 text-[#475569] text-sm font-medium no-underline hover:text-[#0f2c52]">
-          <ArrowLeft size={14} /> Back
-        </Link>
+            {shownError && (
+              <p className="text-red-600 text-sm mb-4 text-center">{shownError}</p>
+            )}
+
+            <button
+              type="submit"
+              disabled={isBusy}
+              className="w-full bg-[#0f2c52] hover:bg-[#0c2444] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm tracking-wide"
+            >
+              {isBusy ? 'VERIFYING...' : 'VERIFY & PROCEED'}
+            </button>
+          </form>
+
+          <div className="flex justify-center mt-6">
+            <Link
+              to={fromSignup ? '/signup' : '/forgot-password'}
+              className="text-[#475569] hover:text-[#0f2c52] font-medium text-[13px] no-underline flex items-center gap-1.5 transition-colors"
+            >
+              <ArrowLeft size={14} /> Back
+            </Link>
+          </div>
+        </div>
       </div>
+
+      {/* ── Right: Brand Panel ── */}
+      <AuthBrandPanel side="right" />
     </div>
   );
 }

@@ -186,7 +186,7 @@ export default function FindingFormPage({ mode }: Props) {
       <Link to="/findings" className="inline-flex items-center gap-[8px] text-[#64748b] text-[14px] font-semibold no-underline mb-[24px] transition-colors duration-200 hover:text-[#0f2c52]">
         <ArrowLeft size={18} /> Back to Finding
       </Link>
-      <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 mb-[8px] tracking-[-0.5px] leading-[1.25]">{isEdit ? 'Edit Finding' : 'New Finding'}</h1>
+      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">{isEdit ? 'Edit Finding' : 'New Finding'}</h1>
       <p className="text-slate-500 mt-[-6px] mb-[24px] text-[13px]">Record details of a non-conformance.</p>
 
       <form className="grid grid-cols-1 md:grid-cols-[1fr_340px] gap-[32px] items-start" onSubmit={handleSubmit} noValidate>

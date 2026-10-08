@@ -69,7 +69,7 @@ export default function AuditReportPreviewPage() {
   return (
     <div className="max-w-full m-0 text-left">
       <button className="inline-flex items-center gap-[8px] bg-transparent border-none text-[#64748b] text-[14px] font-semibold cursor-pointer p-0 mb-[16px] hover:text-[#1e293b]" onClick={() => navigate('/audits')}>← Back to Audits</button>
-      <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 mb-[20px] tracking-[-0.5px] leading-[1.25]">Audit Report Preview</h1>
+      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Audit Report Preview</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-[1fr_340px] gap-[32px] items-start">
         <div className="flex flex-col gap-[24px]">

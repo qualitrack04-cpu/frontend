@@ -29,7 +29,7 @@ export default function CreateCapaPage() {
       <Link to="/capa" className="inline-flex items-center gap-[8px] text-[#64748b] no-underline text-[14px] font-semibold mb-[16px] transition-colors hover:text-[#1e293b]">
         <ArrowLeft size={18} /> Back to CAPA List
       </Link>
-      <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 mb-[20px] tracking-[-0.5px] leading-[1.25]">Create CAPA</h1>
+      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Create CAPA</h1>
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-[24px] items-start">
         <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-[24px]">

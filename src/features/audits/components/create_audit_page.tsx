@@ -51,7 +51,7 @@ export default function CreateAuditPlanPage() {
   return (
     <div className="max-w-full m-0 text-left">
       <button className="back-btn" onClick={() => navigate('/audits')}>← Back to Audits</button>
-      <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 mb-[20px] tracking-[-0.5px] leading-[1.25]">{isEdit ? 'Edit Audit Plan' : 'Create Audit Plan'}</h1>
+      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">{isEdit ? 'Edit Audit Plan' : 'Create Audit Plan'}</h1>
 
       <form onSubmit={handleSubmit} className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] max-w-[760px]">
         <div className="text-[14px] font-bold text-[#0f2c52] uppercase tracking-[0.5px] m-0 mb-[16px]">Audit Details</div>

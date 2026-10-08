@@ -29,7 +29,7 @@ export default function FindingDetailPage() {
       <Link to="/findings" className="inline-flex items-center gap-[8px] text-[#64748b] text-[14px] font-semibold no-underline mb-[24px] transition-colors duration-200 hover:text-[#0f2c52]">
         <ArrowLeft size={18} /> Back to Findings
       </Link>
-      <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 mb-[20px] tracking-[-0.5px] leading-[1.25]">Findings Detail</h1>
+      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Findings Detail</h1>
 
       {finding.loading && <p className="text-slate-500">Memuat temuan...</p>}
       {finding.error && <p className="text-red-600">{finding.error}</p>}

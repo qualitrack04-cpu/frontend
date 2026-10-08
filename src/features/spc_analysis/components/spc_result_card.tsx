@@ -66,9 +66,9 @@ export default function SpcResultCard({ result }: Props) {
       <div>
         <h4 className="text-[16px] text-[#0f2c52] m-0 mb-[20px] font-bold">Control Chart</h4>
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 20, left: 0 }}>
+          <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 25, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="sample" label={{ value: 'Sample', position: 'insideBottom', offset: -15 }} />
+            <XAxis dataKey="sample" label={{ value: 'Sample', position: 'insideBottom', offset: -20 }} />
             <YAxis domain={['dataMin - 0.5', 'dataMax + 0.5']} />
             <Tooltip />
 

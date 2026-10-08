@@ -81,6 +81,7 @@ export default function QualityTrend() {
                 strokeWidth={3}
                 fillOpacity={1} 
                 fill="url(#colorScore)" 
+                dot={{ r: 4, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }}
                 activeDot={{ r: 6, fill: '#3b82f6', stroke: 'white', strokeWidth: 2 }}
               />
             </AreaChart>

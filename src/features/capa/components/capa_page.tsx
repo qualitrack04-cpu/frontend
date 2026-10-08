@@ -35,7 +35,7 @@ export default function CapaPage() {
   return (
     <div className="max-w-full m-0 text-left">
       <div className="flex justify-between items-center mb-[20px] flex-wrap gap-[12px]">
-        <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 tracking-[-0.5px] leading-[1.25]">CAPA</h1>
+        <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">CAPA</h1>
         {allowCreate && (
           <Link to="/capa/new" className="flex items-center gap-[8px] bg-[#0f2c52] text-white px-[16px] py-[10px] rounded-[8px] no-underline text-[14px] font-semibold hover:bg-[#0c2444]">
             <Plus size={18} /> New CAPA
@@ -50,7 +50,7 @@ export default function CapaPage() {
         <p className="text-slate-500">Belum ada CAPA. Tambahkan lewat tombol New CAPA.</p>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-[20px]">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         {items.map((capa) => (
           <CapaCard
             key={capa.id}

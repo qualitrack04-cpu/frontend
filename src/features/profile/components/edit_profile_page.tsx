@@ -83,7 +83,7 @@ export default function EditProfilePage() {
   return (
     <div className="max-w-full m-0 text-left">
       <button className="back-btn" onClick={() => navigate('/profile')}>← Back</button>
-      <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 mb-[8px] tracking-[-0.5px] leading-[1.25]">Edit Profile</h1>
+      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Edit Profile</h1>
       <p className="text-slate-500 mt-[-6px] mb-[24px] text-[13px]">Manage your personal information and security preferences.</p>
 
       <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-[24px] items-start">
@@ -184,7 +184,7 @@ export default function EditProfilePage() {
         <div className="fixed inset-0 bg-[rgba(0,0,0,0.4)] flex items-center justify-center z-[1000] backdrop-blur-[2px]">
           <div className="bg-white p-[30px] rounded-[12px] max-w-[400px] text-center shadow-[0_10px_25px_rgba(0,0,0,0.15)] animate-[slideUp_0.3s_ease]">
             <p className="mb-[20px] text-[15px] text-[#475569] leading-[1.5]">Are you sure you want to save the changes to your profile? This action will update your account information.</p>
-            <button className="bg-[#0f2c52] text-white border-none p-[12px_24px] rounded-[8px] font-semibold cursor-pointer w-full mb-[12px] transition-colors hover:bg-[#0c2444] disabled:opacity-50" onClick={handleConfirmSave} disabled={saving}>
+            <button className="bg-[#16a34a] text-white border-none p-[12px_24px] rounded-[8px] font-semibold cursor-pointer w-full mb-[12px] transition-colors hover:bg-[#15803d] disabled:opacity-50" onClick={handleConfirmSave} disabled={saving}>
               {saving ? 'Saving...' : '✎ Save'}
             </button>
             <button className="bg-transparent border-none text-[#64748b] font-semibold cursor-pointer hover:text-[#334155] transition-colors" onClick={() => setShowConfirmModal(false)}>Cancel</button>

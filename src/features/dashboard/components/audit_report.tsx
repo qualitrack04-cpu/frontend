@@ -16,7 +16,6 @@ export default function AuditReport() {
   const now = new Date();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
-  const [visibleCount, setVisibleCount] = useState(4);
 
   const { data, loading, error } = useFetch(
     () => getMonthlyReport(month, year),
@@ -71,7 +70,7 @@ export default function AuditReport() {
       {data && reportCards.length > 0 && (
         <div className="flex flex-col gap-[16px]">
           <div className="grid grid-cols-4 gap-[16px] max-[1100px]:grid-cols-2 max-[600px]:grid-cols-1">
-            {reportCards.slice(0, visibleCount).map((row, i) => (
+            {reportCards.slice(0, 5).map((row, i) => (
               <div key={`${row.department}-${row.scheduledDate}-${i}`} className="bg-white border border-[#e2e8f0] rounded-[12px] p-[16px] flex flex-col gap-[14px]">
                 <div className="bg-[#eef1fb] rounded-[8px] p-[16px] flex flex-col gap-[8px]">
                   <span className="block h-[8px] rounded-full bg-[#d6dcf5] w-[60%]" />
@@ -111,15 +110,6 @@ export default function AuditReport() {
               </div>
             ))}
           </div>
-          
-          {visibleCount < reportCards.length && (
-            <button 
-              onClick={() => setVisibleCount(c => c + 4)}
-              className="bg-transparent border border-[#cbd5e1] text-[#475569] p-[8px_16px] rounded-[8px] font-semibold text-[13px] cursor-pointer hover:bg-[#f8fafc] hover:text-[#0f2c52] transition-colors self-center"
-            >
-              Load More
-            </button>
-          )}
         </div>
       )}
     </div>

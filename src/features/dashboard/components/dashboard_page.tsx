@@ -9,8 +9,8 @@ export default function DashboardPage() {
 
   return (
     <div className="max-w-full m-0 text-left">
-      <h1 className="text-[3rem] font-bold text-[#0f2c52] m-0 mb-[20px] tracking-[-0.5px] leading-[1.25]">Hello, {fullName}</h1>
-      <p className="text-slate-500 mt-[-6px] mb-[24px] text-[13px]">Welcome back to your dashboard</p>
+      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Hello, {fullName}!</h1>
+      <p className="text-slate-500 m-0 mb-[24px] text-[14px]">Welcome back to your dashboard</p>
 
       <QualityTrend />
 
