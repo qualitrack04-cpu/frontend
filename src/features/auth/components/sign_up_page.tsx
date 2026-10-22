@@ -5,7 +5,6 @@ import { register } from '../api/auth_api';
 import AuthBrandPanel from './auth_brand_panel';
 
 const ROLE_OPTIONS = [
-  { value: 'Admin', label: 'Admin' },
   { value: 'AuditorInternal', label: 'Auditor Internal' },
   { value: 'QualityManager', label: 'Quality Manager' },
 ] as const;

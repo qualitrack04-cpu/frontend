@@ -22,23 +22,65 @@ export async function getUsers(search?: string, role?: string, status?: string):
   if (role) params.append('role', role);
   if (status) params.append('status', status);
 
-  const response = await api.get(`/admin/users?${params.toString()}`);
-  return response.data;
+  try {
+    // Primary: /users (Dika's active UserController endpoint)
+    const response = await api.get(`/users?${params.toString()}`);
+    return response.data;
+  } catch (err: any) {
+    if (err.response?.status === 404) {
+      // Fallback: /admin/users (Zaky's AdminController endpoint)
+      const response = await api.get(`/admin/users?${params.toString()}`);
+      return response.data;
+    }
+    throw err;
+  }
 }
 
 export async function getUserById(id: string): Promise<User> {
-  const response = await api.get(`/admin/users/${id}`);
-  return response.data;
+  try {
+    const response = await api.get(`/users/${id}`);
+    return response.data;
+  } catch (err: any) {
+    if (err.response?.status === 404) {
+      const response = await api.get(`/admin/users/${id}`);
+      return response.data;
+    }
+    throw err;
+  }
 }
 
 export async function updateUser(id: string, data: { fullName: string; email: string }): Promise<void> {
-  await api.put(`/admin/users/${id}`, data);
+  try {
+    await api.put(`/users/${id}`, data);
+  } catch (err: any) {
+    if (err.response?.status === 404) {
+      await api.put(`/admin/users/${id}`, data);
+      return;
+    }
+    throw err;
+  }
 }
 
 export async function updateUserRole(id: string, role: string): Promise<void> {
-  await api.patch(`/admin/users/${id}/role`, { role });
+  try {
+    await api.patch(`/users/${id}/role`, { role });
+  } catch (err: any) {
+    if (err.response?.status === 404) {
+      await api.patch(`/admin/users/${id}/role`, { role });
+      return;
+    }
+    throw err;
+  }
 }
 
 export async function updateUserStatus(id: string, status: string): Promise<void> {
-  await api.patch(`/admin/users/${id}/status`, { status });
+  try {
+    await api.patch(`/users/${id}/status`, { status });
+  } catch (err: any) {
+    if (err.response?.status === 404) {
+      await api.patch(`/admin/users/${id}/status`, { status });
+      return;
+    }
+    throw err;
+  }
 }

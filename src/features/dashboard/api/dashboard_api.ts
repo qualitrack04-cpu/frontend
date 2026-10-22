@@ -28,15 +28,29 @@ export interface QualityTrendResponse {
 
 export async function getQualityTrend(months: number = 6): Promise<QualityTrendResponse> {
   const timeframe = months === 12 ? '1y' : (months === 3 ? '3m' : '6m');
-  const response = await axios_instance.get('quality-scores/overall-trend', {
-    params: { timeframe }
-  });
-  
+  let rawData: any[] = [];
+
+  try {
+    const response = await axios_instance.get('/quality-scores/overall-trend', {
+      params: { timeframe }
+    });
+    rawData = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+  } catch (err: any) {
+    if (err.response?.status === 404) {
+      const response = await axios_instance.get('/dashboard/quality-trends', {
+        params: { year: new Date().getFullYear() }
+      });
+      rawData = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+    } else {
+      throw err;
+    }
+  }
+
   // Backend returns List<OverallTrendDto> which we map to QualityTrendPoint
-  const points: QualityTrendPoint[] = response.data.map((item: any) => ({
-    month: item.monthName || (item.periodLabel ? item.periodLabel.split(' ')[0] : ''), // "Jan 2026" -> "Jan"
-    year: item.year || 0,
-    score: item.overallScore ?? item.score ?? 0
+  const points: QualityTrendPoint[] = rawData.map((item: any) => ({
+    month: item.monthName || (item.periodLabel ? item.periodLabel.split(' ')[0] : item.month ? `M${item.month}` : ''),
+    year: item.year || new Date().getFullYear(),
+    score: item.overallScore ?? item.complianceScore ?? item.score ?? 0
   }));
 
   const currentScore = points.length > 0 ? points[points.length - 1].score : 0;
