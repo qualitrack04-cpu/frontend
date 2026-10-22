@@ -11,7 +11,7 @@ export default function AppLayout() {
       <Header toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
       <div className="flex flex-1 overflow-hidden h-[calc(100vh-65px)]">
         <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-        <main className="flex-1 p-[24px_28px_60px] max-md:p-[16px] bg-[#f8fafc] overflow-y-auto h-full box-border">
+        <main className="flex-1 min-w-0 p-[24px_28px_60px] max-md:p-[16px] bg-[#f8fafc] overflow-y-auto overflow-x-hidden h-full box-border">
           <Outlet />
         </main>
       </div>

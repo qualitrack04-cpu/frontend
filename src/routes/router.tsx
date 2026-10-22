@@ -24,8 +24,18 @@ import SpcAnalysisPage from '../features/spc_analysis/components/spc_analysis_pa
 import SpcHistoryPage from '../features/spc_analysis/components/spc_history_page';
 import SpcResultDetailPage from '../features/spc_analysis/components/spc_result_detail_page';
 
+import UsersPage from '../features/users/components/users_page';
+import IsoStandardsPage from '../features/iso_standards/components/iso_standards_page';
+import DepartmentsPage from '../features/departments/components/departments_page';
+import ChecklistTemplatesPage from '../features/checklist_templates/components/checklist_templates_page';
+import SpcUnitsPage from '../features/spc_units/components/spc_units_page';
+import RecentChangesPage from '../features/recent_changes/components/recent_changes_page';
+import UsersActivityPage from '../features/users_activity/components/users_activity_page';
+import UserOverviewPage from '../features/users_activity/components/user_overview_page';
+
 import ProfilePage from '../features/profile/components/profile_page';
 import EditProfilePage from '../features/profile/components/edit_profile_page';
+import SystemConfigurationPage from '../features/system_configuration/components/system_configuration_page';
 
 import CreateAuditPlanPage from '../features/audits/components/create_audit_page';
 import AuditChecklistEditPage from '../features/audits/components/audit_checklist_edit_page';
@@ -82,7 +92,23 @@ const router = createBrowserRouter([
             ],
           },
           { path: 'audits/:planId/schedule/:scheduleId/checklist',element: <AuditChecklistPage />},
-          { path: 'audits/:planId/schedule/:scheduleId/report',element: <AuditReportPreviewPage />,}
+          { path: 'audits/:planId/schedule/:scheduleId/report', element: <AuditReportPreviewPage /> },
+          {
+            element: <RoleRoute allow={[ROLES.Admin]} redirectTo="/dashboard" />,
+            children: [
+              { path: 'users', element: <UsersPage /> },
+              { path: 'iso-standards', element: <IsoStandardsPage /> },
+              { path: 'departments', element: <DepartmentsPage /> },
+              { path: 'templates', element: <ChecklistTemplatesPage /> },
+              { path: 'spc-units', element: <SpcUnitsPage /> },
+              { path: 'recent-changes', element: <RecentChangesPage /> },
+              { path: 'users-activity', element: <UsersActivityPage /> },
+              { path: 'user-overview/:userId', element: <UserOverviewPage /> },
+              { path: 'user-overview', element: <UserOverviewPage /> },
+              { path: 'settings', element: <SystemConfigurationPage /> },
+              { path: 'system-configuration', element: <SystemConfigurationPage /> },
+            ],
+          },
         ],
       },
     ],

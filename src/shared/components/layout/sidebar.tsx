@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   ClipboardCheck,
@@ -9,16 +9,34 @@ import {
   LogOut,
   Plus,
   X,
+  Users,
+  ShieldCheck,
+  Building2,
+  CheckSquare,
+  Activity,
+  Settings,
+  User,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { canManageAuditPlans } from '../../utils/role';
+import { canManageAuditPlans, getCurrentRole, ROLES } from '../../utils/role';
 
-const menuItems: { label: string; path: string; icon: LucideIcon }[] = [
+const baseMenuItems: { label: string; path: string; icon: LucideIcon }[] = [
   { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
   { label: 'Audits', path: '/audits', icon: ClipboardCheck },
   { label: 'Findings', path: '/findings', icon: FileWarning },
   { label: 'CAPA', path: '/capa', icon: ListChecks },
   { label: 'SPC Analysis', path: '/spc-analysis', icon: TrendingUp },
+];
+
+const adminMenuItems: { label: string; path: string; icon: LucideIcon }[] = [
+  { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+  { label: 'Users', path: '/users', icon: Users },
+  { label: 'ISO Standarts', path: '/iso-standards', icon: ShieldCheck },
+  { label: 'Departments', path: '/departments', icon: Building2 },
+  { label: 'Checklists Templates', path: '/templates', icon: CheckSquare },
+  { label: 'SPC Units', path: '/spc-units', icon: Activity },
+  { label: 'System Configuration', path: '/settings', icon: Settings },
+  { label: 'Profile', path: '/profile', icon: User },
 ];
 
 interface SidebarProps {
@@ -28,6 +46,7 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const confirmLogout = () => {
@@ -36,6 +55,9 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     localStorage.removeItem('fullName');
     navigate('/login', { replace: true });
   };
+
+  const role = getCurrentRole();
+  const menuItems = role === ROLES.Admin ? adminMenuItems : baseMenuItems;
 
   return (
     <>
@@ -48,7 +70,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           </button>
         </div>
 
-        {canManageAuditPlans() && (
+        {canManageAuditPlans() && role !== ROLES.Admin && (
           <button
             className="flex items-center justify-center gap-[8px] bg-transparent border border-[#2ecc71] text-[#2ecc71] py-[10px] rounded-[8px] text-[14px] font-semibold mb-[24px] cursor-pointer no-underline hover:bg-[rgba(46,204,113,0.1)]"
             onClick={() => navigate('/audits/new')}
@@ -58,19 +80,30 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         )}
 
         <nav className="flex flex-col gap-[4px] flex-1">
-          {menuItems.map(({ label, path, icon: Icon }) => (
-            <NavLink
-              key={path}
-              to={path}
-              onClick={onClose}
-              className={({ isActive }) =>
-                `flex items-center gap-[10px] p-[9px_10px] rounded-[8px] text-[14px] font-medium no-underline border-l-[3px] hover:bg-[rgba(255,255,255,0.06)] hover:text-white ${isActive ? 'bg-[#1e3a5f] border-[#60a5fa] text-white' : 'text-[#cbd5e1] border-transparent'}`
-              }
-            >
-              <Icon size={20} strokeWidth={1.75} className="shrink-0" />
-              <span>{label}</span>
-            </NavLink>
-          ))}
+          {menuItems.map(({ label, path, icon: Icon }) => {
+            const isCustomActive =
+              path === '/dashboard' &&
+              (location.pathname === '/recent-changes' ||
+                location.pathname.startsWith('/users-activity') ||
+                location.pathname.startsWith('/user-overview'));
+            return (
+              <NavLink
+                key={path}
+                to={path}
+                onClick={onClose}
+                className={({ isActive }) =>
+                  `flex items-center gap-[10px] p-[10px_12px] rounded-[8px] text-[14px] font-medium no-underline transition-colors ${
+                    isActive || isCustomActive
+                      ? 'bg-[#2563eb] text-white shadow-sm font-semibold'
+                      : 'text-[#94a3b8] hover:bg-[rgba(255,255,255,0.08)] hover:text-white'
+                  }`
+                }
+              >
+                <Icon size={20} strokeWidth={1.75} className="shrink-0" />
+                <span>{label}</span>
+              </NavLink>
+            );
+          })}
         </nav>
 
         <button className="flex items-center gap-[12px] bg-transparent border-none text-[#cbd5e1] text-[14px] font-medium p-[10px] cursor-pointer mt-auto hover:text-white" onClick={() => setShowLogoutModal(true)}>

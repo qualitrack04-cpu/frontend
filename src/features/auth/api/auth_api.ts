@@ -101,6 +101,7 @@ export async function getProfile(): Promise<ProfileData> {
 
 interface UpdateProfilePayload {
   fullName: string;
+  email?: string;
 }
 
 export async function updateProfile(payload: UpdateProfilePayload) {
@@ -116,8 +117,10 @@ export async function changePassword(payload: { newPassword: string; confirmPass
 export async function uploadProfilePhoto(file: File) {
   const formData = new FormData();
   formData.append('file', file);
+  // Setting Content-Type to undefined lets Axios/browser automatically inject
+  // multipart/form-data with the required boundary string
   const response = await axios_instance.post('/profile/photo', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
+    headers: { 'Content-Type': undefined },
   });
   return response.data;
 }

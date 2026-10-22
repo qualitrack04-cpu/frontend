@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { KeyRound, Pencil } from 'lucide-react';
-import ChangePhotoModal from './change_photo_modal';
+import { Camera, Lock, AlertCircle } from 'lucide-react';
 import { useProfile } from '../hooks/use_profile';
 import { useEditProfile } from '../hooks/use_edit_profile';
 import { fileUrl } from '../../../shared/utils/file_url';
+import { MascotAvatar } from './profile_page';
 
 export default function EditProfilePage() {
   const { profile, loading: profileLoading, refetch } = useProfile();
@@ -19,195 +19,241 @@ export default function EditProfilePage() {
   } = useEditProfile();
 
   const [fullName, setFullName] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
-  const [showRemovePhotoConfirm, setShowRemovePhotoConfirm] = useState(false);
+  const [email, setEmail] = useState('');
   const [localError, setLocalError] = useState<string | null>(null);
-  const [showPhotoModal, setShowPhotoModal] = useState(false);
-
+  const [imgError, setImgError] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (profile) setFullName(profile.fullName);
+    if (profile) {
+      setFullName(profile.fullName);
+      setEmail(profile.email);
+      setImgError(false);
+    }
   }, [profile]);
 
   if (profileLoading || !profile) {
-    return <div className="max-w-full m-0 text-left">Loading...</div>;
+    return (
+      <div className="max-w-full m-0 text-left py-12 text-slate-400 text-sm">
+        Loading profile...
+      </div>
+    );
   }
 
-  const handleSaveClick = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLocalError(null);
-
-    if (newPassword && newPassword !== confirmPassword) {
-      setLocalError('Password baru dan konfirmasi tidak sama.');
+    if (!fullName.trim()) {
+      setLocalError('Nama tidak boleh kosong');
+      return;
+    }
+    if (fullName.trim().length > 60) {
+      setLocalError('Nama maksimal 60 karakter');
+      return;
+    }
+    if (!email.trim()) {
+      setLocalError('Email tidak boleh kosong');
       return;
     }
 
-    setShowConfirmModal(true);
-  };
-
-  const handleConfirmSave = async () => {
+    setLocalError(null);
     try {
-      await saveProfile(fullName, newPassword);
-      localStorage.setItem('fullName', fullName);
-      setShowConfirmModal(false);
+      await saveProfile(fullName.trim(), email.trim(), '');
+      localStorage.setItem('fullName', fullName.trim());
+      await refetch();
       navigate('/profile');
     } catch {
-      setShowConfirmModal(false);
+      // Error handled by useEditProfile
     }
   };
 
-  const handleSavePhoto = async (file: File | null) => {
-    setShowPhotoModal(false);
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) return;
+
     try {
       await savePhoto(file);
       await refetch();
     } catch {
-      // error sudah ditangani di dalam hook (photoError)
+      // Error handled by useEditProfile
+    } finally {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
     }
   };
 
-  const handleConfirmRemovePhoto = async () => {
-    setShowRemovePhotoConfirm(false);
+  const handleRemovePhoto = async () => {
     try {
       await deletePhoto();
       await refetch();
     } catch {
-      // photoError akan muncul di kartu avatar
+      // Error handled by useEditProfile
     }
   };
 
+  const displayError = localError || saveError || photoError;
+
   return (
     <div className="max-w-full m-0 text-left">
-      <button className="back-btn" onClick={() => navigate('/profile')}>← Back</button>
-      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Edit Profile</h1>
-      <p className="text-slate-500 mt-[-6px] mb-[24px] text-[13px]">Manage your personal information and security preferences.</p>
+      {/* Header Section */}
+      <div className="mb-6">
+        <h1 className="text-[28px] md:text-[32px] font-bold text-[#0F294A] tracking-tight m-0 mb-1.5">
+          Edit Profile
+        </h1>
+        <p className="text-slate-500 text-[14px] m-0">
+          Update your profile details and personal account settings.
+        </p>
+      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-[24px] items-start">
-        {/* ---- Kartu Avatar (kiri) ---- */}
-        <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-[24px] text-center flex flex-col items-center">
-          <button className="relative w-[110px] h-[110px] rounded-full border-[3px] border-[#f1f5f9] p-0 cursor-pointer overflow-hidden mb-[16px] group" onClick={() => setShowPhotoModal(true)} disabled={photoSaving}>
-            {profile.profilePhotoUrl ? (
-              <img src={fileUrl(profile.profilePhotoUrl)} alt={profile.fullName} className="w-full h-full object-cover transition-opacity duration-200 group-hover:opacity-70" />
-            ) : (
-              <div className="w-full h-full bg-[#f1f5f9] text-[#64748b] flex items-center justify-center font-bold text-[40px] transition-opacity duration-200 group-hover:opacity-70">{fullName?.charAt(0)?.toUpperCase() ?? '?'}</div>
-            )}
-            <span className="absolute inset-0 bg-[rgba(15,44,82,0.6)] text-white flex items-center justify-center opacity-0 transition-opacity duration-200 group-hover:opacity-100"><Pencil size={24} /></span>
-          </button>
-          <h3 className="text-[20px] font-bold text-[#0f2c52] m-0 mb-[8px] leading-[1.3]">{fullName}</h3>
-          <span className="inline-block px-[10px] py-[4px] rounded-[6px] text-[11px] font-bold tracking-[0.5px] uppercase bg-[#0f2c52] text-white mb-[24px]">{profile.role.toUpperCase()}</span>
+      {/* Edit Profile Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 items-start">
+        {/* Left Card: Profile Avatar & Actions */}
+        <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(15,44,82,0.03)] border border-slate-100 p-8 flex flex-col items-center justify-center text-center">
+          {/* Avatar with Camera Icon Overlay */}
+          <div className="relative mb-6">
+            <div className="w-36 h-36 rounded-full bg-[#E2EDF8] flex items-center justify-center overflow-hidden shadow-xs">
+              {profile.profilePhotoUrl && !imgError ? (
+                <img
+                  src={fileUrl(profile.profilePhotoUrl)}
+                  alt={fullName}
+                  className="w-full h-full object-cover"
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <MascotAvatar className="w-28 h-28" />
+              )}
+            </div>
 
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={photoSaving}
+              title="Change Photo"
+              className="absolute bottom-1 right-1 w-9 h-9 rounded-full bg-[#2563EB] hover:bg-blue-700 text-white flex items-center justify-center shadow-md border-2 border-white cursor-pointer transition-colors disabled:opacity-50"
+            >
+              <Camera size={16} strokeWidth={2.2} />
+            </button>
+
+            <input
+              type="file"
+              ref={fileInputRef}
+              accept="image/png,image/jpeg,image/jpg"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+          </div>
+
+          {/* Change Photo Button */}
           <button
-            className="w-full bg-[#fef2f2] text-[#dc2626] border border-[#fecaca] py-[10px] rounded-[8px] text-[14px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#fee2e2] disabled:opacity-50 disabled:cursor-not-allowed"
-            onClick={() => setShowRemovePhotoConfirm(true)}
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
             disabled={photoSaving}
+            className="px-6 py-2 rounded-lg border border-[#2563EB] text-[#2563EB] bg-white hover:bg-blue-50 font-medium text-[13.5px] transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
+          >
+            {photoSaving ? 'Uploading...' : 'Change Photo'}
+          </button>
+
+          {/* Remove Photo Text Button */}
+          <button
+            type="button"
+            onClick={handleRemovePhoto}
+            disabled={photoSaving || !profile.profilePhotoUrl}
+            className="mt-3 text-[13px] font-semibold text-[#DC2626] hover:text-red-700 bg-transparent border-none cursor-pointer p-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             Remove Photo
           </button>
-
-          {photoError && <p className="text-[#dc2626] bg-[#fef2f2] p-[10px_14px] border border-[#fecaca] rounded-[8px] text-[13.5px] mt-[16px] w-full box-border">{photoError}</p>}
         </div>
 
-        {/* ---- Form (kanan) ---- */}
-        <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-[24px]">
-          <h3 className="text-[14px] font-bold text-[#0f2c52] uppercase tracking-[0.5px] m-0 mb-[16px]">Personal Information</h3>
-          <hr className="border-t border-[#e2e8f0] m-0 mb-[24px]" />
+        {/* Right Card: Account Information Form */}
+        <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(15,44,82,0.03)] border border-slate-100 p-8">
+          <h2 className="text-[18px] font-bold text-[#0F294A] m-0 mb-1">
+            Account Information
+          </h2>
+          <p className="text-slate-400 text-[13.5px] m-0 mb-6 font-normal">
+            Your personal details as shown in the QualiTrack system.
+          </p>
 
-          <div className="flex flex-col md:flex-row gap-[16px] mb-[20px]">
-            <div className="flex-1">
-              <label className="block text-[13px] font-semibold text-[#1e293b] mb-[6px]">Full Name</label>
-              <input className="w-full bg-[#eef1fb] border border-[#d6dcf5] rounded-[10px] p-[14px_16px] text-[15px] text-[#1f2937] box-border outline-none transition-all duration-150 placeholder:text-[#94a3b8] focus:border-[#94a3f0] focus:ring-[3px] focus:ring-[#94a3f040]" type="text" value={fullName} maxLength={100} onChange={(e) => setFullName(e.target.value)} />
+          {displayError && (
+            <div className="mb-5 p-3.5 bg-red-50 text-red-600 text-sm rounded-lg flex items-center gap-2 border border-red-100">
+              <AlertCircle size={16} className="shrink-0" />
+              <span>{displayError}</span>
             </div>
-            <div className="flex-1">
-              <label className="block text-[13px] font-semibold text-[#1e293b] mb-[6px]">Email Address</label>
-              <input className="w-full bg-[#eef1fb] border border-[#d6dcf5] rounded-[10px] p-[14px_16px] text-[15px] text-[#1f2937] box-border outline-none transition-all duration-150 disabled:bg-[#f1f5f9] disabled:text-[#94a3b8] disabled:cursor-not-allowed" type="email" value={profile.email} disabled readOnly />
-            </div>
-          </div>
+          )}
 
-          <h3 className="text-[14px] font-bold text-[#0f2c52] uppercase tracking-[0.5px] m-0 mb-[16px] mt-[32px]">Security</h3>
-          <hr className="border-t border-[#e2e8f0] m-0 mb-[24px]" />
-
-          <div className="flex flex-col md:flex-row gap-[16px] mb-[20px]">
-            <div className="flex-1">
-              <label className="block text-[13px] font-semibold text-[#1e293b] mb-[6px]">New Password</label>
-              <div className="relative flex items-center">
-                <KeyRound size={16} className="absolute left-[14px] text-[#64748b] pointer-events-none" />
+          <form onSubmit={handleSave}>
+            <div className="space-y-5">
+              {/* NAME Field */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                    NAME
+                  </label>
+                  <span className="text-[11px] text-slate-400 font-medium">
+                    {fullName.length}/60
+                  </span>
+                </div>
                 <input
-                  className="w-full bg-[#eef1fb] border border-[#d6dcf5] rounded-[10px] p-[14px_16px] pl-[40px] text-[15px] text-[#1f2937] box-border outline-none transition-all duration-150 placeholder:text-[#94a3b8] focus:border-[#94a3f0] focus:ring-[3px] focus:ring-[#94a3f040]"
-                  type="password"
-                  placeholder="New password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  type="text"
+                  maxLength={60}
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="w-full bg-white border border-slate-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 rounded-lg px-4 py-3 text-[14px] text-slate-800 font-medium outline-none transition-all placeholder-slate-400"
+                  placeholder="Enter full name"
+                  required
                 />
               </div>
-            </div>
-            <div className="flex-1">
-              <label className="block text-[13px] font-semibold text-[#1e293b] mb-[6px]">Confirm New Password</label>
-              <div className="relative flex items-center">
-                <KeyRound size={16} className="absolute left-[14px] text-[#64748b] pointer-events-none" />
+
+              {/* EMAIL Field (Editable) */}
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">
+                  EMAIL
+                </label>
                 <input
-                  className="w-full bg-[#eef1fb] border border-[#d6dcf5] rounded-[10px] p-[14px_16px] pl-[40px] text-[15px] text-[#1f2937] box-border outline-none transition-all duration-150 placeholder:text-[#94a3b8] focus:border-[#94a3f0] focus:ring-[3px] focus:ring-[#94a3f040]"
-                  type="password"
-                  placeholder="Confirm password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full bg-white border border-slate-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 rounded-lg px-4 py-3 text-[14px] text-slate-800 font-medium outline-none transition-all placeholder-slate-400"
+                  placeholder="Enter email address"
+                  required
                 />
               </div>
+
+              {/* ROLE Field (Read-only) */}
+              <div>
+                <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">
+                  ROLE
+                </label>
+                <div className="w-full bg-[#F8FAFC] border border-slate-100 rounded-lg px-4 py-2.5 flex items-center justify-between">
+                  <span className="inline-block bg-[#E0F7FE] text-[#0284C7] font-semibold text-[12.5px] px-3 py-1 rounded-md">
+                    {profile.role}
+                  </span>
+                  <Lock size={16} className="text-slate-400 shrink-0" />
+                </div>
+              </div>
             </div>
-          </div>
 
-          {(localError || saveError) && <p className="text-[#dc2626] bg-[#fef2f2] p-[10px_14px] border border-[#fecaca] rounded-[8px] text-[13.5px] mt-[16px] w-full box-border">{localError || saveError}</p>}
-
-          <div className="flex items-center justify-end gap-[12px] mt-[32px] pt-[20px] border-t border-[#e2e8f0]">
-            <button className="bg-[#f1f5f9] text-[#475569] border-none px-[24px] py-[12px] rounded-[8px] text-[14.5px] font-semibold cursor-pointer transition-colors hover:bg-[#e2e8f0]" onClick={() => navigate('/profile')}>Cancel</button>
-            <button className="bg-[#0f5132] text-white border-none px-[24px] py-[12px] rounded-[8px] text-[14.5px] font-semibold cursor-pointer transition-colors hover:bg-[#0c4128] shadow-[0_2px_6px_rgba(15,81,50,0.25)] disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center gap-[8px]" onClick={handleSaveClick} disabled={saving}>
-              {saving ? 'Saving...' : 'Save Changes'}
-            </button>
-          </div>
+            {/* Bottom Actions */}
+            <div className="flex items-center justify-end gap-3 mt-8">
+              <button
+                type="button"
+                onClick={() => navigate('/profile')}
+                disabled={saving}
+                className="px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-medium text-[13.5px] transition-colors bg-white cursor-pointer disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saving}
+                className="px-5 py-2.5 rounded-lg bg-[#2563EB] hover:bg-blue-700 text-white font-medium text-[13.5px] transition-colors shadow-sm border-none cursor-pointer disabled:opacity-50"
+              >
+                {saving ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
-
-      {showPhotoModal && (
-        <ChangePhotoModal
-          currentName={fullName}
-          currentRole={profile.role}
-          currentPhotoUrl={profile.profilePhotoUrl}
-          onClose={() => setShowPhotoModal(false)}
-          onSave={handleSavePhoto}
-        />
-      )}
-
-      {showConfirmModal && (
-        <div className="fixed inset-0 bg-[rgba(0,0,0,0.4)] flex items-center justify-center z-[1000] backdrop-blur-[2px]">
-          <div className="bg-white p-[30px] rounded-[12px] max-w-[400px] text-center shadow-[0_10px_25px_rgba(0,0,0,0.15)] animate-[slideUp_0.3s_ease]">
-            <p className="mb-[20px] text-[15px] text-[#475569] leading-[1.5]">Are you sure you want to save the changes to your profile? This action will update your account information.</p>
-            <button className="bg-[#16a34a] text-white border-none p-[12px_24px] rounded-[8px] font-semibold cursor-pointer w-full mb-[12px] transition-colors hover:bg-[#15803d] disabled:opacity-50" onClick={handleConfirmSave} disabled={saving}>
-              {saving ? 'Saving...' : '✎ Save'}
-            </button>
-            <button className="bg-transparent border-none text-[#64748b] font-semibold cursor-pointer hover:text-[#334155] transition-colors" onClick={() => setShowConfirmModal(false)}>Cancel</button>
-          </div>
-        </div>
-      )}
-
-      {showRemovePhotoConfirm && (
-        <div className="fixed inset-0 bg-[rgba(0,0,0,0.4)] flex items-center justify-center z-[1000] backdrop-blur-[2px]">
-          <div className="bg-white p-[30px] rounded-[12px] max-w-[400px] text-center shadow-[0_10px_25px_rgba(0,0,0,0.15)] animate-[slideUp_0.3s_ease]">
-            <p className="font-bold text-[#0f2c52] mb-[6px]">Remove Profile Photo</p>
-            <p className="text-[#64748b] text-[14px] mb-[20px]">Are You Sure to remove photo?</p>
-            <button
-              className="bg-[#dc2626] text-white border-none p-[12px_24px] rounded-[8px] font-semibold cursor-pointer w-full mb-[12px] transition-colors hover:bg-[#b91c1c] disabled:opacity-50"
-              onClick={handleConfirmRemovePhoto}
-              disabled={photoSaving}
-            >
-              {photoSaving ? 'Removing...' : 'Remove'}
-            </button>
-            <button className="bg-transparent border-none text-[#64748b] font-semibold cursor-pointer hover:text-[#334155] transition-colors" onClick={() => setShowRemovePhotoConfirm(false)}>Cancel</button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

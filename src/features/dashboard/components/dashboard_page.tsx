@@ -3,13 +3,30 @@ import SummaryCards from './summary_cards';
 import ComplianceScore from './compliance_score';
 import AuditReport from './audit_report';
 import QualityTrend from './quality_trend';
+import AdminDashboard from './admin_dashboard';
+import { ROLES, getCurrentRole } from '../../../shared/utils/role';
 
 export default function DashboardPage() {
   const fullName = localStorage.getItem('fullName') || 'there';
+  const role = getCurrentRole();
+
+  const nameLength = fullName.trim().length;
+  const headingSizeClass =
+    nameLength > 30
+      ? 'text-[20px] sm:text-[22px]'
+      : nameLength > 20
+      ? 'text-[24px] sm:text-[26px]'
+      : 'text-[28px]';
+
+  if (role === ROLES.Admin) {
+    return <AdminDashboard />;
+  }
 
   return (
     <div className="max-w-full m-0 text-left">
-      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Hello, {fullName}!</h1>
+      <h1 className={`${headingSizeClass} font-bold text-[#0f2c52] !m-0 !mb-6 leading-[1.35] max-w-full break-words [overflow-wrap:anywhere] [word-break:break-word]`}>
+        Hello, {fullName}!
+      </h1>
       <p className="text-slate-500 m-0 mb-[24px] text-[14px]">Welcome back to your dashboard</p>
 
       <QualityTrend />

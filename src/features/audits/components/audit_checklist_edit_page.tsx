@@ -30,7 +30,7 @@ export default function AuditChecklistEditPage() {
   if (loadError) {
     return (
       <div className="max-w-full m-0 text-left">
-        <button className="back-btn" onClick={() => navigate(-1)}>← Back</button>
+        <button className="flex items-center gap-2 text-slate-500 hover:text-[#0f2c52] transition-colors mb-4 font-semibold bg-transparent border-none cursor-pointer p-0" onClick={() => navigate(-1)}>← Back</button>
         <p className="text-red-600">{loadError}</p>
       </div>
     );

@@ -11,12 +11,12 @@ export function useEditProfile() {
   const [photoSaving, setPhotoSaving] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
 
-  async function saveProfile(fullName: string, newPassword: string) {
+  async function saveProfile(fullName: string, email?: string, newPassword?: string) {
     setSaving(true);
     setError(null);
     try {
-      // Update nama dulu
-      await updateProfile({ fullName });
+      // Update nama dan email
+      await updateProfile({ fullName, email });
 
       // Kalau user isi field password baru, kirim request ganti password terpisah
       if (newPassword) {

@@ -42,7 +42,7 @@ export default function CreateAuditPlanPage() {
   if (loadError) {
     return (
       <div className="max-w-full m-0 text-left">
-        <button className="back-btn" onClick={() => navigate('/audits')}>← Back to Audits</button>
+        <button className="flex items-center gap-2 text-slate-500 hover:text-[#0f2c52] transition-colors mb-4 font-semibold bg-transparent border-none cursor-pointer p-0" onClick={() => navigate('/audits')}>← Back to Audits</button>
         <p className="error-text">{loadError}</p>
       </div>
     );
@@ -50,7 +50,7 @@ export default function CreateAuditPlanPage() {
 
   return (
     <div className="max-w-full m-0 text-left">
-      <button className="back-btn" onClick={() => navigate('/audits')}>← Back to Audits</button>
+      <button className="flex items-center gap-2 text-slate-500 hover:text-[#0f2c52] transition-colors mb-4 font-semibold bg-transparent border-none cursor-pointer p-0" onClick={() => navigate('/audits')}>← Back to Audits</button>
       <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">{isEdit ? 'Edit Audit Plan' : 'Create Audit Plan'}</h1>
 
       <form onSubmit={handleSubmit} className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] max-w-[760px]">

@@ -5,6 +5,7 @@ import { register } from '../api/auth_api';
 import AuthBrandPanel from './auth_brand_panel';
 
 const ROLE_OPTIONS = [
+  { value: 'Admin', label: 'Admin' },
   { value: 'AuditorInternal', label: 'Auditor Internal' },
   { value: 'QualityManager', label: 'Quality Manager' },
 ] as const;
@@ -31,13 +32,17 @@ export default function SignUpPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (fullName.trim().length > 60) {
+      setError('Nama maksimal 60 karakter.');
+      return;
+    }
     if (password !== confirmPassword) {
       setError('Password dan Password Verification tidak sama.');
       return;
     }
     setLoading(true);
     try {
-      await register({ fullName, email, password, role });
+      await register({ fullName: fullName.trim(), email: email.trim(), password, role });
       navigate('/verify-otp', { state: { email, fromSignup: true } });
     } catch (err: any) {
       setError(err.response?.data?.message || 'Pendaftaran gagal. Coba lagi.');
@@ -60,11 +65,17 @@ export default function SignUpPage() {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-0">
             {/* Username */}
-            <label className={labelClass}>Username</label>
+            <div className="flex items-center justify-between !mb-[9px]">
+              <label className="block text-left text-[#1f2937] text-[15px] leading-5 font-semibold !m-0">Username</label>
+              <span className="text-[12px] text-slate-400 font-medium">
+                {fullName.length}/60
+              </span>
+            </div>
             <div className="relative flex items-center mb-5">
               <User size={16} className={iconClass} />
               <input
                 type="text"
+                maxLength={60}
                 placeholder="Name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
