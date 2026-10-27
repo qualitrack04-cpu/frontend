@@ -1,4 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
+import LandingPage from '../features/landing/components/LandingPage'; // Sesuaikan jika ekspor default/named
 // Layout & Route Protection
 import AppLayout from '../shared/components/layout/app_layout';
 import ProtectedRoute from '../shared/components/protected_route';
@@ -43,6 +44,9 @@ import AuditChecklistPage from '../features/audits/components/audit_checklist_pa
 import AuditReportPreviewPage from '../features/audits/components/audit_report_preview_page';
 const router = createBrowserRouter([
   // Hanya untuk yang belum login
+
+  { path: '/', element: <LandingPage /> },
+
   {
     element: <PublicOnlyRoute />,
     children: [
@@ -58,55 +62,55 @@ const router = createBrowserRouter([
     element: <ProtectedRoute />,
     children: [
       {
-        path: '/',
+        // path: '/app',
         element: <AppLayout />,
         children: [
-          { index: true, element: <Navigate to="/dashboard" replace /> },
-          { path: 'dashboard', element: <DashboardPage /> },
-          { path: 'audits', element: <AuditsPage /> },
-          { path: 'findings', element: <FindingsPage /> },
-          { path: 'findings/new', element: <FindingFormPage mode="create" /> },
-          { path: 'findings/:id', element: <FindingDetailPage /> },
-          { path: 'findings/:id/edit', element: <FindingFormPage mode="edit" /> },        
-          { path: 'capa', element: <CapaPage /> },
+          // { index: true, element: <Navigate to="/dashboard" replace /> },
+          { path: '/dashboard', element: <DashboardPage /> },
+          { path: '/audits', element: <AuditsPage /> },
+          { path: '/findings', element: <FindingsPage /> },
+          { path: '/findings/new', element: <FindingFormPage mode="create" /> },
+          { path: '/findings/:id', element: <FindingDetailPage /> },
+          { path: '/findings/:id/edit', element: <FindingFormPage mode="edit" /> },        
+          { path: '/capa', element: <CapaPage /> },
           {
             // Create CAPA hanya untuk Admin, Quality Manager, dan Auditor Internal (Auditee tidak bisa bikin CAPA)
             element: <RoleRoute allow={[ROLES.Admin, ROLES.QualityManager, ROLES.AuditorInternal]} redirectTo="/capa" />,
             children: [
-              { path: 'capa/new', element: <CreateCapaPage /> },
+              { path: '/capa/new', element: <CreateCapaPage /> },
             ],
           },
-          { path: 'capa/:id', element: <CapaDetailPage /> },
-          { path: 'spc-analysis', element: <SpcAnalysisPage /> },
-          { path: 'spc-analysis/history', element: <SpcHistoryPage /> },
-          { path: 'spc-analysis/history/:id', element: <SpcResultDetailPage /> },
-          { path: 'profile', element: <ProfilePage /> },
-          { path: 'profile/edit', element: <EditProfilePage /> },
+          { path: '/capa/:id', element: <CapaDetailPage /> },
+          { path: '/spc-analysis', element: <SpcAnalysisPage /> },
+          { path: '/spc-analysis/history', element: <SpcHistoryPage /> },
+          { path: '/spc-analysis/history/:id', element: <SpcResultDetailPage /> },
+          { path: '/profile', element: <ProfilePage /> },
+          { path: '/profile/edit', element: <EditProfilePage /> },
           {
             // Create/edit audit plan hanya untuk Admin & Quality Manager
             element: <RoleRoute allow={[ROLES.Admin, ROLES.QualityManager]} redirectTo="/audits" />,
             children: [
-              { path: 'audits/new', element: <CreateAuditPlanPage /> },
-              { path: 'audits/:planId/edit', element: <CreateAuditPlanPage /> },
-              { path: 'audits/checklists/:checklistId/edit', element: <AuditChecklistEditPage /> },
+              { path: '/audits/new', element: <CreateAuditPlanPage /> },
+              { path: '/audits/:planId/edit', element: <CreateAuditPlanPage /> },
+              { path: '/audits/checklists/:checklistId/edit', element: <AuditChecklistEditPage /> },
             ],
           },
-          { path: 'audits/:planId/schedule/:scheduleId/checklist',element: <AuditChecklistPage />},
-          { path: 'audits/:planId/schedule/:scheduleId/report', element: <AuditReportPreviewPage /> },
+          { path: '/audits/:planId/schedule/:scheduleId/checklist',element: <AuditChecklistPage />},
+          { path: '/audits/:planId/schedule/:scheduleId/report', element: <AuditReportPreviewPage /> },
           {
             element: <RoleRoute allow={[ROLES.Admin]} redirectTo="/dashboard" />,
             children: [
-              { path: 'users', element: <UsersPage /> },
-              { path: 'iso-standards', element: <IsoStandardsPage /> },
-              { path: 'departments', element: <DepartmentsPage /> },
-              { path: 'templates', element: <ChecklistTemplatesPage /> },
-              { path: 'spc-units', element: <SpcUnitsPage /> },
-              { path: 'recent-changes', element: <RecentChangesPage /> },
-              { path: 'users-activity', element: <UsersActivityPage /> },
-              { path: 'user-overview/:userId', element: <UserOverviewPage /> },
-              { path: 'user-overview', element: <UserOverviewPage /> },
-              { path: 'settings', element: <SystemConfigurationPage /> },
-              { path: 'system-configuration', element: <SystemConfigurationPage /> },
+              { path: '/users', element: <UsersPage /> },
+              { path: '/iso-standards', element: <IsoStandardsPage /> },
+              { path: '/departments', element: <DepartmentsPage /> },
+              { path: '/templates', element: <ChecklistTemplatesPage /> },
+              { path: '/spc-units', element: <SpcUnitsPage /> },
+              { path: '/recent-changes', element: <RecentChangesPage /> },
+              { path: '/users-activity', element: <UsersActivityPage /> },
+              { path: '/user-overview/:userId', element: <UserOverviewPage /> },
+              { path: '/user-overview', element: <UserOverviewPage /> },
+              { path: '/settings', element: <SystemConfigurationPage /> },
+              { path: '/system-configuration', element: <SystemConfigurationPage /> },
             ],
           },
         ],
