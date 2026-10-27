@@ -1,7 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { ArrowDown, ArrowUp, CircleAlert, Plus, Save, Trash2 } from 'lucide-react';
 import { useEditChecklist, STANDARDS } from '../hooks/use_edit_checklist';
-import { DEPARTMENTS } from '../hooks/use_create_audit_plan';
+import { useState, useEffect } from 'react';
+import { getDepartments } from '../api/department_api';
 
 export default function AuditChecklistEditPage() {
   const { checklistId } = useParams<{ checklistId: string }>();
@@ -18,13 +19,20 @@ export default function AuditChecklistEditPage() {
     navigate,
   } = useEditChecklist(checklistId!);
 
-  // Kalau data lama pakai nilai di luar daftar, tetap tampilkan sebagai opsi
+
+  const [departments, setDepartments] = useState<string[]>([]);
+  useEffect(() => {
+    getDepartments()
+      .then((data) => setDepartments(data.filter((d) => d.isActive).map((d) => d.name)))
+      .catch(() => setDepartments([]));
+  }, []);
+
   const standardOptions = STANDARDS.some((s) => s.value === standard) || !standard
     ? STANDARDS
     : [...STANDARDS, { value: standard, label: standard }];
-  const departmentOptions = DEPARTMENTS.includes(department) || !department
-    ? DEPARTMENTS
-    : [...DEPARTMENTS, department];
+  const departmentOptions = departments.includes(department) || !department
+    ? departments
+    : [...departments, department];
 
   if (loading) return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Memuat checklist...</p></div>;
   if (loadError) {

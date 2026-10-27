@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ShieldCheck, CircleAlert, Save, Pencil } from 'lucide-react';
-import { useCreateAuditPlan, DEPARTMENTS } from '../hooks/use_create_audit_plan';
+import { useCreateAuditPlan } from '../hooks/use_create_audit_plan';
 import DatePicker from '../../../shared/components/date_picker';
 
 function toLocalisoDate(date: Date) {
@@ -12,7 +12,6 @@ function toLocalisoDate(date: Date) {
 
 const todayIso = toLocalisoDate(new Date());
 const maxDateIso = `${new Date().getFullYear() + 5}-12-31`;
-
 export default function CreateAuditPlanPage() {
   const navigate = useNavigate();
   const { planId } = useParams<{ planId: string }>();
@@ -26,6 +25,7 @@ export default function CreateAuditPlanPage() {
     checklistId, setChecklistId,
     highPriority, setHighPriority,
     auditors,
+    departments,
     checklists,
     loadingOptions,
     loadingPlan,
@@ -90,7 +90,7 @@ export default function CreateAuditPlanPage() {
             <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Department</label>
             <select value={department} onChange={(e) => setDepartment(e.target.value)} className="p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border font-inherit">
               <option value="">Select Department</option>
-              {DEPARTMENTS.map((d) => (
+              {departments.map((d) => (
                 <option key={d} value={d}>{d}</option>
               ))}
             </select>
