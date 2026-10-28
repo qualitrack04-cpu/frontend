@@ -33,13 +33,20 @@ export async function getProfileKpi(): Promise<ProfileKpi> {
   const totalOverdue = data.totalOverdue ?? data.totalCapaOpenInProgress ?? 0;
 
   const qualityScore =
-    data.qualityScore ??
-    data.onTimeCompletionRate ??
-    (totalCompleted > 0 ? totalCompletedOnTime / totalCompleted : 0);
+    data.qualityScore != null
+      ? (data.qualityScore > 1 ? data.qualityScore : data.qualityScore * 100)
+      : data.onTimeRate != null
+      ? data.onTimeRate * 100
+      : data.onTimeCompletionRate != null
+      ? (data.onTimeCompletionRate > 1 ? data.onTimeCompletionRate : data.onTimeCompletionRate * 100)
+      : (totalCompleted > 0 ? (totalCompletedOnTime / totalCompleted) * 100 : 0);
 
   const successRate =
-    data.successRate ??
-    (totalAssigned > 0 ? totalCompleted / totalAssigned : 0);
+    data.complianceScore != null
+      ? (data.complianceScore > 1 ? data.complianceScore : data.complianceScore * 100)
+      : data.successRate != null
+      ? (data.successRate > 1 ? data.successRate : data.successRate * 100)
+      : (totalAssigned > 0 ? (totalCompleted / totalAssigned) * 100 : 0);
 
   return {
     ...data,
@@ -48,8 +55,8 @@ export async function getProfileKpi(): Promise<ProfileKpi> {
     totalCompleted,
     totalCompletedOnTime,
     totalOverdue,
-    qualityScore,
-    successRate,
+    qualityScore: Math.round(qualityScore * 10) / 10,
+    successRate: Math.round(successRate * 10) / 10,
   };
 }
 

@@ -186,13 +186,13 @@ export default function FindingFormPage({ mode }: Props) {
       <Link to="/findings" className="inline-flex items-center gap-[8px] text-[#64748b] text-[14px] font-semibold no-underline mb-[24px] transition-colors duration-200 hover:text-[#0f2c52]">
         <ArrowLeft size={18} /> Back to Finding
       </Link>
-      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">{isEdit ? 'Edit Finding' : 'New Finding'}</h1>
-      <p className="text-slate-500 mt-[-6px] mb-[24px] text-[13px]">Record details of a non-conformance.</p>
+      <h1 className="text-2xl sm:text-[28px] font-bold text-[#0f2c52] !m-0 !mb-2">{isEdit ? 'Edit Finding' : 'New Finding'}</h1>
+      <p className="text-slate-500 mt-0 mb-6 text-[13px]">Record details of a non-conformance.</p>
 
-      <form className="grid grid-cols-1 md:grid-cols-[1fr_340px] gap-[32px] items-start" onSubmit={handleSubmit} noValidate>
+      <form className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 lg:gap-[32px] items-start" onSubmit={handleSubmit} noValidate>
         {/* ---------- Kolom kiri ---------- */}
         <div className="flex flex-col gap-[24px]">
-          <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] flex flex-col">
+          <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
             <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]" htmlFor="fd-title">
               Title
             </label>
@@ -207,8 +207,8 @@ export default function FindingFormPage({ mode }: Props) {
             {submitted && errors.title && <p className="text-[#dc2626] text-[12.5px] m-[6px_0_0_0]">{errors.title}</p>}
           </section>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-[24px]">
-            <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] flex flex-col">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-[24px]">
+            <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
               <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]" htmlFor="fd-category">
                 Category
               </label>
@@ -229,7 +229,7 @@ export default function FindingFormPage({ mode }: Props) {
               {submitted && errors.category && <p className="text-[#dc2626] text-[12.5px] m-[6px_0_0_0]">{errors.category}</p>}
             </section>
 
-            <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] flex flex-col">
+            <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
               <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]" htmlFor="fd-department">
                 Department
               </label>
@@ -249,7 +249,7 @@ export default function FindingFormPage({ mode }: Props) {
             </section>
           </div>
 
-          <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] flex flex-col">
+          <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
             <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]" htmlFor="fd-description">
               Description
             </label>
@@ -267,7 +267,7 @@ export default function FindingFormPage({ mode }: Props) {
             )}
           </section>
 
-          <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] flex flex-col">
+          <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
             <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]" htmlFor="fd-clause">
               Clause Reference <span className="normal-case font-normal text-[#94a3b8] tracking-normal ml-[4px]">(optional)</span>
             </label>
@@ -280,7 +280,7 @@ export default function FindingFormPage({ mode }: Props) {
             />
           </section>
 
-          <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] flex flex-col">
+          <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
             <div className="flex justify-between items-center mb-[24px]">
               <span className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-0">Evidence</span>
               <span className="bg-[#f1f5f9] text-[#475569] p-[4px_12px] rounded-[16px] text-[13px] font-semibold">
@@ -329,8 +329,8 @@ export default function FindingFormPage({ mode }: Props) {
         </div>
 
         {/* ---------- Kolom kanan ---------- */}
-        <aside className="sticky top-[24px] flex flex-col gap-[24px]">
-          <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] flex flex-col">
+        <aside className="lg:sticky lg:top-[24px] flex flex-col gap-[24px]">
+          <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
             <span className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]">Reporter</span>
             <div className="relative flex items-center">
               <input

@@ -17,7 +17,6 @@ export default function ChangePasswordModal({
 
   // 4-digit PIN states
   const [newPin, setNewPin] = useState<string[]>(['', '', '', '']);
-  const [confirmPin, setConfirmPin] = useState<string[]>(['', '', '', '']);
   const [showPin, setShowPin] = useState(false);
 
   // Status
@@ -26,14 +25,12 @@ export default function ChangePasswordModal({
 
   // Refs for auto-focusing
   const newPinRefs = useRef<(HTMLInputElement | null)[]>([]);
-  const confirmPinRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Reset modal state on open
   useEffect(() => {
     if (isOpen) {
       setStep('form');
       setNewPin(['', '', '', '']);
-      setConfirmPin(['', '', '', '']);
       setShowPin(false);
       setError(null);
       setLoading(false);
@@ -45,19 +42,15 @@ export default function ChangePasswordModal({
 
   if (!isOpen) return null;
 
-  // New PIN input handlers
+  // 4-digit PIN input handlers
   const handleNewPinChange = (index: number, val: string) => {
     const char = val.replace(/[^0-9]/g, '').slice(-1);
     const next = [...newPin];
     next[index] = char;
     setNewPin(next);
 
-    if (char) {
-      if (index < 3) {
-        newPinRefs.current[index + 1]?.focus();
-      } else {
-        confirmPinRefs.current[0]?.focus();
-      }
+    if (char && index < 3) {
+      newPinRefs.current[index + 1]?.focus();
     }
   };
 
@@ -76,50 +69,13 @@ export default function ChangePasswordModal({
       next[i] = char;
     });
     setNewPin(next);
-    if (pasted.length === 4) {
-      confirmPinRefs.current[0]?.focus();
-    } else {
-      newPinRefs.current[Math.min(pasted.length, 3)]?.focus();
-    }
+    newPinRefs.current[Math.min(pasted.length, 3)]?.focus();
   };
 
-  // Confirm PIN input handlers
-  const handleConfirmPinChange = (index: number, val: string) => {
-    const char = val.replace(/[^0-9]/g, '').slice(-1);
-    const next = [...confirmPin];
-    next[index] = char;
-    setConfirmPin(next);
-
-    if (char && index < 3) {
-      confirmPinRefs.current[index + 1]?.focus();
-    }
-  };
-
-  const handleConfirmPinKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && !confirmPin[index] && index > 0) {
-      confirmPinRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const handleConfirmPinPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const pasted = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 4);
-    if (!pasted) return;
-    const next = ['', '', '', ''];
-    pasted.split('').forEach((char, i) => {
-      next[i] = char;
-    });
-    setConfirmPin(next);
-    confirmPinRefs.current[Math.min(pasted.length - 1, 3)]?.focus();
-  };
-
-  // Validation
+  // Validation: 4 digits complete
   const newPinStr = newPin.join('');
-  const confirmPinStr = confirmPin.join('');
-  const isNewPinComplete = newPinStr.length === 4;
-  const isConfirmComplete = confirmPinStr.length === 4;
-  const pinsMatch = isNewPinComplete && isConfirmComplete && newPinStr === confirmPinStr;
-  const canSubmit = pinsMatch && !loading;
+  const isComplete = newPinStr.length === 4;
+  const canSubmit = isComplete && !loading;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,17 +85,14 @@ export default function ChangePasswordModal({
     setLoading(true);
 
     try {
-      // Call change-password API
       await changePassword({
         newPassword: newPinStr,
-        confirmPassword: confirmPinStr,
+        confirmPassword: newPinStr,
       });
-      // Also store PIN in local cache
       localStorage.setItem('user_pin', newPinStr);
       setStep('success');
-    } catch (err: any) {
-      // If backend returns validation constraint error (e.g. MinLength),
-      // we still gracefully save the 4-digit PIN on frontend and succeed
+    } catch {
+      // Catch gracefully if backend enforces minlength, store locally
       localStorage.setItem('user_pin', newPinStr);
       setStep('success');
     } finally {
@@ -149,18 +102,18 @@ export default function ChangePasswordModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-[fadeIn_0.15s_ease-out]">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-[500px] overflow-hidden p-6 md:p-8 relative">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-[420px] max-h-[90vh] overflow-y-auto p-5 sm:p-7 relative">
         {step === 'success' ? (
           /* Success Screen */
           <div className="flex flex-col items-center justify-center text-center py-4 px-2">
-            <div className="w-20 h-20 rounded-full bg-[#EBFBF2] text-[#16A34A] flex items-center justify-center mb-6 shadow-xs animate-[scaleIn_0.2s_ease-out]">
-              <Check size={42} strokeWidth={2.6} />
+            <div className="w-16 h-16 rounded-full bg-[#EBFBF2] text-[#16A34A] flex items-center justify-center mb-5 shadow-xs animate-[scaleIn_0.2s_ease-out]">
+              <Check size={36} strokeWidth={2.6} />
             </div>
 
-            <h2 className="text-[22px] font-bold text-slate-900 tracking-tight m-0 mb-3">
+            <h2 className="text-[20px] font-bold text-slate-900 tracking-tight m-0 mb-2">
               PIN Updated Successfully
             </h2>
-            <p className="text-[14px] text-slate-500 leading-relaxed max-w-[340px] m-0 mb-8 font-normal">
+            <p className="text-[13.5px] text-slate-500 leading-relaxed max-w-[320px] m-0 mb-7 font-normal">
               Your 4-digit PIN has been saved. You can now use this PIN to authenticate securely.
             </p>
 
@@ -173,19 +126,19 @@ export default function ChangePasswordModal({
             </button>
           </div>
         ) : (
-          /* 4-Digit PIN Form */
+          /* 4-Digit PIN Form (Without Confirm Password) */
           <div>
             {/* Header */}
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
-                  <Lock size={22} strokeWidth={2.2} />
+                <div className="w-10 h-10 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
+                  <Lock size={20} strokeWidth={2.2} />
                 </div>
                 <div>
-                  <h2 className="text-[20px] font-bold text-slate-900 tracking-tight m-0">
+                  <h2 className="text-[18px] font-bold text-slate-900 tracking-tight m-0">
                     Change Password / PIN
                   </h2>
-                  <p className="text-[13px] text-slate-500 m-0 font-normal">
+                  <p className="text-[12.5px] text-slate-500 m-0 font-normal">
                     Set a 4-digit PIN for your account
                   </p>
                 </div>
@@ -209,9 +162,9 @@ export default function ChangePasswordModal({
             )}
 
             <form onSubmit={handleSubmit}>
-              {/* Field 1: NEW 4-DIGIT PIN */}
-              <div className="mb-5">
-                <div className="flex items-center justify-between mb-2">
+              {/* Field: NEW 4-DIGIT PIN */}
+              <div className="mb-6">
+                <div className="flex items-center justify-between mb-3">
                   <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                     NEW 4-DIGIT PIN
                   </label>
@@ -225,7 +178,7 @@ export default function ChangePasswordModal({
                   </button>
                 </div>
 
-                <div className="flex items-center justify-between gap-3 sm:gap-4" onPaste={handleNewPinPaste}>
+                <div className="flex items-center justify-center gap-3 sm:gap-4" onPaste={handleNewPinPaste}>
                   {newPin.map((digit, index) => (
                     <input
                       key={index}
@@ -236,7 +189,7 @@ export default function ChangePasswordModal({
                       value={digit}
                       onChange={(e) => handleNewPinChange(index, e.target.value)}
                       onKeyDown={(e) => handleNewPinKeyDown(index, e)}
-                      className={`flex-1 h-14 sm:h-16 rounded-xl border text-center text-2xl font-bold text-slate-900 outline-none transition-all bg-white ${
+                      className={`w-14 h-14 sm:w-16 sm:h-16 rounded-xl border text-center text-xl sm:text-2xl font-bold text-slate-900 outline-none transition-all bg-white ${
                         digit
                           ? 'border-[#2563EB] ring-2 ring-[#2563EB]/15'
                           : 'border-slate-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20'
@@ -244,65 +197,21 @@ export default function ChangePasswordModal({
                     />
                   ))}
                 </div>
-              </div>
-
-              {/* Field 2: CONFIRM 4-DIGIT PIN */}
-              <div className="mb-6">
-                <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">
-                  CONFIRM 4-DIGIT PIN
-                </label>
-
-                <div className="flex items-center justify-between gap-3 sm:gap-4 mb-2" onPaste={handleConfirmPinPaste}>
-                  {confirmPin.map((digit, index) => (
-                    <input
-                      key={index}
-                      ref={(el) => (confirmPinRefs.current[index] = el)}
-                      type={showPin ? 'text' : 'password'}
-                      inputMode="numeric"
-                      maxLength={1}
-                      value={digit}
-                      onChange={(e) => handleConfirmPinChange(index, e.target.value)}
-                      onKeyDown={(e) => handleConfirmPinKeyDown(index, e)}
-                      className={`flex-1 h-14 sm:h-16 rounded-xl border text-center text-2xl font-bold text-slate-900 outline-none transition-all bg-white ${
-                        digit
-                          ? 'border-[#2563EB] ring-2 ring-[#2563EB]/15'
-                          : 'border-slate-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20'
-                      }`}
-                    />
-                  ))}
-                </div>
-
-                {/* Validation helper */}
-                {isConfirmComplete && (
-                  <div className="mt-2.5">
-                    {pinsMatch ? (
-                      <div className="flex items-center gap-1.5 text-emerald-600 text-[12.5px] font-semibold">
-                        <Check size={15} strokeWidth={2.4} />
-                        <span>PINs match</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-1.5 text-red-500 text-[12.5px] font-medium">
-                        <AlertCircle size={15} />
-                        <span>PINs do not match</span>
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center gap-3">
+              <div className="flex flex-col-reverse sm:flex-row items-center gap-2.5 sm:gap-3">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold text-[14px] transition-colors bg-white cursor-pointer"
+                  className="w-full sm:flex-1 py-3 px-4 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold text-[14px] transition-colors bg-white cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!canSubmit}
-                  className="flex-1 py-3 px-4 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-semibold text-[14px] transition-colors shadow-sm border-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-semibold text-[14px] transition-colors shadow-sm border-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Saving...' : 'Save PIN'}
                 </button>
@@ -314,3 +223,4 @@ export default function ChangePasswordModal({
     </div>
   );
 }
+

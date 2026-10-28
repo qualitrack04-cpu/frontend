@@ -54,7 +54,7 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden p-6 md:p-7 animate-[fadeIn_0.15s_ease-out] relative">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto p-5 sm:p-7 animate-[fadeIn_0.15s_ease-out] relative">
         {/* Close Button */}
         <button
           type="button"
@@ -149,19 +149,19 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
           </div>
 
           {/* Modal Footer */}
-          <div className="flex items-center justify-end gap-3 mt-6 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 sm:gap-3 mt-6 pt-2">
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 font-medium text-[13.5px] transition-colors cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 font-medium text-[13.5px] transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2.5 rounded-lg bg-[#2563EB] hover:bg-blue-700 text-white font-medium text-[13.5px] transition-colors shadow-sm border-none cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-[#2563EB] hover:bg-blue-700 text-white font-medium text-[13.5px] transition-colors shadow-sm border-none cursor-pointer disabled:opacity-50"
             >
               {loading ? 'Saving...' : 'Save Changes'}
             </button>

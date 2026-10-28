@@ -288,9 +288,9 @@ export default function DepartmentsPage() {
           </div>
         )}
 
-        <form onSubmit={handleAddDepartment} className="flex flex-wrap items-end gap-6">
+        <form onSubmit={handleAddDepartment} className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6">
           {/* Department Name Input */}
-          <div className="flex-1 min-w-[280px]">
+          <div className="flex-1 w-full min-w-0">
             <label className="block text-[13px] font-semibold text-slate-700 mb-2">
               Department Name
             </label>
@@ -331,11 +331,11 @@ export default function DepartmentsPage() {
           </div>
 
           {/* Add Department Button */}
-          <div className="shrink-0">
+          <div className="w-full sm:w-auto shrink-0">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center justify-center gap-1.5 bg-[#2563EB] hover:bg-blue-700 text-white font-medium px-5 h-[42px] rounded-lg text-[14px] transition-all shadow-sm active:scale-[0.98] cursor-pointer border-none disabled:opacity-50"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-[#2563EB] hover:bg-blue-700 text-white font-medium px-5 h-[42px] rounded-lg text-[14px] transition-all shadow-sm active:scale-[0.98] cursor-pointer border-none disabled:opacity-50"
             >
               <Plus size={16} strokeWidth={2.5} />
               <span>{isSubmitting ? 'Adding...' : 'Add Department'}</span>

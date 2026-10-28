@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useAuth } from '../hooks/use_auth';
 import AuthBrandPanel from './auth_brand_panel';
+import splashLogo from '../../../assets/splash.png';
 
 export default function SignInPage() {
   const [email, setEmail] = useState('');
@@ -16,12 +17,21 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full overflow-hidden bg-white">
+    <div className="relative flex min-h-screen w-full overflow-hidden bg-slate-50 lg:bg-white">
       <AuthBrandPanel side="left" />
 
-      <div className="flex flex-1 flex-col items-center lg:items-end justify-center px-6 lg:pr-[85px] py-12 z-10">
-        <div className="w-full max-w-[380px] bg-white rounded-2xl shadow-2xl px-8 py-10 text-left">
-          <div className="text-[#0f2c52] text-[28px] font-bold !m-0 !mb-10 text-center !tracking-normal">
+      <div className="flex flex-1 flex-col items-center lg:items-end justify-center px-4 sm:px-6 lg:pr-[85px] py-8 sm:py-12 z-10">
+        <div className="w-full max-w-[400px] bg-white rounded-2xl shadow-xl sm:shadow-2xl px-6 py-8 sm:px-8 sm:py-10 text-left">
+          {/* Logo on Mobile/Tablet */}
+          <div className="flex justify-center mb-6 lg:hidden">
+            <img
+              src={splashLogo}
+              alt="QualiTrack"
+              className="h-10 sm:h-12 w-auto object-contain"
+            />
+          </div>
+
+          <div className="text-[#0f2c52] text-2xl sm:text-[28px] font-bold !m-0 !mb-8 text-center !tracking-normal">
             Sign In
           </div>
 

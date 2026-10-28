@@ -51,9 +51,9 @@ export default function CreateAuditPlanPage() {
   return (
     <div className="max-w-full m-0 text-left">
       <button className="flex items-center gap-2 text-slate-500 hover:text-[#0f2c52] transition-colors mb-4 font-semibold bg-transparent border-none cursor-pointer p-0" onClick={() => navigate('/audits')}>← Back to Audits</button>
-      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">{isEdit ? 'Edit Audit Plan' : 'Create Audit Plan'}</h1>
+      <h1 className="text-2xl sm:text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">{isEdit ? 'Edit Audit Plan' : 'Create Audit Plan'}</h1>
 
-      <form onSubmit={handleSubmit} className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] max-w-[760px]">
+      <form onSubmit={handleSubmit} className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] max-w-[760px]">
         <div className="text-[14px] font-bold text-[#0f2c52] uppercase tracking-[0.5px] m-0 mb-[16px]">Audit Details</div>
         <hr className="border-t border-[#e2e8f0] m-0 mb-[24px]" />
 
@@ -180,7 +180,7 @@ export default function CreateAuditPlanPage() {
         {submitError && <p className="text-[#dc2626] text-[13px] m-0 mb-[16px]">{submitError}</p>}
 
         <div className="flex items-center justify-end gap-[12px] mt-[32px] pt-[20px] border-t border-[#e2e8f0]">
-          <button type="submit" className="bg-[#0f2c52] text-white border-none p-[12px_24px] rounded-[8px] text-[14.5px] font-semibold cursor-pointer inline-flex items-center justify-center gap-[8px] transition-all hover:bg-[#0c2444] disabled:opacity-50 disabled:cursor-not-allowed" disabled={submitting}>
+          <button type="submit" className="w-full sm:w-auto bg-[#0f2c52] text-white border-none p-[12px_24px] rounded-[8px] text-[14.5px] font-semibold cursor-pointer inline-flex items-center justify-center gap-[8px] transition-all hover:bg-[#0c2444] disabled:opacity-50 disabled:cursor-not-allowed" disabled={submitting}>
             <Save size={16} /> {submitting ? 'Saving...' : isEdit ? 'Save Changes' : 'Create Plan'}
           </button>
         </div>

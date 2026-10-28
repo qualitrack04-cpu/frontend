@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { User, Mail, Lock, Eye, EyeOff, Briefcase } from 'lucide-react';
 import { register } from '../api/auth_api';
 import AuthBrandPanel from './auth_brand_panel';
+import splashLogo from '../../../assets/splash.png';
 
 const ROLE_OPTIONS = [
   { value: 'AuditorInternal', label: 'Auditor Internal' },
@@ -51,14 +52,23 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full overflow-hidden bg-white">
+    <div className="relative flex min-h-screen w-full overflow-hidden bg-slate-50 lg:bg-white">
       {/* ── Left: Brand Panel ── */}
       <AuthBrandPanel side="left" />
 
       {/* ── Right: Form area ── */}
-      <div className="flex flex-1 flex-col items-center lg:items-end justify-center px-6 lg:pr-[85px] py-8 z-10">
-        <div className="w-full max-w-[380px] bg-white rounded-[20px] shadow-2xl p-8 text-left">
-          <div className="text-[#0f2c52] text-[28px] leading-9 font-bold !m-0 !mb-[22px] text-center !tracking-normal">
+      <div className="flex flex-1 flex-col items-center lg:items-end justify-center px-4 sm:px-6 lg:pr-[85px] py-6 sm:py-8 z-10">
+        <div className="w-full max-w-[400px] bg-white rounded-[20px] shadow-xl sm:shadow-2xl p-6 sm:p-8 text-left">
+          {/* Logo on Mobile/Tablet */}
+          <div className="flex justify-center mb-5 lg:hidden">
+            <img
+              src={splashLogo}
+              alt="QualiTrack"
+              className="h-9 sm:h-11 w-auto object-contain"
+            />
+          </div>
+
+          <div className="text-[#0f2c52] text-2xl sm:text-[28px] leading-8 sm:leading-9 font-bold !m-0 !mb-5 text-center !tracking-normal">
             Sign Up
           </div>
 

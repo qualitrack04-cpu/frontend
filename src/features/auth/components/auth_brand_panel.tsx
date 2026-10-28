@@ -47,10 +47,10 @@ export default function AuthBrandPanel({ side = 'left' }: AuthBrandPanelProps) {
     return (
       <>
         <div
-          className={`hidden md:block absolute top-0 bottom-0 left-0 z-0 pointer-events-none ${gradientClass}`}
+          className={`hidden lg:block absolute top-0 bottom-0 left-0 z-0 pointer-events-none ${gradientClass}`}
           style={{ clipPath: 'polygon(0 0, 100% 0, 83.6% 100%, 0 100%)', width: '54%' }}
         />
-        <div className="hidden md:flex flex-[0_0_50%] z-10 text-white flex-col justify-center pl-[56px] pr-[40px] py-16 [&_*]:box-border">
+        <div className="hidden lg:flex flex-[0_0_50%] z-10 text-white flex-col justify-center pl-10 xl:pl-[56px] pr-8 xl:pr-[40px] py-16 [&_*]:box-border">
           <BrandContent />
         </div>
       </>
@@ -59,13 +59,13 @@ export default function AuthBrandPanel({ side = 'left' }: AuthBrandPanelProps) {
 
   // Kanan: background dan konten dalam SATU wrapper, jadi posisinya pasti sejajar.
   return (
-    <div className="hidden md:block absolute top-0 bottom-0 right-0 w-[54%] z-10 text-white [&_*]:box-border">
+    <div className="hidden lg:block absolute top-0 bottom-0 right-0 w-[54%] z-10 text-white [&_*]:box-border">
       <div
         className={`absolute inset-0 z-0 pointer-events-none ${gradientClass}`}
         style={{ clipPath: 'polygon(16.4% 0, 100% 0, 100% 100%, 0 100%)' }}
       />
       <div
-        className="relative z-10 h-full flex flex-col justify-center py-16 pr-[40px]"
+        className="relative z-10 h-full flex flex-col justify-center py-16 pr-8 xl:pr-[40px]"
         style={{ paddingLeft: '15vw' }}
       >
         <BrandContent />

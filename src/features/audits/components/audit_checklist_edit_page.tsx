@@ -39,9 +39,9 @@ export default function AuditChecklistEditPage() {
   return (
     <div className="max-w-full m-0 text-left">
       <button className="inline-flex items-center gap-[8px] bg-transparent border-none text-[#64748b] text-[14px] font-semibold cursor-pointer p-0 mb-[16px] hover:text-[#1e293b]" onClick={() => navigate(-1)}>← Back</button>
-      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Edit Audit Checklist</h1>
+      <h1 className="text-2xl sm:text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Edit Audit Checklist</h1>
 
-      <form onSubmit={handleSubmit} className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] max-w-[760px]">
+      <form onSubmit={handleSubmit} className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] max-w-[760px]">
         <div className="text-[14px] font-bold text-[#0f2c52] uppercase tracking-[0.5px] m-0 mb-[16px]">Checklist Details</div>
         <hr className="border-t border-[#e2e8f0] m-0 mb-[24px]" />
 
@@ -177,11 +177,11 @@ export default function AuditChecklistEditPage() {
 
         {submitError && <p className="text-[#dc2626] text-[13px] mt-[4px]">{submitError}</p>}
 
-        <div className="flex items-center justify-end gap-[12px] mt-[32px] pt-[20px] border-t border-[#e2e8f0]">
-          <button type="button" className="bg-[#f1f5f9] text-[#475569] border-none p-[12px_24px] rounded-[8px] text-[14px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#e2e8f0]" onClick={() => navigate(-1)}>
+        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 sm:gap-[12px] mt-[32px] pt-[20px] border-t border-[#e2e8f0]">
+          <button type="button" className="w-full sm:w-auto bg-[#f1f5f9] text-[#475569] border-none p-[12px_24px] rounded-[8px] text-[14px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#e2e8f0]" onClick={() => navigate(-1)}>
             Cancel
           </button>
-          <button type="submit" className="bg-[#0f2c52] text-white border-none p-[12px_24px] rounded-[8px] text-[14px] font-semibold cursor-pointer flex items-center gap-[8px] transition-colors duration-200 hover:bg-[#0c2444] disabled:opacity-50 disabled:cursor-not-allowed" disabled={submitting}>
+          <button type="submit" className="w-full sm:w-auto bg-[#0f2c52] text-white border-none p-[12px_24px] rounded-[8px] text-[14px] font-semibold cursor-pointer flex items-center justify-center gap-[8px] transition-colors duration-200 hover:bg-[#0c2444] disabled:opacity-50 disabled:cursor-not-allowed" disabled={submitting}>
             <Save size={16} /> {submitting ? 'Saving...' : 'Save Changes'}
           </button>
         </div>

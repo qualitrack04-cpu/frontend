@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Mail, ArrowLeft } from 'lucide-react';
 import { useForgotPasswordFlow } from '../hooks/use_forgot_password_flow';
 import AuthBrandPanel from './auth_brand_panel';
+import splashLogo from '../../../assets/splash.png';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -19,14 +20,23 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full overflow-hidden bg-white [&_*]:box-border">
+    <div className="relative flex min-h-screen w-full overflow-hidden bg-slate-50 lg:bg-white [&_*]:box-border">
       {/* ── Left: Form area ── */}
-      <div className="flex flex-1 flex-col items-center lg:items-start justify-center px-6 lg:pl-[85px] py-12 z-10">
-        <div className="w-full max-w-[444px] bg-white rounded-[20px] shadow-2xl p-8 text-left">
-          <div className="text-[#0f2c52] text-[25px] leading-8 font-bold !m-0 !mb-5 text-center !tracking-normal">
+      <div className="flex flex-1 flex-col items-center lg:items-start justify-center px-4 sm:px-6 lg:pl-[85px] py-8 sm:py-12 z-10">
+        <div className="w-full max-w-[444px] bg-white rounded-[20px] shadow-xl sm:shadow-2xl p-6 sm:p-8 text-left">
+          {/* Logo on Mobile/Tablet */}
+          <div className="flex justify-center mb-5 lg:hidden">
+            <img
+              src={splashLogo}
+              alt="QualiTrack"
+              className="h-9 sm:h-11 w-auto object-contain"
+            />
+          </div>
+
+          <div className="text-[#0f2c52] text-2xl sm:text-[25px] leading-8 font-bold !m-0 !mb-4 text-center !tracking-normal">
             Forget Password?
           </div>
-          <p className="text-[14px] leading-[22px] text-[#64748b] text-center !m-0 !mb-[26px]">
+          <p className="text-[13.5px] sm:text-[14px] leading-relaxed text-[#64748b] text-center !m-0 !mb-6">
             Enter your registered work email below. We will send you a OTP Code to reset your password.
           </p>
 
