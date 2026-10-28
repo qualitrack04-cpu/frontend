@@ -1,26 +1,24 @@
+import { fileUrl } from '../../../shared/utils/file_url';
 import { useState, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { 
   ArrowLeft, 
   CheckCircle2, 
-  ShieldCheck, 
-  ChevronLeft, 
-  ChevronRight,
-  ChevronDown
+  ShieldCheck 
 } from 'lucide-react';
+import TablePagination from '../../../shared/components/table_pagination';
 import { useUserOverview } from '../hooks/use_users_activity';
 
 export default function UserOverviewPage() {
   const { userId } = useParams<{ userId: string }>();
   const { overview, loading } = useUserOverview(userId);
 
-  // Pagination state
+  // Pagination state (Max 7 items per page to match User Management)
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const pageSize = 7;
 
   const activities = overview?.recentActivities || [];
   const totalResults = activities.length;
-  const totalPages = Math.max(1, Math.ceil(totalResults / pageSize));
 
   const paginatedActivities = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
@@ -53,53 +51,6 @@ export default function UserOverviewPage() {
       return dateStr;
     }
   };
-
-  // Generate pagination buttons
-  const renderPaginationButtons = () => {
-    const buttons = [];
-    if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) {
-        buttons.push(i);
-      }
-    } else {
-      if (currentPage <= 3) {
-        buttons.push(1, 2, 3, '..', totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        buttons.push(1, '..', totalPages - 2, totalPages - 1, totalPages);
-      } else {
-        buttons.push(1, '..', currentPage, '..', totalPages);
-      }
-    }
-
-    return buttons.map((btn, index) => {
-      if (btn === '..') {
-        return (
-          <span key={`ellipsis-${index}`} className="w-7 h-7 flex items-center justify-center text-slate-400 text-sm select-none">
-            ..
-          </span>
-        );
-      }
-      const pageNum = btn as number;
-      const isActive = currentPage === pageNum;
-      return (
-        <button
-          key={pageNum}
-          type="button"
-          onClick={() => setCurrentPage(pageNum)}
-          className={`w-7 h-7 rounded-[6px] flex items-center justify-center font-medium text-xs transition-all border-none cursor-pointer ${
-            isActive
-              ? 'bg-[#0F172A] text-white shadow-xs font-semibold'
-              : 'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-          }`}
-        >
-          {pageNum}
-        </button>
-      );
-    });
-  };
-
-  const startRecord = totalResults === 0 ? 0 : (currentPage - 1) * pageSize + 1;
-  const endRecord = Math.min(currentPage * pageSize, totalResults);
 
   if (loading && !overview) {
     return <div className="p-8 text-center text-slate-400">Loading user overview...</div>;
@@ -147,16 +98,18 @@ export default function UserOverviewPage() {
         {/* Card 1: User Profile Card */}
         <div className="bg-white rounded-2xl p-6 shadow-[0_2px_12px_rgba(15,44,82,0.03)] border border-slate-100 flex flex-col items-center justify-center text-center overflow-hidden min-w-0">
           <div className="w-20 h-20 rounded-full bg-[#E0E7FF] border-2 border-slate-100 flex items-center justify-center overflow-hidden mb-3.5 shadow-sm shrink-0">
-            {/* Custom SVG stylized penguin/avatar to match reference perfectly */}
-            <svg className="w-16 h-16" viewBox="0 0 100 100" fill="none">
-              <circle cx="50" cy="50" r="46" fill="#64748B" />
-              <ellipse cx="50" cy="62" rx="34" ry="28" fill="#FFFFFF" />
-              <circle cx="40" cy="50" r="4.5" fill="#0F172A" />
-              <circle cx="60" cy="50" r="4.5" fill="#0F172A" />
-              <circle cx="41.5" cy="48.5" r="1.5" fill="#FFFFFF" />
-              <circle cx="61.5" cy="48.5" r="1.5" fill="#FFFFFF" />
-              <polygon points="50,53 44,61 56,61" fill="#F59E0B" />
-            </svg>
+            {(user.photoUrl || (user as any).profilePhotoUrl) ? (
+              <img
+                src={fileUrl(user.photoUrl || (user as any).profilePhotoUrl)}
+                alt={user.fullName}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <svg className="w-10 h-10 text-[#2563EB]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            )}
           </div>
 
           <h2 className="font-bold text-[#0F294A] text-[18px] m-0 mb-1 w-full max-w-full break-words [overflow-wrap:anywhere] [word-break:break-word]">
@@ -308,56 +261,13 @@ export default function UserOverviewPage() {
           </table>
         </div>
 
-        {/* Footer with Pagination */}
-        <div className="px-6 py-3.5 border-t border-slate-100 bg-white flex flex-wrap items-center justify-between gap-4 text-[13.5px] text-slate-500 font-normal">
-          <div>
-            Showing <strong className="font-semibold text-slate-800">{startRecord}-{endRecord}</strong> of{' '}
-            <strong className="font-semibold text-slate-800">{totalResults}</strong> results
-          </div>
-
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <span className="text-slate-500 text-[13px]">Rows per page:</span>
-              <div className="relative">
-                <select
-                  value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  className="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-[13px] text-slate-700 outline-none focus:border-blue-500 cursor-pointer font-medium appearance-none pr-6"
-                >
-                  <option value={10}>10</option>
-                  <option value={20}>20</option>
-                  <option value={50}>50</option>
-                </select>
-                <ChevronDown size={14} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white"
-              >
-                <ChevronLeft size={16} />
-              </button>
-
-              {renderPaginationButtons()}
-
-              <button
-                type="button"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white"
-              >
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
-        </div>
+        {/* Pagination Bar */}
+        <TablePagination
+          currentPage={currentPage}
+          totalResults={totalResults}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </div>
   );

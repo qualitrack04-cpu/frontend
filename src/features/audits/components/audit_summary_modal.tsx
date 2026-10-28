@@ -17,7 +17,7 @@ export default function AuditSummaryModal({ sessionId, onSaved, onClose }: Audit
 
   const handleSave = async () => {
     if (!summary.trim()) {
-      setError('Ringkasan audit tidak boleh kosong');
+      setError('Audit summary cannot be empty');
       return;
     }
     setSaving(true);
@@ -31,7 +31,7 @@ export default function AuditSummaryModal({ sessionId, onSaved, onClose }: Audit
         onSaved();
         return;
       }
-      setError(err.response?.data?.message ?? 'Gagal menyimpan ringkasan audit');
+      setError(err.response?.data?.message ?? 'Failed to save audit summary');
     } finally {
       setSaving(false);
     }

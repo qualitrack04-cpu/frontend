@@ -16,7 +16,7 @@ export function useAuditPlans() {
       const data = await getAuditPlans();
       setAllAudits(data);
     } catch (err: any) {
-      setError(err.response?.data?.message ?? 'Gagal memuat daftar audit plan');
+      setError(err.response?.data?.message ?? 'Failed to load audit plans');
     } finally {
       setLoading(false);
     }
@@ -31,7 +31,7 @@ export function useAuditPlans() {
       await deleteAuditPlan(id);
       setAllAudits((prev) => prev.filter((a) => a.id !== id));
     } catch (err: any) {
-      setError(err.response?.data?.message ?? 'Gagal menghapus audit plan');
+      setError(err.response?.data?.message ?? 'Failed to delete audit plan');
     }
   }, []);
 

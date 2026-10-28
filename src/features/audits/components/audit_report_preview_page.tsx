@@ -24,7 +24,7 @@ export default function AuditReportPreviewPage() {
       const result = await generatePdfReport(session.id);
       setPdfResult(result);
     } catch (err: any) {
-      setPdfError(err.response?.data?.message ?? 'Gagal membuat PDF');
+      setPdfError(err.response?.data?.message ?? 'Failed to generate PDF');
     } finally {
       setGenerating(false);
     }
@@ -45,7 +45,7 @@ export default function AuditReportPreviewPage() {
       link.remove();
       URL.revokeObjectURL(url);
     } catch {
-      setPdfError('Gagal mengunduh PDF');
+      setPdfError('Failed to download PDF');
     } finally {
       setDownloading(false);
     }
@@ -61,7 +61,7 @@ export default function AuditReportPreviewPage() {
     }
   };
 
-  if (loading) return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Memuat laporan...</p></div>;
+  if (loading) return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Loading report...</p></div>;
   if (error) return <div className="max-w-full m-0 text-left"><p className="text-red-600">{error}</p></div>;
 
   const auditIdShort = session?.id.slice(0, 8).toUpperCase();
@@ -153,7 +153,7 @@ export default function AuditReportPreviewPage() {
         </div>
       </div>
 
-      {/* Modal: PDF berhasil dibuat */}
+      {/* Modal: PDF generated successfully */}
       {pdfResult && !showShareModal && (
         <div className="fixed inset-0 bg-[rgba(15,44,82,0.4)] backdrop-blur-[2px] flex items-end sm:items-center justify-center z-[1000] animate-[fadein_0.2s_ease-out]">
           <div className="bg-white w-full max-w-[360px] rounded-[20px] p-[32px_24px_24px_24px] flex flex-col items-center animate-[scalein_0.2s_cubic-bezier(0.175,0.885,0.32,1.275)] relative">
@@ -161,7 +161,7 @@ export default function AuditReportPreviewPage() {
               type="button"
               className="absolute top-[16px] right-[16px] bg-transparent border-none text-[#94a3b8] cursor-pointer p-[4px] flex items-center justify-center transition-colors duration-200 hover:text-[#0f2c52]"
               onClick={() => setPdfResult(null)}
-              aria-label="Tutup"
+              aria-label="Close"
             >
               ✕
             </button>
@@ -212,7 +212,7 @@ export default function AuditReportPreviewPage() {
                 type="button"
                 className="bg-transparent border-none text-[#94a3b8] cursor-pointer p-[4px] flex items-center justify-center transition-colors duration-200 hover:text-[#0f2c52]"
                 onClick={() => setShowShareModal(false)}
-                aria-label="Tutup"
+                aria-label="Close"
               >
                 ✕
               </button>

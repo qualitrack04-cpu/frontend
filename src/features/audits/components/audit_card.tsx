@@ -51,7 +51,7 @@ export default function AuditCard({ audit, onDelete }: AuditCardProps) {
               <button
                 className="w-[32px] h-[32px] rounded-[8px] border-none bg-transparent text-[#dc2626] flex items-center justify-center cursor-pointer hover:bg-[#fef2f2]"
                 onClick={() => onDelete(audit.id)}
-                aria-label="Hapus"
+                aria-label="Delete"
               >
                 <Trash2 size={16} />
               </button>
@@ -75,7 +75,7 @@ export default function AuditCard({ audit, onDelete }: AuditCardProps) {
             </Link>
           )
         ) : (
-          <span className="text-slate-500">Belum ada jadwal</span>
+          <span className="text-slate-500">No schedule yet</span>
         )}
       </div>
     </div>

@@ -16,8 +16,8 @@ export function useFetch<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {
         if (!active) return;
         setError(
           err.response?.status === 404
-            ? 'Data belum tersedia.'
-            : err.response?.data?.message ?? 'Gagal memuat data.'
+            ? 'Data is not available yet.'
+            : err.response?.data?.message ?? 'Failed to load data.'
         );
       })
       .finally(() => active && setLoading(false));

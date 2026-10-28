@@ -21,11 +21,11 @@ export default function ResetPasswordPage() {
     e.preventDefault();
     setLocalError(null);
     if (!email || !resetToken) {
-      setLocalError('Sesi reset tidak valid. Silakan ulangi dari halaman Forgot Password.');
+      setLocalError('Reset session is invalid. Please restart from the Forgot Password page.');
       return;
     }
     if (newPassword !== confirmPassword) {
-      setLocalError('Password tidak sama.');
+      setLocalError('Passwords do not match.');
       return;
     }
     try {
@@ -35,10 +35,10 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full overflow-hidden bg-slate-50 lg:bg-[#f3f4f6]">
+    <div className="relative flex min-h-screen w-full overflow-hidden bg-slate-50 lg:bg-white [&_*]:box-border">
       {/* ── Left: Form area ── */}
-      <div className="flex flex-1 flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 z-10">
-        <div className="w-full max-w-[420px] bg-white rounded-2xl shadow-xl sm:shadow-2xl border border-slate-100 p-6 sm:p-8 md:p-[40px]">
+      <div className="flex flex-1 lg:w-[46%] lg:max-w-[46%] flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 z-10 min-h-screen">
+        <div className="w-full max-w-[400px] bg-white rounded-2xl shadow-xl sm:shadow-2xl border border-slate-100 p-6 sm:p-8 text-left">
           {/* Logo on Mobile/Tablet */}
           <div className="flex justify-center mb-5 lg:hidden">
             <img

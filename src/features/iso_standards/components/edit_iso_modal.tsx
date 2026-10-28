@@ -20,11 +20,11 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!standardName.trim()) {
-      setError('ISO Standard Name wajib diisi');
+      setError('ISO Standard Name is required');
       return;
     }
     if (!category.trim()) {
-      setError('ISO Category wajib diisi');
+      setError('ISO Category is required');
       return;
     }
 
@@ -46,7 +46,7 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
 
       onSuccess();
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Gagal mengubah ISO Standard');
+      setError(err.response?.data?.message || err.message || 'Failed to update ISO Standard');
     } finally {
       setLoading(false);
     }
@@ -89,14 +89,16 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
               <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
                 ISO Standard Name
               </label>
-              <input
-                type="text"
-                value={standardName}
-                onChange={(e) => setStandardName(e.target.value)}
-                placeholder="e.g. ISO 45001:2018"
-                className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
-                required
-              />
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  value={standardName}
+                  onChange={(e) => setStandardName(e.target.value)}
+                  placeholder="e.g. ISO 45001:2018"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all box-border"
+                  required
+                />
+              </div>
             </div>
 
             {/* ISO Category */}
@@ -104,14 +106,16 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
               <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
                 ISO Category
               </label>
-              <input
-                type="text"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="e.g. Occupational Health & Safety"
-                className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
-                required
-              />
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  placeholder="e.g. Occupational Health & Safety"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all box-border"
+                  required
+                />
+              </div>
             </div>
 
             {/* Account Status */}

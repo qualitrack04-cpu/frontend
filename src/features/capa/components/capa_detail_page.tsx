@@ -31,7 +31,7 @@ export default function CapaDetailPage() {
       </Link>
       <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">CAPA Detail</h1>
 
-      {loading && <p className="text-slate-500">Memuat CAPA...</p>}
+      {loading && <p className="text-slate-500">Loading CAPA...</p>}
       {error && <p className="text-[#dc2626] text-[13px] mt-[4px]">{error}</p>}
 
       {capa && (
@@ -74,7 +74,7 @@ export default function CapaDetailPage() {
               <span className="block text-[11px] font-bold text-[#64748b] uppercase mb-[4px]">Assignee</span>
               <div className="flex items-center gap-[12px] text-[15px] font-semibold text-[#0f2c52]">
                 <span className="w-[40px] h-[40px] bg-[#f1f5f9] rounded-full flex items-center justify-center text-[14px] font-bold text-[#475569]">{initials(capa.picName)}</span>
-                <span>{capa.picName || 'Belum ditugaskan'}</span>
+                <span>{capa.picName || 'Unassigned'}</span>
               </div>
             </div>
 

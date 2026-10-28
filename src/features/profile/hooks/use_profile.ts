@@ -13,7 +13,7 @@ export function useProfile() {
       const result = await getProfile();
       setProfile(result);
     } catch (err) {
-      setError('Gagal memuat data profil.');
+      setError('Failed to load profile data.');
       console.error(err);
     } finally {
       setLoading(false);

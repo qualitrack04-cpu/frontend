@@ -76,7 +76,7 @@ export function useAuditChecklist(planId: string, scheduleId: string) {
         const scheduleData = planData.schedules.find((s) => s.id === scheduleId) ?? null;
         setSchedule(scheduleData);
         if (!scheduleData) {
-          setError('Jadwal audit tidak ditemukan pada audit plan ini');
+          setError('Audit schedule not found in this audit plan');
           return;
         }
         
@@ -108,14 +108,14 @@ export function useAuditChecklist(planId: string, scheduleId: string) {
         }
         
         if (!sessionData) {
-          setError('Gagal memulai sesi audit');
+          setError('Failed to start audit session');
           return;
         }
 
         setSession(sessionData);
         await loadItemsForSession(sessionData);
       } catch (err: any) {
-        if (!cancelled) setError(err.response?.data?.message ?? 'Gagal memuat audit checklist');
+        if (!cancelled) setError(err.response?.data?.message ?? 'Failed to load audit checklist');
       } finally {
         if (!cancelled) setLoading(false);
       }        
@@ -137,7 +137,7 @@ export function useAuditChecklist(planId: string, scheduleId: string) {
         setNeedsChecklistSelection(false);
         await loadItemsForSession(sessionData);
       } catch (err: any) {
-        setError(err.response?.data?.message ?? 'Gagal memulai sesi audit');
+        setError(err.response?.data?.message ?? 'Failed to start audit session');
       } finally {
         setLoading(false);
       }
@@ -167,7 +167,7 @@ export function useAuditChecklist(planId: string, scheduleId: string) {
           );
         }
       } catch (err: any) {
-        setError(err.response?.data?.message ?? 'Gagal menyimpan jawaban');
+        setError(err.response?.data?.message ?? 'Failed to save answer');
       }
     },
     [session]
@@ -195,7 +195,7 @@ export function useAuditChecklist(planId: string, scheduleId: string) {
           )
         );
       } catch (err: any) {
-        setError(err.response?.data?.message ?? 'Gagal menyimpan temuan (finding)');
+        setError(err.response?.data?.message ?? 'Failed to save finding');
       }
     },
     [session, schedule, items]

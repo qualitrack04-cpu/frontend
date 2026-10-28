@@ -45,7 +45,7 @@ export default function SpcHistoryPage() {
         });
         setItems(res.data);
       } catch (err: any) {
-        setError(err.response?.data?.message ?? 'Gagal memuat riwayat analisis.');
+        setError(err.response?.data?.message ?? 'Failed to load analysis history.');
       } finally {
         setLoading(false);
       }
@@ -80,11 +80,11 @@ export default function SpcHistoryPage() {
         </div>
       </div>
 
-      {loading && <p className="text-[#64748b]">Memuat riwayat analisis...</p>}
+      {loading && <p className="text-[#64748b]">Loading analysis history...</p>}
       {error && <p className="text-[#dc2626] bg-[#fef2f2] p-[12px_16px] rounded-[8px] border border-[#fecaca] text-[14px] mb-[20px]">{error}</p>}
 
       {!loading && !error && items.length === 0 && (
-        <p className="text-[#64748b]">Belum ada analisis SPC yang tersimpan.</p>
+        <p className="text-[#64748b]">No SPC analysis records saved yet.</p>
       )}
 
       <div className="flex flex-col gap-[16px]">

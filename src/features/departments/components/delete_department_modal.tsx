@@ -19,7 +19,7 @@ export default function DeleteDepartmentModal({ department, onClose, onSuccess }
       await deleteDepartment(department.id);
       onSuccess();
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Gagal menghapus departemen');
+      setError(err.response?.data?.message || err.message || 'Failed to delete department');
       setLoading(false);
     }
   };

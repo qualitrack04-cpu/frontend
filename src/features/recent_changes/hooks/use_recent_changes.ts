@@ -13,7 +13,7 @@ export function useRecentChanges() {
       const data = await getRecentChanges();
       setChanges(data);
     } catch (err: any) {
-      setError(err?.message || 'Gagal memuat riwayat perubahan');
+      setError(err?.message || 'Failed to load change history');
     } finally {
       setLoading(false);
     }

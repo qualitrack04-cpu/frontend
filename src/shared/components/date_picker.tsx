@@ -147,7 +147,7 @@ export default function DatePicker({ value, onChange, min, max, placeholder = 'd
       {open && (
         <div className="absolute top-[calc(100%+6px)] left-0 z-[40] w-[300px] bg-white border border-[#e2e8f0] rounded-[12px] shadow-[0_10px_25px_rgba(15,44,82,0.12)] p-[12px]">
           <div className="flex items-center justify-between mb-[8px] font-semibold text-[#0f2c52] text-[14px]">
-            <button type="button" onClick={() => shiftMonth(-1)} aria-label="Bulan sebelumnya" className="bg-transparent border-none p-[4px] rounded-[6px] cursor-pointer text-[#475569] flex hover:bg-[#f1f5f9]">
+            <button type="button" onClick={() => shiftMonth(-1)} aria-label="Previous month" className="bg-transparent border-none p-[4px] rounded-[6px] cursor-pointer text-[#475569] flex hover:bg-[#f1f5f9]">
               <ChevronLeft size={18} />
             </button>
             <span>{MONTHS[viewMonth]} {viewYear}</span>

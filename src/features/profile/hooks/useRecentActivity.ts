@@ -16,7 +16,7 @@ export function useRecentActivity() {
         const result = await getRecentActivity();
         if (isMounted) setData(result);
       } catch (err) {
-        if (isMounted) setError('Gagal memuat aktivitas terbaru.');
+        if (isMounted) setError('Failed to load recent activity.');
         console.error(err);
       } finally {
         if (isMounted) setLoading(false);

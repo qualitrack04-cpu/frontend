@@ -41,8 +41,8 @@ export default function AuditReport() {
     } catch (err: any) {
       setDownloadError(
         err.response?.status === 404
-          ? 'PDF belum tersedia untuk audit ini.'
-          : 'Gagal mengunduh PDF.'
+          ? 'PDF is not available for this audit yet.'
+          : 'Failed to download PDF.'
       );
     } finally {
       setDownloadingId(null);
@@ -59,12 +59,12 @@ export default function AuditReport() {
         <p className="text-[11px] font-bold tracking-[0.8px] text-slate-500 uppercase m-0">AUDIT REPORT</p>
       </div>
 
-      {loading && <p className="text-slate-500">Memuat laporan...</p>}
+      {loading && <p className="text-slate-500">Loading report...</p>}
       {error && <p className="text-red-600">{error}</p>}
       {downloadError && <p className="text-red-600">{downloadError}</p>}
 
       {data && reportCards.length === 0 && (
-        <p className="text-slate-500">Belum ada audit report bulan ini.</p>
+        <p className="text-slate-500">No audit reports this month.</p>
       )}
 
       {data && reportCards.length > 0 && (
@@ -98,7 +98,7 @@ export default function AuditReport() {
                     disabled={downloadingId === row.sessionId}
                   >
                     <Download size={14} />
-                    {downloadingId === row.sessionId ? 'Mengunduh...' : 'Download'}
+                    {downloadingId === row.sessionId ? 'Downloading...' : 'Download'}
                   </button>
                   <Link
                     to={`/audits/${row.planId}/schedule/${row.scheduleId}/report`}

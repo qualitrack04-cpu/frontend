@@ -41,7 +41,7 @@ export default function CapaStatusBadge({ status, onChange, disabled }: CapaStat
         disabled={disabled}
         onChange={(e) => onChange(e.target.value as CapaStatus)}
         onClick={(e) => e.stopPropagation()}
-        aria-label="Ubah status CAPA"
+        aria-label="Change CAPA status"
       >
         {STATUS_OPTIONS.map((opt) => (
           <option key={opt} value={opt}>

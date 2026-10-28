@@ -23,16 +23,13 @@ export async function getUsers(search?: string, role?: string, status?: string):
   if (status) params.append('status', status);
 
   try {
-    // Primary: /users (Dika's active UserController endpoint)
-    const response = await api.get(`/users?${params.toString()}`);
+    // Prefer /admin/users which includes ProfilePhotoUrl, full role names, search, and status
+    const response = await api.get(`/admin/users?${params.toString()}`);
     return response.data;
   } catch (err: any) {
-    if (err.response?.status === 404) {
-      // Fallback: /admin/users (Zaky's AdminController endpoint)
-      const response = await api.get(`/admin/users?${params.toString()}`);
-      return response.data;
-    }
-    throw err;
+    // Fallback: /users
+    const response = await api.get(`/users?${params.toString()}`);
+    return response.data;
   }
 }
 

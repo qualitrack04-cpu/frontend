@@ -55,7 +55,7 @@ export function useEditChecklist(checklistId: string) {
           }))
         );
       } catch (err: any) {
-        if (!cancelled) setLoadError(err.response?.data?.message ?? 'Gagal memuat checklist');
+        if (!cancelled) setLoadError(err.response?.data?.message ?? 'Failed to load checklist');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -91,7 +91,7 @@ export function useEditChecklist(checklistId: string) {
     });
   };
 
-  const titleError = showErrors && !title.trim() ? 'Judul checklist wajib diisi' : null;
+  const titleError = showErrors && !title.trim() ? 'Checklist title is required' : null;
   const isQuestionMissing = (item: EditableChecklistItem) => showErrors && !item.question.trim();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -101,15 +101,15 @@ export function useEditChecklist(checklistId: string) {
 
     if (!title.trim()) return;
     if (!standard || !department) {
-      setSubmitError('Pilih Standard dan Department terlebih dahulu.');
+      setSubmitError('Please select Standard and Department first.');
       return;
     }
     if (items.length === 0) {
-      setSubmitError('Checklist minimal punya 1 item.');
+      setSubmitError('Checklist must have at least 1 item.');
       return;
     }
     if (items.some((it) => !it.question.trim())) {
-      setSubmitError('Semua item wajib punya pertanyaan.');
+      setSubmitError('All items must have a question.');
       return;
     }
 
@@ -128,7 +128,7 @@ export function useEditChecklist(checklistId: string) {
       });
       navigate(-1);
     } catch (err: any) {
-      setSubmitError(err.response?.data?.message ?? 'Gagal menyimpan checklist');
+      setSubmitError(err.response?.data?.message ?? 'Failed to save checklist');
     } finally {
       setSubmitting(false);
     }

@@ -33,11 +33,11 @@ export default function SignUpPage() {
     e.preventDefault();
     setError(null);
     if (fullName.trim().length > 60) {
-      setError('Nama maksimal 60 karakter.');
+      setError('Name cannot exceed 60 characters.');
       return;
     }
     if (password !== confirmPassword) {
-      setError('Password dan Password Verification tidak sama.');
+      setError('Password and confirm password do not match.');
       return;
     }
     setLoading(true);
@@ -45,7 +45,7 @@ export default function SignUpPage() {
       await register({ fullName: fullName.trim(), email: email.trim(), password, role });
       navigate('/verify-otp', { state: { email, fromSignup: true } });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Pendaftaran gagal. Coba lagi.');
+      setError(err.response?.data?.message || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }

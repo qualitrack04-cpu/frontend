@@ -67,7 +67,7 @@ export default function SpcUnitsPage() {
             SPC Unit Management
           </h1>
           <p className="text-slate-500 text-[14px] m-0">
-            Manage ISO standards used in the QualiTrack audit process.
+            Manage measurement units and parameters for Statistical Process Control (SPC).
           </p>
         </div>
 

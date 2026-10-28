@@ -84,17 +84,17 @@ export default function EditProfilePage() {
     setLocalError(null);
 
     if (!fullName.trim()) {
-      setLocalError('Nama tidak boleh kosong');
+      setLocalError('Name cannot be empty');
       return;
     }
 
     if (fullName.trim().length > 60) {
-      setLocalError('Nama maksimal 60 karakter');
+      setLocalError('Name cannot exceed 60 characters');
       return;
     }
 
     if (newPassword && newPassword !== confirmPassword) {
-      setLocalError('Password baru dan konfirmasi password tidak sama');
+      setLocalError('New password and confirmation password do not match');
       return;
     }
 

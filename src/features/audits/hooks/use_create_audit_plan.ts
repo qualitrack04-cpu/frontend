@@ -46,15 +46,15 @@ export function useCreateAuditPlan(planId?: string) {
         const status = auditorsResult.reason?.response?.status;
         errors.push(
           status === 403
-            ? 'Gagal memuat daftar auditor: akun Anda tidak punya akses (butuh role Admin/QualityManager).'
-            : (auditorsResult.reason?.response?.data?.message ?? 'Gagal memuat daftar auditor.')
+            ? 'Failed to load auditor list: insufficient permissions (Admin/QualityManager role required).'
+            : (auditorsResult.reason?.response?.data?.message ?? 'Failed to load auditor list.')
         );
       }
 
       if (checklistsResult.status === 'fulfilled') {
         setChecklists(checklistsResult.value);
       } else {
-        errors.push(checklistsResult.reason?.response?.data?.message ?? 'Gagal memuat daftar checklist.');
+        errors.push(checklistsResult.reason?.response?.data?.message ?? 'Failed to load checklist list.');
       }
 
       if (errors.length > 0) setSubmitError(errors.join(' '));
@@ -97,7 +97,7 @@ export function useCreateAuditPlan(planId?: string) {
       })
       .catch((err: any) => {
         if (cancelled) return;
-        setLoadError(err.response?.data?.message ?? 'Gagal memuat data audit plan.');
+        setLoadError(err.response?.data?.message ?? 'Failed to load audit plan data.');
       })
       .finally(() => {
         if (!cancelled) setLoadingPlan(false);
@@ -133,11 +133,11 @@ export function useCreateAuditPlan(planId?: string) {
     const selectedChecklist = filteredChecklists.find((c) => c.id === checklistId);
 
     if (!selectedAuditor) {
-      setSubmitError('Pilih Lead Auditor terlebih dahulu.');
+      setSubmitError('Please select a Lead Auditor first.');
       return;
     }
     if (!department) {
-      setSubmitError('Pilih Department terlebih dahulu.');
+      setSubmitError('Please select a Department first.');
       return;
     }
     if (!scheduledDate) {
@@ -148,12 +148,12 @@ export function useCreateAuditPlan(planId?: string) {
     const year = Number(scheduledDate.split('-')[0]);
     const maxYear = new Date().getFullYear() + 5;
     if (!/^\d{4}-\d{2}-\d{2}$/.test(scheduledDate) || year < 2000 || year > maxYear) {
-      setSubmitError(`Tanggal tidak valid. Tahun harus antara 2000 dan ${maxYear}.`);
+      setSubmitError(`Invalid date. Year must be between 2000 and ${maxYear}.`);
       return;
     }
 
     if (!selectedChecklist) {
-      setSubmitError('Pilih ISO Template terlebih dahulu.');
+      setSubmitError('Please select an ISO Template first.');
       return;
     }
 
@@ -197,7 +197,7 @@ export function useCreateAuditPlan(planId?: string) {
         : null;
 
       const message =
-        data?.message ?? validationMessages ?? data?.title ?? `Gagal ${isEdit ? 'menyimpan perubahan' : 'membuat'} audit plan.`;
+        data?.message ?? validationMessages ?? data?.title ?? `Failed to ${isEdit ? 'save changes to' : 'create'} audit plan.`;
       if (err.response?.status === 400 && message.toLowerCase().includes('title')) {
         setTitleError(message);
       } else {

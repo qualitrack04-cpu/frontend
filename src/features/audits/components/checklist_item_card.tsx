@@ -61,7 +61,7 @@ export default function ChecklistItemCard({
         <div className="mt-[20px] pt-[20px] border-t border-dashed border-[#cbd5e1] flex flex-col gap-[12px]">
           <textarea
             rows={3}
-            placeholder="Jelaskan temuan (finding) untuk item yang gagal ini..."
+            placeholder="Explain finding for this failed item..."
             value={findingText}
             onChange={(e) => setFindingText(e.target.value)}
             className="w-full p-[12px] border border-[#e2e8f0] rounded-[8px] font-inherit text-[14px] resize-y outline-none transition-all duration-200 focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)]"
@@ -72,7 +72,7 @@ export default function ChecklistItemCard({
               if (findingText.trim()) onSubmitFinding(item.id, findingText);
             }}
           >
-            Simpan Finding
+            Save Finding
           </button>
         </div>
       )}

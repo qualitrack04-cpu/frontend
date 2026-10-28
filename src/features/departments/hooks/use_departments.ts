@@ -13,7 +13,7 @@ export function useDepartments() {
       const data = await getDepartments();
       setDepartments(data);
     } catch (err: any) {
-      setError(err?.response?.data?.message || err?.message || 'Gagal memuat departemen');
+      setError(err?.response?.data?.message || err?.message || 'Failed to load departments');
     } finally {
       setLoading(false);
     }

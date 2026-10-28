@@ -17,7 +17,7 @@ export default function EditDepartmentModal({ department, onClose, onSuccess }: 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setError('Departement Name wajib diisi');
+      setError('Department Name is required');
       return;
     }
 
@@ -37,7 +37,7 @@ export default function EditDepartmentModal({ department, onClose, onSuccess }: 
 
       onSuccess();
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Gagal mengubah departemen');
+      setError(err.response?.data?.message || err.message || 'Failed to update department');
     } finally {
       setLoading(false);
     }
@@ -77,14 +77,16 @@ export default function EditDepartmentModal({ department, onClose, onSuccess }: 
               <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
                 Departement Name
               </label>
-              <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Enter department name"
-                className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
-                required
-              />
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter department name"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all box-border"
+                  required
+                />
+              </div>
             </div>
 
             {/* Departement Status */}

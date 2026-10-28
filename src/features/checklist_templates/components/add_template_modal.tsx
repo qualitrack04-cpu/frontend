@@ -16,9 +16,18 @@ export default function AddTemplateModal({
   onClose,
   onSuccess,
 }: AddTemplateModalProps) {
+  const activeIsoStandards = isoStandards.filter((iso: any) => {
+    if (!iso) return false;
+    if (iso.isActive === false || iso.is_active === false) return false;
+    if (typeof iso.isActive === 'string' && (iso.isActive === 'false' || iso.isActive === 'Inactive')) return false;
+    if (iso.status === 'Inactive' || iso.status === 'inactive') return false;
+    return true;
+  });
+  const activeDepartments = departments.filter((dept) => (dept as any).isActive !== false);
+
   const [title, setTitle] = useState('');
-  const [isoStandardId, setIsoStandardId] = useState(isoStandards[0]?.id || '');
-  const [departmentId, setDepartmentId] = useState(departments[0]?.id || '');
+  const [isoStandardId, setIsoStandardId] = useState(activeIsoStandards[0]?.id || '');
+  const [departmentId, setDepartmentId] = useState(activeDepartments[0]?.id || '');
   const [firstQuestion, setFirstQuestion] = useState('');
   const [clauseRef, setClauseRef] = useState('');
 
@@ -32,7 +41,7 @@ export default function AddTemplateModal({
     setError(null);
 
     if (!departmentId) {
-      setError('Pilih Department terlebih dahulu');
+      setError('Please select a Department first');
       setLoading(false);
       return;
     }
@@ -55,12 +64,18 @@ export default function AddTemplateModal({
         items,
       });
 
-      setSuccessMsg('Template berhasil ditambahkan!');
+      setSuccessMsg('Template added successfully!');
       setTimeout(() => {
         onSuccess();
       }, 700);
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Gagal menambahkan template');
+      const rawErr = err.response?.data?.message || err.message || 'Failed to add template';
+      const lowerErr = String(rawErr).toLowerCase();
+      if (lowerErr.includes('tidak ditemukan atau tidak aktif') || lowerErr.includes('not found or inactive')) {
+        setError('Selected ISO Standard is inactive or not found. Please choose an active standard.');
+      } else {
+        setError(rawErr);
+      }
     } finally {
       setLoading(false);
     }
@@ -125,8 +140,8 @@ export default function AddTemplateModal({
                   required
                   className="w-full bg-slate-50 border border-slate-200 rounded-[10px] px-3 py-2.5 text-[14px] outline-none focus:border-blue-500 focus:bg-white transition-colors text-slate-700 cursor-pointer"
                 >
-                  <option value="">Pilih Standart</option>
-                  {isoStandards.map((iso) => (
+                  <option value="">Select Standard</option>
+                  {activeIsoStandards.map((iso) => (
                     <option key={iso.id} value={iso.id}>
                       {iso.code}
                     </option>
@@ -144,8 +159,8 @@ export default function AddTemplateModal({
                   required
                   className="w-full bg-slate-50 border border-slate-200 rounded-[10px] px-3 py-2.5 text-[14px] outline-none focus:border-blue-500 focus:bg-white transition-colors text-slate-700 cursor-pointer"
                 >
-                  <option value="">Pilih Department</option>
-                  {departments.map((dept) => (
+                  <option value="">Select Department</option>
+                  {activeDepartments.map((dept) => (
                     <option key={dept.id} value={dept.id}>
                       {dept.name}
                     </option>
@@ -156,7 +171,7 @@ export default function AddTemplateModal({
 
             <div className="border-t border-slate-100 pt-3 mt-1">
               <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">
-                Pertanyaan Awal Checklist <span className="text-slate-400 font-normal">(Opsional)</span>
+                Initial Checklist Question <span className="text-slate-400 font-normal">(Optional)</span>
               </label>
               <input
                 type="text"

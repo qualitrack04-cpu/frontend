@@ -24,6 +24,12 @@ import AddCategoryModal from './add_category_modal';
 import EditCategoryModal from './edit_category_modal';
 import AddCapaStatusModal from './add_capa_status_modal';
 import EditCapaStatusModal from './edit_capa_status_modal';
+import {
+  getCategoryColor,
+  getStatusColor,
+  getCategoryActive,
+  getStatusActive,
+} from '../utils/color_storage';
 
 const TIMEZONE_OPTIONS = [
   { value: 'WIB', label: 'Asia/Jakarta (UTC+07:00)' },
@@ -279,7 +285,7 @@ export default function SystemConfigurationPage() {
       }
       setDeleteTarget(null);
     } catch (err: any) {
-      setDeleteError(err.response?.data?.message || 'Gagal menghapus item');
+      setDeleteError(err.response?.data?.message || 'Failed to delete item');
     } finally {
       setDeleteLoading(false);
     }
@@ -450,59 +456,74 @@ export default function SystemConfigurationPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {categories.map((cat) => (
-                <tr key={cat.id} className="hover:bg-slate-50/60 transition-colors">
-                  <td className="py-3.5 px-4 text-[13.5px] font-medium text-slate-800">
-                    {cat.name}
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[#414751] inline-block" />
-                      <span className="text-[13px] text-slate-600 font-mono">
-                        #414751
+              {categories.map((cat) => {
+                const catColor = getCategoryColor(cat.id, cat.name);
+                const catActive = getCategoryActive(cat.id, cat.isActive ?? true);
+                return (
+                  <tr key={cat.id} className="hover:bg-slate-50/60 transition-colors">
+                    <td className="py-3.5 px-4 text-[13.5px] font-medium text-slate-800">
+                      {cat.name}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="w-2.5 h-2.5 rounded-full inline-block shrink-0 shadow-2xs"
+                          style={{ backgroundColor: catColor }}
+                        />
+                        <span className="text-[13px] text-slate-600 font-mono">
+                          {catColor.toUpperCase()}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 text-[13px] text-slate-600 max-w-xs truncate">
+                      {cat.description || 'Assigned & awaiting root-cause analysis'}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <span
+                        className={`inline-flex items-center gap-1.5 text-[12.5px] font-medium ${
+                          catActive ? 'text-emerald-600' : 'text-slate-400'
+                        }`}
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            catActive ? 'bg-emerald-500' : 'bg-slate-400'
+                          }`}
+                        />
+                        {catActive ? 'Active' : 'Inactive'}
                       </span>
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4 text-[13px] text-slate-600 max-w-xs truncate">
-                    {cat.description || 'Assigned & awaiting root-cause analysis'}
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <span className="inline-flex items-center gap-1.5 text-[12.5px] text-emerald-600 font-medium">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                      Active
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 text-[12.5px] text-slate-500">
-                    {formatUpdatedDate(cat.createdAt)}
-                  </td>
-                  <td className="py-3.5 px-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setEditCat(cat)}
-                        className="w-8 h-8 rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 flex items-center justify-center transition-colors cursor-pointer bg-white"
-                        title="Edit category"
-                      >
-                        <Pencil size={14} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setDeleteTarget({
-                            type: 'category',
-                            id: cat.id,
-                            name: cat.name,
-                          })
-                        }
-                        className="w-8 h-8 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors cursor-pointer bg-white"
-                        title="Delete category"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="py-3.5 px-4 text-[12.5px] text-slate-500">
+                      {formatUpdatedDate(cat.createdAt)}
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setEditCat(cat)}
+                          className="w-8 h-8 rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 flex items-center justify-center transition-colors cursor-pointer bg-white"
+                          title="Edit category"
+                        >
+                          <Pencil size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setDeleteTarget({
+                              type: 'category',
+                              id: cat.id,
+                              name: cat.name,
+                            })
+                          }
+                          className="w-8 h-8 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors cursor-pointer bg-white"
+                          title="Delete category"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -554,59 +575,74 @@ export default function SystemConfigurationPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {statuses.map((st) => (
-                <tr key={st.id} className="hover:bg-slate-50/60 transition-colors">
-                  <td className="py-3.5 px-4 text-[13.5px] font-medium text-slate-800">
-                    {st.name}
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-[#414751] inline-block" />
-                      <span className="text-[13px] text-slate-600 font-mono">
-                        #414751
+              {statuses.map((st) => {
+                const stColor = getStatusColor(st.id, st.name);
+                const stActive = getStatusActive(st.id, st.isActive ?? true);
+                return (
+                  <tr key={st.id} className="hover:bg-slate-50/60 transition-colors">
+                    <td className="py-3.5 px-4 text-[13.5px] font-medium text-slate-800">
+                      {st.name}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="w-2.5 h-2.5 rounded-full inline-block shrink-0 shadow-2xs"
+                          style={{ backgroundColor: stColor }}
+                        />
+                        <span className="text-[13px] text-slate-600 font-mono">
+                          {stColor.toUpperCase()}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="py-3.5 px-4 text-[13px] text-slate-600 max-w-xs truncate">
+                      {st.description || 'Assigned & awaiting root-cause analysis'}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <span
+                        className={`inline-flex items-center gap-1.5 text-[12.5px] font-medium ${
+                          stActive ? 'text-emerald-600' : 'text-slate-400'
+                        }`}
+                      >
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            stActive ? 'bg-emerald-500' : 'bg-slate-400'
+                          }`}
+                        />
+                        {stActive ? 'Active' : 'Inactive'}
                       </span>
-                    </div>
-                  </td>
-                  <td className="py-3.5 px-4 text-[13px] text-slate-600 max-w-xs truncate">
-                    {st.description || 'Assigned & awaiting root-cause analysis'}
-                  </td>
-                  <td className="py-3.5 px-4">
-                    <span className="inline-flex items-center gap-1.5 text-[12.5px] text-emerald-600 font-medium">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                      Active
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 text-[12.5px] text-slate-500">
-                    {formatUpdatedDate(st.createdAt)}
-                  </td>
-                  <td className="py-3.5 px-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setEditStatus(st)}
-                        className="w-8 h-8 rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 flex items-center justify-center transition-colors cursor-pointer bg-white"
-                        title="Edit status"
-                      >
-                        <Pencil size={14} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setDeleteTarget({
-                            type: 'status',
-                            id: st.id,
-                            name: st.name,
-                          })
-                        }
-                        className="w-8 h-8 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors cursor-pointer bg-white"
-                        title="Delete status"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="py-3.5 px-4 text-[12.5px] text-slate-500">
+                      {formatUpdatedDate(st.createdAt)}
+                    </td>
+                    <td className="py-3.5 px-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          type="button"
+                          onClick={() => setEditStatus(st)}
+                          className="w-8 h-8 rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 flex items-center justify-center transition-colors cursor-pointer bg-white"
+                          title="Edit status"
+                        >
+                          <Pencil size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setDeleteTarget({
+                              type: 'status',
+                              id: st.id,
+                              name: st.name,
+                            })
+                          }
+                          className="w-8 h-8 rounded-lg border border-red-200 text-red-500 hover:bg-red-50 flex items-center justify-center transition-colors cursor-pointer bg-white"
+                          title="Delete status"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -664,12 +700,12 @@ export default function SystemConfigurationPage() {
               <Trash2 size={24} />
             </div>
             <h3 className="text-[18px] font-bold text-slate-900 m-0 mb-1.5">
-              Hapus {deleteTarget.type === 'category' ? 'Kategori' : 'Status'}?
+              Delete {deleteTarget.type === 'category' ? 'Category' : 'Status'}?
             </h3>
             <p className="text-[13.5px] text-slate-500 m-0 mb-6 font-normal leading-relaxed">
-              Apakah Anda yakin ingin menghapus{' '}
+              Are you sure you want to delete{' '}
               <strong className="text-slate-800">{deleteTarget.name}</strong>? Tindakan
-              ini tidak dapat dibatalkan.
+              This action cannot be undone.
             </p>
 
             {deleteError && (
@@ -686,7 +722,7 @@ export default function SystemConfigurationPage() {
                 disabled={deleteLoading}
                 className="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium text-[13.5px] transition-colors bg-white cursor-pointer disabled:opacity-50"
               >
-                Batal
+                Cancel
               </button>
               <button
                 type="button"
@@ -694,7 +730,7 @@ export default function SystemConfigurationPage() {
                 disabled={deleteLoading}
                 className="px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium text-[13.5px] transition-colors shadow-sm border-none cursor-pointer disabled:opacity-50"
               >
-                {deleteLoading ? 'Menghapus...' : 'Hapus'}
+                {deleteLoading ? 'Deleting...' : 'Delete'}
               </button>
             </div>
           </div>

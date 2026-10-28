@@ -26,31 +26,31 @@ export default function AddUserModal({ onClose, onSuccess }: AddUserModalProps) 
     setError(null);
 
     if (!email.trim()) {
-      setError('Email wajib diisi');
+      setError('Email is required');
       return;
     }
     if (!username.trim()) {
-      setError('Username wajib diisi');
+      setError('Username is required');
       return;
     }
     if (username.trim().length > 60) {
-      setError('Username maksimal 60 karakter');
+      setError('Username must be 60 characters or less');
       return;
     }
     if (!password) {
-      setError('Password wajib diisi');
+      setError('Password is required');
       return;
     }
     if (password.length < 6) {
-      setError('Password minimal 6 karakter');
+      setError('Password must be at least 6 characters');
       return;
     }
     if (password !== verifyPassword) {
-      setError('Password dan konfirmasi password tidak cocok');
+      setError('Password and confirmation password do not match');
       return;
     }
     if (!role) {
-      setError('Silakan pilih role');
+      setError('Please select a role');
       return;
     }
 
@@ -79,7 +79,7 @@ export default function AddUserModal({ onClose, onSuccess }: AddUserModalProps) 
 
       onSuccess();
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Gagal menambahkan user');
+      setError(err.response?.data?.message || err.message || 'Failed to add user');
     } finally {
       setLoading(false);
     }
@@ -122,14 +122,16 @@ export default function AddUserModal({ onClose, onSuccess }: AddUserModalProps) 
               <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
                 Email
               </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter email address"
-                className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
-                required
-              />
+              <div className="relative flex items-center">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter email address"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all box-border"
+                  required
+                />
+              </div>
             </div>
 
             {/* Username */}
@@ -142,15 +144,17 @@ export default function AddUserModal({ onClose, onSuccess }: AddUserModalProps) 
                   {username.length}/60
                 </span>
               </div>
-              <input
-                type="text"
-                maxLength={60}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter username"
-                className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
-                required
-              />
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  maxLength={60}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter username"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all box-border"
+                  required
+                />
+              </div>
             </div>
 
             {/* Password */}

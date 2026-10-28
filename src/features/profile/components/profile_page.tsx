@@ -1,11 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Pencil, Lock, Camera, RefreshCw, Clock, AlertTriangle, Users } from 'lucide-react';
+import { Pencil, Lock, Clock, AlertTriangle, Users } from 'lucide-react';
 import { useProfile } from '../hooks/use_profile';
 import { useProfileKpi } from '../hooks/useProfileKpi';
 import RecentActivity from './recent_activity';
 import { fileUrl } from '../../../shared/utils/file_url';
-import { uploadProfilePhoto } from '../../auth/api/auth_api';
 import { getCurrentRole, ROLES } from '../../../shared/utils/role';
 import ChangePasswordModal from './change_password_modal';
 
@@ -73,32 +72,8 @@ export default function ProfilePage() {
 
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
 
-  // Photo upload state
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [photoUploading, setPhotoUploading] = useState(false);
-  const [photoError, setPhotoError] = useState<string | null>(null);
+  // Image error state
   const [imgError, setImgError] = useState(false);
-
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setPhotoUploading(true);
-    setPhotoError(null);
-    setImgError(false);
-
-    try {
-      await uploadProfilePhoto(file);
-      await refetch();
-    } catch (err: any) {
-      setPhotoError(err.response?.data?.message || 'Gagal mengunggah foto profil.');
-    } finally {
-      setPhotoUploading(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
-  };
 
   if (profileLoading || (!isAdmin && kpiLoading)) {
     return (
@@ -111,7 +86,7 @@ export default function ProfilePage() {
   if (profileError || !profile) {
     return (
       <div className="max-w-full m-0 text-left py-8 text-red-600 text-sm">
-        {profileError || 'Gagal memuat profil'}
+        {profileError || 'Failed to load profile'}
       </div>
     );
   }
@@ -168,35 +143,7 @@ export default function ProfilePage() {
                 )}
               </div>
 
-              {/* Quick Camera Upload Button */}
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={photoUploading}
-                title="Change Profile Photo"
-                className="absolute bottom-1 right-1 w-9 h-9 rounded-full bg-[#2563EB] hover:bg-blue-700 text-white flex items-center justify-center shadow-md border-2 border-white cursor-pointer transition-colors disabled:opacity-50"
-              >
-                {photoUploading ? (
-                  <RefreshCw size={15} className="animate-spin" />
-                ) : (
-                  <Camera size={16} strokeWidth={2.2} />
-                )}
-              </button>
-
-              <input
-                type="file"
-                ref={fileInputRef}
-                accept="image/png,image/jpeg,image/jpg"
-                onChange={handlePhotoUpload}
-                className="hidden"
-              />
             </div>
-
-            {photoError && (
-              <div className="mb-3 text-[12px] text-red-600 bg-red-50 py-1 px-2.5 rounded-lg border border-red-100">
-                {photoError}
-              </div>
-            )}
 
             <h2 className={`${nameSizeClass} font-bold text-[#0F294A] m-0 mb-2 max-w-full break-words [overflow-wrap:anywhere] [word-break:break-word]`}>
               {profile.fullName}
@@ -261,10 +208,10 @@ export default function ProfilePage() {
                 </div>
                 <div>
                   <h4 className="text-[16px] font-bold text-[#0F294A] m-0 mb-0.5">
-                    Password / PIN
+                    Password
                   </h4>
                   <p className="text-[13px] text-slate-400 m-0 leading-relaxed font-normal">
-                    Set a 4-digit PIN to secure your account.
+                    Change your password securely via email verification code.
                   </p>
                 </div>
               </div>
@@ -274,7 +221,7 @@ export default function ProfilePage() {
                 onClick={() => setIsChangePasswordOpen(true)}
                 className="px-5 py-2.5 rounded-lg border border-[#2563EB] text-[#2563EB] bg-white hover:bg-blue-50 font-medium text-[13.5px] transition-colors cursor-pointer"
               >
-                Change Password / PIN
+                Change Password
               </button>
             </div>
           </div>
@@ -310,7 +257,7 @@ export default function ProfilePage() {
   const taskLabel = kpi?.kpiBasis === 'Capa' ? 'CAPA' : 'audits';
   const qualityLabel =
     assignedCount === 0 && completedCount === 0
-      ? 'Belum ada data'
+      ? 'No data available'
       : qualityPct >= 90
       ? 'Excellent'
       : qualityPct >= 75

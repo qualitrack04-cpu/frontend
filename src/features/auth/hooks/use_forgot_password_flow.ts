@@ -16,7 +16,7 @@ export function useForgotPasswordFlow() {
     try {
       await forgotPasswordRequestOtp({ email });
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Gagal mengirim OTP.');
+      setError(err.response?.data?.message || 'Failed to send OTP.');
       throw err; // supaya komponen tahu gagal dan tidak lanjut navigate
     } finally {
       setLoading(false);
@@ -31,7 +31,7 @@ export function useForgotPasswordFlow() {
       const result = await forgotPasswordVerifyOtp({ email, otp });
       return result.resetToken;
     } catch (err: any) {
-      setError(err.response?.data?.message ?? 'Kode OTP salah atau kadaluarsa.');
+      setError(err.response?.data?.message ?? 'Invalid or expired OTP code.');
       throw err;
     } finally {
       setLoading(false);
@@ -51,7 +51,7 @@ export function useForgotPasswordFlow() {
       await forgotPasswordReset({ email, resetToken, newPassword, confirmPassword });
       navigate('/login'); // selesai, kembali ke halaman login
     } catch (err: any) {
-      setError(err.response?.data?.message ?? 'Gagal mengubah password.');
+      setError(err.response?.data?.message ?? 'Failed to reset password.');
     } finally {
       setLoading(false);
     }

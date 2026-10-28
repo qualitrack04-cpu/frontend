@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { 
   ArrowLeft, 
   Search, 
+  SlidersHorizontal,
   ChevronDown, 
   RotateCcw, 
   Calendar,
@@ -11,12 +12,11 @@ import {
   CheckCircle2,
   PauseCircle,
   Trash2,
-  ChevronLeft,
-  ChevronRight,
   Check,
   X,
   Settings
 } from 'lucide-react';
+import TablePagination from '../../../shared/components/table_pagination';
 import { useRecentChanges } from '../hooks/use_recent_changes';
 import type { RecentChangeItem } from '../api/recent_changes_api';
 
@@ -45,9 +45,9 @@ export default function RecentChangesPage() {
   const moduleDropdownRef = useRef<HTMLDivElement>(null);
   const calendarRef = useRef<HTMLDivElement>(null);
 
-  // Pagination state
+  // Pagination state (Max 7 items per page to match User Management)
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const pageSize = 7;
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -314,53 +314,6 @@ export default function RecentChangesPage() {
     }
   };
 
-  // Generate pagination buttons
-  const renderPaginationButtons = () => {
-    const buttons = [];
-    if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) {
-        buttons.push(i);
-      }
-    } else {
-      if (currentPage <= 3) {
-        buttons.push(1, 2, 3, '..', totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        buttons.push(1, '..', totalPages - 2, totalPages - 1, totalPages);
-      } else {
-        buttons.push(1, '..', currentPage, '..', totalPages);
-      }
-    }
-
-    return buttons.map((btn, index) => {
-      if (btn === '..') {
-        return (
-          <span key={`ellipsis-${index}`} className="w-7 h-7 flex items-center justify-center text-slate-400 text-sm select-none">
-            ..
-          </span>
-        );
-      }
-      const pageNum = btn as number;
-      const isActive = currentPage === pageNum;
-      return (
-        <button
-          key={pageNum}
-          type="button"
-          onClick={() => setCurrentPage(pageNum)}
-          className={`w-7 h-7 rounded-[6px] flex items-center justify-center font-medium text-xs transition-all border-none cursor-pointer ${
-            isActive
-              ? 'bg-[#0F172A] text-white shadow-xs font-semibold'
-              : 'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-          }`}
-        >
-          {pageNum}
-        </button>
-      );
-    });
-  };
-
-  const startRecord = totalResults === 0 ? 0 : (currentPage - 1) * pageSize + 1;
-  const endRecord = Math.min(currentPage * pageSize, totalResults);
-
   return (
     <div className="max-w-full m-0 text-left">
       {/* Back to Dashboard Link */}
@@ -386,9 +339,9 @@ export default function RecentChangesPage() {
 
       {/* Filter Bar */}
       <div className="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-slate-200/80 p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-3.5 flex-1 min-w-[300px]">
+        <div className="flex flex-wrap items-center gap-3.5">
           {/* Search Box */}
-          <div className="relative flex-1 min-w-[240px] max-w-[340px]">
+          <div className="relative w-full sm:w-[260px] md:w-[300px] shrink-0">
             <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             <input
               type="text"
@@ -403,19 +356,13 @@ export default function RecentChangesPage() {
           </div>
 
           {/* Select Module Dropdown */}
-          <div className="relative" ref={moduleDropdownRef}>
+          <div className="relative shrink-0" ref={moduleDropdownRef}>
             <button
               type="button"
               onClick={() => setIsModuleDropdownOpen(!isModuleDropdownOpen)}
-              className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3.5 py-2 text-[14px] text-slate-700 hover:border-slate-300 transition-colors cursor-pointer"
+              className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3.5 py-2 text-[14px] text-slate-700 hover:border-slate-300 transition-colors cursor-pointer whitespace-nowrap"
             >
-              {/* Custom 3-bar list filter icon */}
-              <svg className="w-4 h-4 text-slate-700 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="4" y1="4" x2="4" y2="20" />
-                <line x1="4" y1="7" x2="20" y2="7" />
-                <line x1="4" y1="12" x2="15" y2="12" />
-                <line x1="4" y1="17" x2="10" y2="17" />
-              </svg>
+              <SlidersHorizontal size={16} className="text-slate-600" />
               <span className="font-normal text-slate-700">
                 {selectedModule || 'Select Module'}
               </span>
@@ -463,11 +410,11 @@ export default function RecentChangesPage() {
           </div>
 
           {/* Calendar Date Picker Filter (Select 2 Dates) */}
-          <div className="relative" ref={calendarRef}>
+          <div className="relative shrink-0" ref={calendarRef}>
             <button
               type="button"
               onClick={() => setIsCalendarOpen(!isCalendarOpen)}
-              className={`flex items-center gap-2 bg-white border rounded-lg px-3.5 py-2 text-[14px] transition-colors cursor-pointer ${
+              className={`flex items-center gap-2 bg-white border rounded-lg px-3.5 py-2 text-[14px] transition-colors cursor-pointer whitespace-nowrap ${
                 startDate
                   ? 'border-[#2563EB] text-[#2563EB] bg-blue-50/40 font-medium'
                   : 'border-slate-200 text-slate-700 hover:border-slate-300'
@@ -624,7 +571,7 @@ export default function RecentChangesPage() {
         <button
           type="button"
           onClick={handleResetFilters}
-          className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900 text-[14px] font-normal bg-transparent border-none cursor-pointer py-1.5 px-2.5 rounded-lg hover:bg-slate-100 transition-colors"
+          className="flex items-center gap-1.5 text-slate-500 hover:text-slate-800 text-[14px] font-normal bg-transparent border-none cursor-pointer py-1.5 px-2.5 rounded-lg hover:bg-slate-100 transition-colors"
         >
           <RotateCcw size={15} />
           <span>Reset</span>
@@ -681,56 +628,13 @@ export default function RecentChangesPage() {
           })}
         </div>
 
-        {/* Footer with Pagination */}
-        <div className="px-6 py-3.5 border-t border-slate-100 bg-white flex flex-wrap items-center justify-between gap-4 text-[13.5px] text-slate-500 font-normal">
-          <div>
-            Showing <strong className="font-semibold text-slate-800">{startRecord}-{endRecord}</strong> of{' '}
-            <strong className="font-semibold text-slate-800">{totalResults}</strong> results
-          </div>
-
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <span className="text-slate-500 text-[13px]">Rows per page:</span>
-              <div className="relative">
-                <select
-                  value={pageSize}
-                  onChange={(e) => {
-                    setPageSize(Number(e.target.value));
-                    setCurrentPage(1);
-                  }}
-                  className="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-[13px] text-slate-700 outline-none focus:border-blue-500 cursor-pointer font-medium appearance-none pr-6"
-                >
-                  <option value={10}>10</option>
-                  <option value={20}>20</option>
-                  <option value={50}>50</option>
-                </select>
-                <ChevronDown size={14} className="absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white"
-              >
-                <ChevronLeft size={16} />
-              </button>
-
-              {renderPaginationButtons()}
-
-              <button
-                type="button"
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                className="w-8 h-8 rounded-lg border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer bg-white"
-              >
-                <ChevronRight size={16} />
-              </button>
-            </div>
-          </div>
-        </div>
+        {/* Pagination Bar */}
+        <TablePagination
+          currentPage={currentPage}
+          totalResults={totalResults}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </div>
   );

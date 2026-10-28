@@ -20,7 +20,7 @@ export default function DeleteUserModal({ user, onClose, onSuccess }: DeleteUser
       await updateUserStatus(user.id, 'Inactive');
       onSuccess();
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Gagal menonaktifkan user');
+      setError(err.response?.data?.message || err.message || 'Failed to deactivate user');
     } finally {
       setLoading(false);
     }
@@ -55,15 +55,15 @@ export default function DeleteUserModal({ user, onClose, onSuccess }: DeleteUser
           <div className="flex items-start gap-3.5 mb-4 p-3.5 bg-amber-50/70 border border-amber-200/60 rounded-xl text-amber-800 text-sm">
             <AlertTriangle size={20} className="shrink-0 text-amber-600 mt-0.5" />
             <div>
-              <p className="font-semibold m-0 mb-1">Konfirmasi Penonaktifan</p>
+              <p className="font-semibold m-0 mb-1">Deactivation Confirmation</p>
               <p className="m-0 text-[13px] text-amber-700 leading-relaxed">
-                Apakah kamu yakin ingin menonaktifkan akun <strong className="break-words [overflow-wrap:anywhere] [word-break:break-word]">{user.fullName}</strong>?
+                Are you sure you want to deactivate account <strong className="break-words [overflow-wrap:anywhere] [word-break:break-word]">{user.fullName}</strong>?
               </p>
             </div>
           </div>
 
           <p className="text-slate-500 text-sm m-0 leading-relaxed">
-            Status user <strong className="break-words [overflow-wrap:anywhere] [word-break:break-word]">{user.email}</strong> akan diubah menjadi <span className="font-semibold text-rose-600">Inactive</span> dan hak akses ke sistem akan ditangguhkan.
+            The status of user <strong className="break-words [overflow-wrap:anywhere] [word-break:break-word]">{user.email}</strong> will be set to <span className="font-semibold text-rose-600">Inactive</span> and system access will be suspended.
           </p>
         </div>
 
@@ -73,7 +73,7 @@ export default function DeleteUserModal({ user, onClose, onSuccess }: DeleteUser
             onClick={onClose}
             className="w-full sm:w-auto px-4 py-2 rounded-lg text-sm font-semibold text-slate-500 hover:text-slate-700 bg-transparent border-none cursor-pointer hover:bg-slate-100 transition-colors"
           >
-            Batal
+            Cancel
           </button>
           <button 
             type="button" 
@@ -81,7 +81,7 @@ export default function DeleteUserModal({ user, onClose, onSuccess }: DeleteUser
             disabled={loading}
             className="w-full sm:w-auto px-5 py-2 rounded-lg text-sm font-semibold text-white bg-red-600 hover:bg-red-700 border-none cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           >
-            {loading ? 'Memproses...' : 'Nonaktifkan User'}
+            {loading ? 'Processing...' : 'Deactivate User'}
           </button>
         </div>
 

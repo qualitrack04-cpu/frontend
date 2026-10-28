@@ -19,7 +19,7 @@ export default function DeleteSpcUnitModal({ unit, onClose, onSuccess }: DeleteS
       await updateSpcUnitStatus(unit.id, false);
       onSuccess();
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Gagal menonaktifkan SPC unit');
+      setError(err.response?.data?.message || err.message || 'Failed to deactivate SPC unit');
       setLoading(false);
     }
   };

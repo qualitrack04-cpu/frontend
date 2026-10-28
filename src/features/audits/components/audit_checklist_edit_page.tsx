@@ -26,7 +26,7 @@ export default function AuditChecklistEditPage() {
     ? DEPARTMENTS
     : [...DEPARTMENTS, department];
 
-  if (loading) return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Memuat checklist...</p></div>;
+  if (loading) return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Loading checklist...</p></div>;
   if (loadError) {
     return (
       <div className="max-w-full m-0 text-left">
@@ -88,7 +88,7 @@ export default function AuditChecklistEditPage() {
         <hr className="border-t border-[#e2e8f0] m-0 mb-[24px]" />
 
         {items.length === 0 && (
-          <p className="text-[12px] text-[#94a3b8]">Belum ada item. Klik "Add Item" untuk menambahkan.</p>
+          <p className="text-[12px] text-[#94a3b8]">No items yet. Click "Add Item" to add one.</p>
         )}
 
         <div className="flex flex-col gap-[24px]">
@@ -121,7 +121,7 @@ export default function AuditChecklistEditPage() {
                       type="button"
                       className="bg-white border border-[#e2e8f0] text-[#64748b] w-[32px] h-[32px] rounded-[6px] flex items-center justify-center cursor-pointer transition-all duration-200 hover:not(:disabled):border-[#fca5a5] hover:not(:disabled):text-[#dc2626] hover:not(:disabled):bg-[#fef2f2] disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-[#f1f5f9]"
                       onClick={() => removeItem(item.key)}
-                      aria-label="Hapus item"
+                      aria-label="Delete item"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -140,7 +140,7 @@ export default function AuditChecklistEditPage() {
                     />
                     {questionMissing && (
                       <p className="text-[#dc2626] text-[13px] mt-[4px] flex items-center gap-[4px] m-0">
-                        <CircleAlert size={14} /> Pertanyaan wajib diisi
+                        <CircleAlert size={14} /> Question is required
                       </p>
                     )}
                   </div>

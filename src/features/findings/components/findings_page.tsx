@@ -16,10 +16,10 @@ export default function FindingsPage() {
         </Link>
       </div>
 
-      {loading && <p className="text-slate-500">Memuat temuan...</p>}
+      {loading && <p className="text-slate-500">Loading findings...</p>}
       {error && <p className="text-red-600">{error}</p>}
       {!loading && !error && data?.length === 0 && (
-        <p className="text-slate-500">Belum ada temuan. Tambahkan lewat tombol New FINDINGS.</p>
+        <p className="text-slate-500">No findings yet. Add one via New FINDINGS button.</p>
       )}
 
       <div className="grid grid-cols-2 gap-[20px] max-[900px]:grid-cols-1">

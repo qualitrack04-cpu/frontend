@@ -77,10 +77,10 @@ export default function AuditSchedule() {
       </div>
 
       <div className="flex flex-col gap-[12px]">
-        {loading && <p className="text-slate-500">Memuat jadwal audit...</p>}
+        {loading && <p className="text-slate-500">Loading audit schedule...</p>}
         {error && <p className="text-red-600">{error}</p>}
         {!loading && !error && audits.length === 0 && (
-          <p className="text-slate-500">Belum ada audit yang dijadwalkan bulan ini.</p>
+          <p className="text-slate-500">No audits scheduled for this month.</p>
         )}
 
         {audits.slice(0, 5).map((audit) => (

@@ -34,7 +34,7 @@ export default function EvidenceUploadModal({ responseId, onClose, onSuccess }: 
       await uploadAuditResponseEvidence(responseId, file);
       onSuccess();
     } catch (err: any) {
-      setError(err.response?.data?.message ?? 'Gagal mengunggah bukti');
+      setError(err.response?.data?.message ?? 'Failed to upload evidence');
     } finally {
       setUploading(false);
     }
@@ -55,7 +55,7 @@ export default function EvidenceUploadModal({ responseId, onClose, onSuccess }: 
         ) : (
           <div className="relative w-full h-[200px] rounded-[12px] overflow-hidden mb-[20px]">
             <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
-            <button className="absolute top-[8px] right-[8px] w-[32px] h-[32px] bg-[rgba(0,0,0,0.6)] text-white border-none rounded-full flex items-center justify-center cursor-pointer transition-colors duration-200 hover:bg-[#dc2626]" onClick={handleRemove} aria-label="Hapus">
+            <button className="absolute top-[8px] right-[8px] w-[32px] h-[32px] bg-[rgba(0,0,0,0.6)] text-white border-none rounded-full flex items-center justify-center cursor-pointer transition-colors duration-200 hover:bg-[#dc2626]" onClick={handleRemove} aria-label="Remove">
               <Trash2 size={16} />
             </button>
           </div>

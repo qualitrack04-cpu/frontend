@@ -47,7 +47,7 @@ export default function CreateCapaPage() {
 
           <div className="flex flex-col gap-[8px] mb-[20px]">
             <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">LINKED FINDING</label>
-            {loadingOptions && <p className="text-slate-500 m-0">Memuat finding...</p>}
+            {loadingOptions && <p className="text-slate-500 m-0">Loading findings...</p>}
             {!loadingOptions && findingsError && (
               <div className="flex items-center justify-between bg-[#fff3cd] text-[#856404] p-[10px_14px] rounded-[6px] text-[13.5px]">
                 <span className="flex items-center gap-[6px]">

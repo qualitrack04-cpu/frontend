@@ -18,7 +18,7 @@ export function useProfileKpi(enabled = true) {
         const result = await getProfileKpi();
         if (isMounted) setData(result);
       } catch (err) {
-        if (isMounted) setError('Gagal memuat data quality score.');
+        if (isMounted) setError('Failed to load quality score data.');
         console.error(err);
       } finally {
         if (isMounted) setLoading(false);

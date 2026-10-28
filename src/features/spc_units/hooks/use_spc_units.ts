@@ -15,7 +15,7 @@ export function useSpcUnits(isActive?: boolean) {
       setUnits(res.data);
       setTotal(res.total);
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Gagal memuat data SPC units');
+      setError(err.response?.data?.message || err.message || 'Failed to load SPC units');
     } finally {
       setLoading(false);
     }

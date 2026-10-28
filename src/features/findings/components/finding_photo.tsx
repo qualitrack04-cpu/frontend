@@ -17,7 +17,7 @@ export default function FindingPhotoView({ url, alt }: Props) {
   const src = fileUrl(url);
 
   if (failed || !src) {
-    return <div className="relative w-full aspect-[4/3] rounded-[8px] overflow-hidden bg-[#f1f5f9] flex items-center justify-center text-[13px] text-[#94a3b8] italic">Gagal memuat</div>;
+    return <div className="relative w-full aspect-[4/3] rounded-[8px] overflow-hidden bg-[#f1f5f9] flex items-center justify-center text-[13px] text-[#94a3b8] italic">Failed to load</div>;
   }
 
   return (

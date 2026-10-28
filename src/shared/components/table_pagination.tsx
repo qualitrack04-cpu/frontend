@@ -16,28 +16,28 @@ export default function TablePagination({
   const endRecord = Math.min(currentPage * pageSize, totalResults);
 
   const renderPaginationButtons = () => {
-    const pages: (number | string)[] = [];
-    if (totalPages <= 5) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      if (currentPage <= 3) {
-        pages.push(1, 2, 3, 4, '...', totalPages);
-      } else if (currentPage >= totalPages - 2) {
-        pages.push(1, '...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+    let startPage = 1;
+    let endPage = Math.min(3, totalPages);
+
+    if (totalPages > 3) {
+      if (currentPage <= 2) {
+        startPage = 1;
+        endPage = 3;
+      } else if (currentPage >= totalPages) {
+        startPage = Math.max(1, totalPages - 2);
+        endPage = totalPages;
       } else {
-        pages.push(1, '...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+        startPage = currentPage - 1;
+        endPage = currentPage + 1;
       }
     }
 
-    return pages.map((page, index) => {
-      if (typeof page === 'string') {
-        return (
-          <span key={`dots-${index}`} className="px-2 py-1 text-slate-400">
-            ...
-          </span>
-        );
-      }
+    const pages: number[] = [];
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
 
+    return pages.map((page) => {
       const isActive = currentPage === page;
       return (
         <button

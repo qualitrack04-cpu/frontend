@@ -22,8 +22,8 @@ export default function ForgotPasswordPage() {
   return (
     <div className="relative flex min-h-screen w-full overflow-hidden bg-slate-50 lg:bg-white [&_*]:box-border">
       {/* ── Left: Form area ── */}
-      <div className="flex flex-1 flex-col items-center lg:items-start justify-center px-4 sm:px-6 lg:pl-[85px] py-8 sm:py-12 z-10">
-        <div className="w-full max-w-[444px] bg-white rounded-[20px] shadow-xl sm:shadow-2xl p-6 sm:p-8 text-left">
+      <div className="flex flex-1 lg:w-[46%] lg:max-w-[46%] flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 z-10 min-h-screen">
+        <div className="w-full max-w-[400px] bg-white rounded-2xl shadow-xl sm:shadow-2xl border border-slate-100 p-6 sm:p-8 text-left">
           {/* Logo on Mobile/Tablet */}
           <div className="flex justify-center mb-5 lg:hidden">
             <img

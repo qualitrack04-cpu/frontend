@@ -31,7 +31,7 @@ export default function FindingDetailPage() {
       </Link>
       <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Findings Detail</h1>
 
-      {finding.loading && <p className="text-slate-500">Memuat temuan...</p>}
+      {finding.loading && <p className="text-slate-500">Loading finding...</p>}
       {finding.error && <p className="text-red-600">{finding.error}</p>}
 
       {data && (

@@ -62,7 +62,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <>
       {isOpen && <div className="max-md:block hidden fixed inset-0 bg-[rgba(0,0,0,0.5)] z-[150]" onClick={onClose} />}
-      <aside className={`w-[210px] bg-[#0f2c52] text-white py-[18px] px-[12px] flex flex-col overflow-y-auto shrink-0 transition-transform duration-300 z-[200] max-md:fixed max-md:top-0 max-md:left-0 max-md:bottom-0 max-md:-translate-x-full max-md:w-[250px] ${isOpen ? 'max-md:translate-x-0' : ''}`}>
+      <aside className={`w-[240px] bg-[#0f2c52] text-white py-[18px] px-[12px] flex flex-col overflow-y-auto shrink-0 transition-transform duration-300 z-[200] max-md:fixed max-md:top-0 max-md:left-0 max-md:bottom-0 max-md:-translate-x-full max-md:w-[250px] ${isOpen ? 'max-md:translate-x-0' : ''}`}>
         <div className="max-md:flex hidden items-center justify-between mb-[24px]">
           <span className="font-bold text-[20px]">QualiTrack</span>
           <button className="bg-transparent border-none text-white cursor-pointer p-[4px]" onClick={onClose}>
@@ -92,7 +92,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 to={path}
                 onClick={onClose}
                 className={({ isActive }) =>
-                  `flex items-center gap-[10px] p-[10px_12px] rounded-[8px] text-[14px] font-medium no-underline transition-colors ${
+                  `flex items-center gap-[10px] p-[10px_12px] rounded-[8px] text-[14px] font-medium no-underline transition-colors whitespace-nowrap ${
                     isActive || isCustomActive
                       ? 'bg-[#2563eb] text-white shadow-sm font-semibold'
                       : 'text-[#94a3b8] hover:bg-[rgba(255,255,255,0.08)] hover:text-white'
@@ -100,7 +100,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 }
               >
                 <Icon size={20} strokeWidth={1.75} className="shrink-0" />
-                <span>{label}</span>
+                <span className="whitespace-nowrap">{label}</span>
               </NavLink>
             );
           })}

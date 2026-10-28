@@ -37,7 +37,7 @@ export default function CreateAuditPlanPage() {
   } = useCreateAuditPlan(planId);
 
   if (loadingPlan) {
-    return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Memuat audit plan...</p></div>;
+    return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Loading audit plan...</p></div>;
   }
   if (loadError) {
     return (
@@ -83,7 +83,7 @@ export default function CreateAuditPlanPage() {
               ))}
             </select>
             {!loadingOptions && auditors.length === 0 && (
-              <p className="text-slate-500 text-[12px] m-0">Belum ada auditor tersedia.</p>
+              <p className="text-slate-500 text-[12px] m-0">No auditors available.</p>
             )}
           </div>
           <div className="flex-1 flex flex-col gap-[8px]">
@@ -123,9 +123,9 @@ export default function CreateAuditPlanPage() {
         <div className="flex flex-col gap-[8px] mb-[20px]">
           <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">ISO TEMPLATE</label>
 
-          {loadingOptions && <p className="text-slate-500 m-0">Memuat template...</p>}
+          {loadingOptions && <p className="text-slate-500 m-0">Loading template...</p>}
           {!loadingOptions && checklists.length === 0 && (
-            <p className="text-slate-500 text-[12px] m-0">Belum ada checklist/template tersedia.</p>
+            <p className="text-slate-500 text-[12px] m-0">No checklist/template available.</p>
           )}
 
           <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[16px] mt-[8px]">

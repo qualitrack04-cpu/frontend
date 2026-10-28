@@ -1,20 +1,19 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useChecklistTemplates } from '../hooks/use_checklist_templates';
 import { 
   Search, 
-  SlidersHorizontal, 
+  SlidersHorizontal,
   ChevronDown, 
   RotateCcw, 
   Plus, 
   Pencil, 
   Trash2, 
-  ChevronLeft, 
-  ChevronRight,
   Check,
   AlertCircle
 } from 'lucide-react';
-import AddTemplateModal from './add_template_modal';
-import EditTemplateModal from './edit_template_modal';
+import CreateChecklistPage from './create_checklist_page';
+import EditChecklistPage from './edit_checklist_page';
 import DeleteTemplateModal from './delete_template_modal';
 import TablePagination from '../../../shared/components/table_pagination';
 import type { ChecklistTemplateItem } from '../api/checklist_templates_api';
@@ -22,13 +21,49 @@ import type { ChecklistTemplateItem } from '../api/checklist_templates_api';
 export default function ChecklistTemplatesPage() {
   const { templates, departments, isoStandards, loading, error, refetch } = useChecklistTemplates();
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStandard, setSelectedStandard] = useState('');
-  
-  // Modals state
+  const [searchParams, setSearchParams] = useSearchParams();
+  const actionParam = searchParams.get('action');
+  const editIdParam = searchParams.get('id');
+
+  const [viewMode, setViewMode] = useState<'list' | 'create' | 'edit'>('list');
   const [editingTemplate, setEditingTemplate] = useState<ChecklistTemplateItem | null>(null);
   const [deletingTemplate, setDeletingTemplate] = useState<ChecklistTemplateItem | null>(null);
-  const [showAddModal, setShowAddModal] = useState(false);
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedStandard, setSelectedStandard] = useState('');
+
+  // Sync with URL query parameter
+  useEffect(() => {
+    if (actionParam === 'create') {
+      setViewMode('create');
+    } else if (actionParam === 'edit' && editIdParam) {
+      const match = templates.find((t) => t.id === editIdParam);
+      if (match) {
+        setEditingTemplate(match);
+        setViewMode('edit');
+      }
+    } else if (!actionParam) {
+      setViewMode('list');
+      setEditingTemplate(null);
+    }
+  }, [actionParam, editIdParam, templates]);
+
+  const handleOpenCreate = () => {
+    setViewMode('create');
+    setSearchParams({ action: 'create' });
+  };
+
+  const handleOpenEdit = (tmpl: ChecklistTemplateItem) => {
+    setEditingTemplate(tmpl);
+    setViewMode('edit');
+    setSearchParams({ action: 'edit', id: tmpl.id });
+  };
+
+  const handleBackToList = () => {
+    setViewMode('list');
+    setEditingTemplate(null);
+    setSearchParams({});
+  };
 
   // ISO Dropdown state
   const [isIsoDropdownOpen, setIsIsoDropdownOpen] = useState(false);
@@ -49,14 +84,32 @@ export default function ChecklistTemplatesPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Unified standard options for the filter dropdown
+  // Unified standard options for the filter dropdown (active standards only)
   const standardOptions = useMemo(() => {
     const list: { id: string; code: string; name: string }[] = [];
     const seenCodes = new Set<string>();
 
+    // Collect inactive ISO identifiers from isoStandards to ensure they don't leak into options
+    const inactiveCodes = new Set<string>();
+    const inactiveNums = new Set<string>();
     if (Array.isArray(isoStandards)) {
       for (const iso of isoStandards) {
-        if (iso && iso.code && !seenCodes.has(iso.code.toLowerCase())) {
+        if (iso.isActive === false) {
+          if (iso.code) {
+            inactiveCodes.add(iso.code.trim().toLowerCase());
+            const num = iso.code.match(/\d{4,5}/)?.[0];
+            if (num) inactiveNums.add(num);
+          }
+          if (iso.name) {
+            inactiveCodes.add(iso.name.trim().toLowerCase());
+          }
+        }
+      }
+    }
+
+    if (Array.isArray(isoStandards)) {
+      for (const iso of isoStandards) {
+        if (iso && iso.code && iso.isActive !== false && !seenCodes.has(iso.code.toLowerCase())) {
           seenCodes.add(iso.code.toLowerCase());
           list.push({ id: iso.id, code: iso.code, name: iso.name || '' });
         }
@@ -74,19 +127,21 @@ export default function ChecklistTemplatesPage() {
     ];
 
     for (const def of defaults) {
+      const defCodeLower = def.code.toLowerCase();
+      const defNum = def.code.match(/\d{4,5}/)?.[0];
+
+      // If this default standard is inactive in the database, SKIP IT!
+      if (inactiveCodes.has(defCodeLower) || (defNum && inactiveNums.has(defNum))) {
+        continue;
+      }
+
       const exists = list.some(
         (i) =>
-          i.code.toLowerCase() === def.code.toLowerCase() ||
-          (def.code.includes('9001') && i.code.includes('9001')) ||
-          (def.code.includes('14001') && i.code.includes('14001')) ||
-          (def.code.includes('45001') && i.code.includes('45001')) ||
-          (def.code.includes('27001') && i.code.includes('27001')) ||
-          (def.code.includes('22000') && i.code.includes('22000')) ||
-          (def.code.includes('19011') && i.code.includes('19011')) ||
-          (def.code.includes('50001') && i.code.includes('50001'))
+          i.code.toLowerCase() === defCodeLower ||
+          (defNum && i.code.includes(defNum))
       );
-      if (!exists && !seenCodes.has(def.code.toLowerCase())) {
-        seenCodes.add(def.code.toLowerCase());
+      if (!exists && !seenCodes.has(defCodeLower)) {
+        seenCodes.add(defCodeLower);
         list.push(def);
       }
     }
@@ -129,6 +184,71 @@ export default function ChecklistTemplatesPage() {
     return clean;
   };
 
+  // Helper to determine if a checklist template is using an inactive ISO standard
+  const isTemplateIsoInactive = (t: ChecklistTemplateItem) => {
+    if (!Array.isArray(isoStandards) || isoStandards.length === 0) return false;
+
+    // 1. Direct match by isoStandardId
+    if (t.isoStandardId) {
+      const match = isoStandards.find((i) => i.id === t.isoStandardId);
+      if (match) {
+        return match.isActive === false;
+      }
+    }
+
+    // 2. Match by code, name, or standard number among inactive standards
+    const tIsoName = (t.isoStandardName || '').trim().toLowerCase();
+    const tDisplayCode = getIsoDisplayCode(t.isoStandardName, t.isoStandardId).trim().toLowerCase();
+    const tTitle = (t.title || '').trim().toLowerCase();
+
+    for (const iso of isoStandards) {
+      if (iso.isActive === false) {
+        const isoCode = (iso.code || '').trim().toLowerCase();
+        const isoName = (iso.name || '').trim().toLowerCase();
+        const isoNum = isoCode.match(/\d{4,5}/)?.[0];
+
+        if (isoCode && (tIsoName === isoCode || tDisplayCode === isoCode || tTitle.includes(isoCode))) {
+          return true;
+        }
+
+        if (isoName && (tIsoName === isoName || tTitle.includes(isoName))) {
+          return true;
+        }
+
+        if (isoNum) {
+          const tNum = tIsoName.match(/\d{4,5}/)?.[0] || tDisplayCode.match(/\d{4,5}/)?.[0] || tTitle.match(/\d{4,5}/)?.[0];
+          if (tNum && tNum === isoNum) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
+  };
+
+  // Helper to determine if a checklist template is using an inactive Department
+  const isTemplateDeptInactive = (t: ChecklistTemplateItem) => {
+    if (!Array.isArray(departments) || departments.length === 0) return false;
+    if (t.departmentId) {
+      const match = departments.find((d) => d.id === t.departmentId);
+      if (match && match.isActive === false) return true;
+    }
+    const tDeptName = (t.departmentName || '').trim().toLowerCase();
+    if (tDeptName) {
+      for (const dept of departments) {
+        if (dept.isActive === false) {
+          const deptName = (dept.name || '').trim().toLowerCase();
+          const deptCode = (dept.code || '').trim().toLowerCase();
+          if ((deptName && tDeptName === deptName) || (deptCode && tDeptName === deptCode)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  };
+
   // Dot color matching the reference image for each ISO Standard
   const getIsoDotColor = (nameOrCode?: string | null) => {
     if (!nameOrCode) return 'bg-[#3b82f6]';
@@ -146,6 +266,9 @@ export default function ChecklistTemplatesPage() {
   // Filter in memory for instantaneous search & filtering
   const filteredTemplates = useMemo(() => {
     let list = Array.isArray(templates) ? [...templates] : [];
+
+    // Filter out templates where the associated ISO standard is inactive (or department is inactive)
+    list = list.filter((t) => !isTemplateIsoInactive(t) && !isTemplateDeptInactive(t));
 
     // Sort by createdAt descending so newest items (matching reference) are on top
     list.sort((a, b) => {
@@ -224,7 +347,7 @@ export default function ChecklistTemplatesPage() {
     }
 
     return list;
-  }, [templates, searchTerm, selectedStandard, standardOptions]);
+  }, [templates, searchTerm, selectedStandard, standardOptions, isoStandards, departments]);
 
   // Paginated slice
   const totalResults = filteredTemplates.length;
@@ -266,6 +389,38 @@ export default function ChecklistTemplatesPage() {
     setCurrentPage(1);
   };
 
+  // Render Create View
+  if (viewMode === 'create') {
+    return (
+      <CreateChecklistPage
+        departments={departments}
+        isoStandards={isoStandards}
+        existingTemplates={templates}
+        onCancel={handleBackToList}
+        onSuccess={() => {
+          handleBackToList();
+          refetch();
+        }}
+      />
+    );
+  }
+
+  // Render Edit View
+  if (viewMode === 'edit' && editingTemplate) {
+    return (
+      <EditChecklistPage
+        template={editingTemplate}
+        departments={departments}
+        isoStandards={isoStandards}
+        onCancel={handleBackToList}
+        onSuccess={() => {
+          handleBackToList();
+          refetch();
+        }}
+      />
+    );
+  }
+
   return (
     <div className="max-w-full m-0 text-left">
       {/* Header Section */}
@@ -275,12 +430,12 @@ export default function ChecklistTemplatesPage() {
             Checklist Template Management
           </h1>
           <p className="text-slate-500 text-[14px] m-0">
-            Manage users and their access to the QualiTrack system.
+            Track and manage audit checklist templates and procedures.
           </p>
         </div>
         <button
           type="button"
-          onClick={() => setShowAddModal(true)}
+          onClick={handleOpenCreate}
           className="inline-flex items-center justify-center gap-2 bg-[#2563EB] hover:bg-blue-700 text-white font-medium px-4 py-2.5 rounded-lg text-[14px] transition-all shadow-sm active:scale-[0.98] cursor-pointer border-none"
         >
           <Plus size={18} strokeWidth={2.5} />
@@ -290,13 +445,13 @@ export default function ChecklistTemplatesPage() {
 
       {/* Filter Bar */}
       <div className="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-slate-200/80 p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-3.5 flex-1 min-w-[300px]">
+        <div className="flex flex-wrap items-center gap-3.5">
           {/* Search Box */}
-          <div className="relative flex-1 min-w-[240px] max-w-[340px]">
+          <div className="relative w-full sm:w-[260px] md:w-[300px] shrink-0">
             <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             <input
               type="text"
-              placeholder="Search change"
+              placeholder="Search templates..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -307,19 +462,13 @@ export default function ChecklistTemplatesPage() {
           </div>
 
           {/* Select ISO Standart Dropdown */}
-          <div className="relative" ref={isoDropdownRef}>
+          <div className="relative shrink-0" ref={isoDropdownRef}>
             <button
               type="button"
               onClick={() => setIsIsoDropdownOpen(!isIsoDropdownOpen)}
-              className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3.5 py-2 text-[14px] text-slate-700 hover:border-slate-300 transition-colors cursor-pointer"
+              className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3.5 py-2 text-[14px] text-slate-700 hover:border-slate-300 transition-colors cursor-pointer whitespace-nowrap"
             >
-              {/* Custom 3-bar list filter icon matching reference design */}
-              <svg className="w-4 h-4 text-slate-700 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="4" y1="4" x2="4" y2="20" />
-                <line x1="4" y1="7" x2="20" y2="7" />
-                <line x1="4" y1="12" x2="15" y2="12" />
-                <line x1="4" y1="17" x2="10" y2="17" />
-              </svg>
+              <SlidersHorizontal size={16} className="text-slate-600" />
               <span className="font-normal text-slate-700">
                 {selectedStandard || 'Select ISO Standart'}
               </span>
@@ -371,7 +520,7 @@ export default function ChecklistTemplatesPage() {
         <button
           type="button"
           onClick={handleResetFilters}
-          className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900 text-[14px] font-normal bg-transparent border-none cursor-pointer py-1.5 px-2.5 rounded-lg hover:bg-slate-100 transition-colors"
+          className="flex items-center gap-1.5 text-slate-500 hover:text-slate-800 text-[14px] font-normal bg-transparent border-none cursor-pointer py-1.5 px-2.5 rounded-lg hover:bg-slate-100 transition-colors"
         >
           <RotateCcw size={15} />
           <span>Reset</span>
@@ -464,7 +613,7 @@ export default function ChecklistTemplatesPage() {
                       <div className="flex items-center justify-center gap-2">
                         <button
                           type="button"
-                          onClick={() => setEditingTemplate(template)}
+                          onClick={() => handleOpenEdit(template)}
                           title="Edit Template"
                           className="w-7 h-7 rounded-[6px] bg-[#EEF2FF] hover:bg-blue-100 text-[#3B82F6] flex items-center justify-center transition-colors cursor-pointer border-none"
                         >
@@ -495,33 +644,6 @@ export default function ChecklistTemplatesPage() {
           onPageChange={setCurrentPage}
         />
       </div>
-
-      {/* Add Template Modal */}
-      {showAddModal && (
-        <AddTemplateModal
-          departments={departments}
-          isoStandards={isoStandards}
-          onClose={() => setShowAddModal(false)}
-          onSuccess={() => {
-            setShowAddModal(false);
-            refetch();
-          }}
-        />
-      )}
-
-      {/* Edit Template Modal */}
-      {editingTemplate && (
-        <EditTemplateModal
-          template={editingTemplate}
-          departments={departments}
-          isoStandards={isoStandards}
-          onClose={() => setEditingTemplate(null)}
-          onSuccess={() => {
-            setEditingTemplate(null);
-            refetch();
-          }}
-        />
-      )}
 
       {/* Delete Template Modal */}
       {deletingTemplate && (

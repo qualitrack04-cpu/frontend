@@ -150,15 +150,15 @@ export default function FindingFormPage({ mode }: Props) {
       if (failed.length > 0) {
         // Temuan sudah tersimpan; jangan submit ulang agar tidak duplikat
         setSubmitError(
-          `Temuan tersimpan, tetapi ${failed.length} foto gagal diunggah (${failed.join(', ')}). ` +
-          'Tambahkan lagi lewat halaman Edit.'
+          `Finding saved, but ${failed.length} photos failed to upload (${failed.join(', ')}). ` +
+          'You can re-upload them on the Edit page.'
         );
         setTimeout(() => navigate('/findings'), 3500);
         return;
       }
       navigate('/findings');
     } catch (err: any) {
-      setSubmitError(err.response?.data?.message ?? 'Gagal menyimpan temuan.');
+      setSubmitError(err.response?.data?.message ?? 'Failed to save finding.');
       setSubmitting(false);
     }
   };
@@ -166,7 +166,7 @@ export default function FindingFormPage({ mode }: Props) {
   if (isEdit && finding.loading) {
     return (
       <div className="max-w-full m-0 text-left">
-        <p className="text-slate-500">Memuat temuan...</p>
+        <p className="text-slate-500">Loading finding...</p>
       </div>
     );
   }
@@ -311,7 +311,7 @@ export default function FindingFormPage({ mode }: Props) {
                       <button
                         type="button"
                         className="absolute top-[8px] right-[8px] w-[28px] h-[28px] bg-[rgba(0,0,0,0.6)] text-white border-none rounded-full flex items-center justify-center cursor-pointer transition-colors duration-200 hover:bg-[#dc2626]"
-                        aria-label={`Hapus ${p.file.name}`}
+                        aria-label={`Delete ${p.file.name}`}
                         onClick={() => setPending((prev) => prev.filter((_, idx) => idx !== i))}
                       >
                         <Trash2 size={14} />

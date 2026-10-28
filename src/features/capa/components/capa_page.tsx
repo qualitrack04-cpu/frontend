@@ -26,7 +26,7 @@ export default function CapaPage() {
       await updateCapaStatus(id, status);
     } catch (err: any) {
       setItems(prev);
-      setStatusError(err.response?.data?.message ?? 'Gagal mengubah status CAPA.');
+      setStatusError(err.response?.data?.message ?? 'Failed to update CAPA status.');
     } finally {
       setUpdatingId(null);
     }
@@ -43,11 +43,11 @@ export default function CapaPage() {
         )}
       </div>
 
-      {loading && <p className="text-slate-500">Memuat CAPA...</p>}
+      {loading && <p className="text-slate-500">Loading CAPA...</p>}
       {error && <p className="text-red-600">{error}</p>}
       {statusError && <p className="text-red-600">{statusError}</p>}
       {!loading && !error && items.length === 0 && (
-        <p className="text-slate-500">Belum ada CAPA. Tambahkan lewat tombol New CAPA.</p>
+        <p className="text-slate-500">No CAPAs yet. Add one via New CAPA button.</p>
       )}
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
