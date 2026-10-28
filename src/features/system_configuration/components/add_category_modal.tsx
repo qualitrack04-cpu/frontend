@@ -35,6 +35,7 @@ export default function AddCategoryModal({ onClose, onSuccess }: AddCategoryModa
       const res = await createFindingCategory({
         name: name.trim(),
         description: description.trim(),
+        hexaCode: color,
         severity: 3,
         requiresImmediateAction: false,
       });

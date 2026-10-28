@@ -75,8 +75,7 @@ export default function UsersActivityPage() {
 
   // Paginated slice
   const totalResults = filteredActivities.length;
-  const totalPages = Math.max(1, Math.ceil(totalResults / pageSize));
-  const paginatedActivities = useMemo(() => {
+    const paginatedActivities = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     return filteredActivities.slice(start, start + pageSize);
   }, [filteredActivities, currentPage, pageSize]);
@@ -103,7 +102,7 @@ export default function UsersActivityPage() {
     return name.substring(0, 2).toUpperCase();
   };
 
-  const getAvatarBg = (name: string, role: string) => {
+  const getAvatarBg = (_name: string, role: string) => {
     const r = role.toLowerCase();
     if (r.includes('manager')) return 'bg-[#F5F3FF] text-[#7C3AED]';
     if (r.includes('internal')) return 'bg-[#EFF6FF] text-[#2563EB]';

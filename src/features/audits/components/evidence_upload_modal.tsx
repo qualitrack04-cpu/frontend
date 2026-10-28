@@ -42,7 +42,7 @@ export default function EvidenceUploadModal({ responseId, onClose, onSuccess }: 
 
   return (
     <div className="fixed inset-0 bg-[rgba(15,44,82,0.4)] backdrop-blur-[2px] flex items-end sm:items-center justify-center z-[1000] animate-[fadein_0.2s_ease-out]">
-      <div className="bg-white w-full max-w-[400px] rounded-t-[20px] sm:rounded-[16px] p-[24px] flex flex-col animate-[slideup_0.2s_ease-out]">
+      <div className="bg-white w-full max-w-[400px] max-h-[90vh] overflow-y-auto rounded-t-[20px] sm:rounded-[16px] p-5 sm:p-6 flex flex-col animate-[slideup_0.2s_ease-out]">
         <div className="w-[40px] h-[4px] bg-[#cbd5e1] rounded-[2px] mx-auto mb-[16px] sm:hidden" />
         <h3 className="text-center text-[16px] text-[#0f2c52] m-0 mb-[20px] font-bold">Upload Evidence</h3>
 

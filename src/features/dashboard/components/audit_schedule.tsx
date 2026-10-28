@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Calendar, Clock } from 'lucide-react';
 import { useFetch } from '../../../shared/hooks/use_fetch';
 import { getAuditSchedule } from '../api/dashboard_api';

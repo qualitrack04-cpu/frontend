@@ -24,7 +24,7 @@ export function useChecklistTemplates(isoStandardId?: string, departmentId?: str
       const [templatesRes, deptRes, isoRes] = await Promise.all([
         getChecklistTemplates(isoStandardId, departmentId),
         getDepartments().catch(() => []),
-        getIsoStandards(true).catch(() => []),
+        getIsoStandards().catch(() => []),
       ]);
       setTemplates(Array.isArray(templatesRes) ? templatesRes : []);
       setDepartments(Array.isArray(deptRes) ? deptRes : []);

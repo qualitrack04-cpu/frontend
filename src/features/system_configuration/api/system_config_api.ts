@@ -23,6 +23,7 @@ export interface FindingCategoryItem {
   id: string;
   name: string;
   description: string;
+  hexaCode?: string;
   severity: number;
   requiresImmediateAction: boolean;
   isActive: boolean;
@@ -34,6 +35,7 @@ export interface CapaStatusItem {
   id: string;
   name: string;
   description: string;
+  hexaCode?: string;
   orderIndex: number;
   isTerminal: boolean;
   isActive: boolean;
@@ -77,12 +79,14 @@ export async function getFindingCategories(): Promise<FindingCategoryItem[]> {
 export async function createFindingCategory(payload: {
   name: string;
   description: string;
+  hexaCode?: string;
   severity?: number;
   requiresImmediateAction?: boolean;
 }) {
   const res = await api.post('/system-config/finding-categories', {
     name: payload.name,
     description: payload.description,
+    hexaCode: payload.hexaCode || '#808080',
     severity: payload.severity ?? 3,
     requiresImmediateAction: payload.requiresImmediateAction ?? false,
   });
@@ -94,6 +98,7 @@ export async function updateFindingCategory(
   payload: {
     name: string;
     description: string;
+    hexaCode?: string;
     severity?: number;
     requiresImmediateAction?: boolean;
   }
@@ -101,6 +106,7 @@ export async function updateFindingCategory(
   const res = await api.put(`/system-config/finding-categories/${id}`, {
     name: payload.name,
     description: payload.description,
+    hexaCode: payload.hexaCode || '#808080',
     severity: payload.severity ?? 3,
     requiresImmediateAction: payload.requiresImmediateAction ?? false,
   });
@@ -121,12 +127,14 @@ export async function getCapaStatuses(): Promise<CapaStatusItem[]> {
 export async function createCapaStatus(payload: {
   name: string;
   description: string;
+  hexaCode?: string;
   orderIndex?: number;
   isTerminal?: boolean;
 }) {
   const res = await api.post('/system-config/capa-statuses', {
     name: payload.name,
     description: payload.description,
+    hexaCode: payload.hexaCode || '#808080',
     orderIndex: payload.orderIndex ?? 1,
     isTerminal: payload.isTerminal ?? false,
   });
@@ -138,6 +146,7 @@ export async function updateCapaStatus(
   payload: {
     name: string;
     description: string;
+    hexaCode?: string;
     orderIndex?: number;
     isTerminal?: boolean;
   }
@@ -145,6 +154,7 @@ export async function updateCapaStatus(
   const res = await api.put(`/system-config/capa-statuses/${id}`, {
     name: payload.name,
     description: payload.description,
+    hexaCode: payload.hexaCode || '#808080',
     orderIndex: payload.orderIndex ?? 1,
     isTerminal: payload.isTerminal ?? false,
   });

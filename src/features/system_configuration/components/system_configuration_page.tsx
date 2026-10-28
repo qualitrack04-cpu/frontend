@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Settings,
   AlertCircle,
@@ -79,13 +79,13 @@ export default function SystemConfigurationPage() {
 
   // Finding Categories state
   const [categories, setCategories] = useState<FindingCategoryItem[]>([]);
-  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [, setLoadingCategories] = useState(true);
   const [isAddCatOpen, setIsAddCatOpen] = useState(false);
   const [editCat, setEditCat] = useState<FindingCategoryItem | null>(null);
 
   // CAPA Statuses state
   const [statuses, setStatuses] = useState<CapaStatusItem[]>([]);
-  const [loadingStatuses, setLoadingStatuses] = useState(true);
+  const [, setLoadingStatuses] = useState(true);
   const [isAddStatusOpen, setIsAddStatusOpen] = useState(false);
   const [editStatus, setEditStatus] = useState<CapaStatusItem | null>(null);
 
@@ -457,7 +457,7 @@ export default function SystemConfigurationPage() {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {categories.map((cat) => {
-                const catColor = getCategoryColor(cat.id, cat.name);
+                const catColor = cat.hexaCode || getCategoryColor(cat.id, cat.name);
                 const catActive = getCategoryActive(cat.id, cat.isActive ?? true);
                 return (
                   <tr key={cat.id} className="hover:bg-slate-50/60 transition-colors">
@@ -576,7 +576,7 @@ export default function SystemConfigurationPage() {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {statuses.map((st) => {
-                const stColor = getStatusColor(st.id, st.name);
+                const stColor = st.hexaCode || getStatusColor(st.id, st.name);
                 const stActive = getStatusActive(st.id, st.isActive ?? true);
                 return (
                   <tr key={st.id} className="hover:bg-slate-50/60 transition-colors">

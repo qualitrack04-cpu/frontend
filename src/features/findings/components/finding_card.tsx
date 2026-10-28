@@ -3,8 +3,9 @@ import { ChevronRight } from 'lucide-react';
 import { categoryBadgeLabel, type Finding } from '../api/findings_api';
 
 export default function FindingCard({ finding }: { finding: Finding }) {
-  const borderColor = finding.category === 'minor' ? 'border-t-[#f59e0b]' : finding.category === 'major' ? 'border-t-[#f97316]' : finding.category === 'critical' ? 'border-t-[#dc2626]' : 'border-t-[#3b82f6]';
-  const dotColor = finding.category === 'minor' ? 'bg-[#f59e0b]' : finding.category === 'major' ? 'bg-[#f97316]' : finding.category === 'critical' ? 'bg-[#dc2626]' : 'bg-[#3b82f6]';
+  const cat = String(finding.category || '').toLowerCase();
+  const borderColor = cat.includes('minor') ? 'border-t-[#f59e0b]' : cat.includes('major') ? 'border-t-[#f97316]' : cat.includes('critical') ? 'border-t-[#dc2626]' : 'border-t-[#3b82f6]';
+  const dotColor = cat.includes('minor') ? 'bg-[#f59e0b]' : cat.includes('major') ? 'bg-[#f97316]' : cat.includes('critical') ? 'bg-[#dc2626]' : 'bg-[#3b82f6]';
 
   return (
     <article className={`bg-white border border-[#e2e8f0] border-t-[4px] rounded-[12px] p-[24px] flex flex-col transition-all duration-200 hover:shadow-[0_4px_12px_rgba(15,44,82,0.05)] hover:border-[#cbd5e1] ${borderColor}`}>

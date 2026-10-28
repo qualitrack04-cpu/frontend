@@ -22,7 +22,7 @@ export default function EditCapaStatusModal({
   onSuccess,
 }: EditCapaStatusModalProps) {
   const [name, setName] = useState(status.name);
-  const [color, setColor] = useState(() => getStatusColor(status.id, status.name));
+  const [color, setColor] = useState(() => status.hexaCode || getStatusColor(status.id, status.name));
   const [description, setDescription] = useState(status.description || '');
   const [isActive, setIsActive] = useState(() =>
     getStatusActive(status.id, status.isActive ?? true)
@@ -50,6 +50,7 @@ export default function EditCapaStatusModal({
       await updateCapaStatus(status.id, {
         name: name.trim(),
         description: description.trim(),
+        hexaCode: color,
         orderIndex: status.orderIndex || 1,
         isTerminal: status.isTerminal || false,
       });

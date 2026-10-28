@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { getAdminDashboard } from '../api/admin_api';
 import type { AdminDashboardSummary } from '../api/admin_api';
 

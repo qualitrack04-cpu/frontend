@@ -39,7 +39,7 @@ export default function AuditSummaryModal({ sessionId, onSaved, onClose }: Audit
 
   return (
     <div className="fixed inset-0 bg-[rgba(15,44,82,0.4)] backdrop-blur-[2px] flex items-end sm:items-center justify-center z-[1000] animate-[fadein_0.2s_ease-out]">
-      <div className="bg-white w-full max-w-[600px] rounded-t-[20px] sm:rounded-[16px] p-[32px] flex flex-col animate-[slideup_0.2s_ease-out]">
+      <div className="bg-white w-full max-w-[600px] max-h-[90vh] overflow-y-auto rounded-t-[20px] sm:rounded-[16px] p-5 sm:p-8 flex flex-col animate-[slideup_0.2s_ease-out]">
         <div className="flex justify-between items-center">
           <p className="text-[14px] font-bold text-[#0f2c52] uppercase tracking-[0.5px] m-0">Audit Summary</p>
           <button type="button" className="bg-transparent border-none text-[#94a3b8] cursor-pointer p-[4px] flex items-center justify-center transition-colors duration-200 hover:text-[#0f2c52]" onClick={onClose} aria-label="Close">

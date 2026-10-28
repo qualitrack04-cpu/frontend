@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Pencil, Lock, Clock, AlertTriangle, Users } from 'lucide-react';
 import { useProfile } from '../hooks/use_profile';
 import { useProfileKpi } from '../hooks/useProfileKpi';
@@ -63,7 +63,7 @@ function QualityGauge({ score }: { score: number }) {
 }
 
 export default function ProfilePage() {
-  const { profile, loading: profileLoading, error: profileError, refetch } = useProfile();
+  const { profile, loading: profileLoading, error: profileError } = useProfile();
   const currentRole = getCurrentRole();
   const isAdmin = currentRole === ROLES.Admin;
 

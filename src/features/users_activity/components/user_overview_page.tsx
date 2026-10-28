@@ -57,9 +57,11 @@ export default function UserOverviewPage() {
   }
 
   const user = overview?.user || {
+    id: 'u-3',
     fullName: 'Amir Lesley Oakwood',
     email: 'amiroakwood@gmail.com',
     role: 'Auditor Internal',
+    photoUrl: undefined as string | undefined,
   };
 
   const successRate = overview?.successRate || { percentage: 90, achieved: 18, total: 20, target: 90 };

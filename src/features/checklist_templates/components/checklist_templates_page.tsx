@@ -192,7 +192,9 @@ export default function ChecklistTemplatesPage() {
     if (t.isoStandardId) {
       const match = isoStandards.find((i) => i.id === t.isoStandardId);
       if (match) {
-        return match.isActive === false;
+        if (match.isActive === false || (match as any).status === 'Inactive' || (match as any).is_active === false) {
+          return true;
+        }
       }
     }
 
@@ -202,7 +204,8 @@ export default function ChecklistTemplatesPage() {
     const tTitle = (t.title || '').trim().toLowerCase();
 
     for (const iso of isoStandards) {
-      if (iso.isActive === false) {
+      const isInactive = iso.isActive === false || (iso as any).status === 'Inactive' || (iso as any).is_active === false;
+      if (isInactive) {
         const isoCode = (iso.code || '').trim().toLowerCase();
         const isoName = (iso.name || '').trim().toLowerCase();
         const isoNum = isoCode.match(/\d{4,5}/)?.[0];
@@ -221,6 +224,26 @@ export default function ChecklistTemplatesPage() {
             return true;
           }
         }
+      }
+    }
+
+    // 3. Fallback: If template is tagged with an ISO standard, but that standard is NOT found among active standards
+    if (tIsoName || t.isoStandardId) {
+      const hasActiveMatch = isoStandards.some((iso) => {
+        if (iso.isActive === false || (iso as any).status === 'Inactive' || (iso as any).is_active === false) return false;
+        if (t.isoStandardId && iso.id === t.isoStandardId) return true;
+        const isoCode = (iso.code || '').trim().toLowerCase();
+        const isoName = (iso.name || '').trim().toLowerCase();
+        const isoNum = isoCode.match(/\d{4,5}/)?.[0];
+        const tNum = tIsoName.match(/\d{4,5}/)?.[0] || tDisplayCode.match(/\d{4,5}/)?.[0];
+        if (isoCode && (tIsoName === isoCode || tDisplayCode === isoCode)) return true;
+        if (isoName && tIsoName === isoName) return true;
+        if (isoNum && tNum && isoNum === tNum) return true;
+        return false;
+      });
+
+      if (!hasActiveMatch && (tIsoName.toLowerCase().includes('iso') || tIsoName.match(/\d{4,5}/) || t.isoStandardId)) {
+        return true;
       }
     }
 

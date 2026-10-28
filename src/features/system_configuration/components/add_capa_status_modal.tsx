@@ -40,6 +40,7 @@ export default function AddCapaStatusModal({
       const res = await createCapaStatus({
         name: name.trim(),
         description: description.trim(),
+        hexaCode: color,
         orderIndex: nextOrderIndex || 1,
         isTerminal: false,
       });

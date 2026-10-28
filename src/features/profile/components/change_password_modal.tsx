@@ -393,7 +393,7 @@ export default function ChangePasswordModal({
                   {otpDigits.map((digit, index) => (
                     <input
                       key={index}
-                      ref={(el) => (otpInputsRef.current[index] = el)}
+                      ref={(el) => { otpInputsRef.current[index] = el; }}
                       type="text"
                       inputMode="numeric"
                       maxLength={1}

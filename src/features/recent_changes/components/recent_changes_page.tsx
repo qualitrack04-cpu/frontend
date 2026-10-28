@@ -6,6 +6,8 @@ import {
   SlidersHorizontal,
   ChevronDown, 
   RotateCcw, 
+  ChevronLeft,
+  ChevronRight,
   Calendar,
   CreditCard,
   RefreshCw,
@@ -120,8 +122,7 @@ export default function RecentChangesPage() {
 
   // Paginated slice
   const totalResults = filteredChanges.length;
-  const totalPages = Math.max(1, Math.ceil(totalResults / pageSize));
-  const paginatedChanges = useMemo(() => {
+    const paginatedChanges = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     return filteredChanges.slice(start, start + pageSize);
   }, [filteredChanges, currentPage, pageSize]);

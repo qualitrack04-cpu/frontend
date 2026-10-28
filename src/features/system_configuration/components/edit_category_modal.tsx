@@ -22,7 +22,7 @@ export default function EditCategoryModal({
   onSuccess,
 }: EditCategoryModalProps) {
   const [name, setName] = useState(category.name);
-  const [color, setColor] = useState(() => getCategoryColor(category.id, category.name));
+  const [color, setColor] = useState(() => category.hexaCode || getCategoryColor(category.id, category.name));
   const [description, setDescription] = useState(category.description || '');
   const [isActive, setIsActive] = useState(() =>
     getCategoryActive(category.id, category.isActive ?? true)
@@ -50,6 +50,7 @@ export default function EditCategoryModal({
       await updateFindingCategory(category.id, {
         name: name.trim(),
         description: description.trim(),
+        hexaCode: color,
         severity: category.severity || 3,
         requiresImmediateAction: category.requiresImmediateAction || false,
       });

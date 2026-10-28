@@ -45,7 +45,7 @@ export default function AdminSummaryCards({ summary }: AdminSummaryCardsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6">
+    <div className="grid grid-cols-1 min-[420px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-6">
       {cards.map((card, idx) => (
         <div key={idx} className="bg-white rounded-[16px] p-[24px] shadow-[0_2px_12px_rgba(15,44,82,0.03)] border border-slate-100 flex flex-col">
           <div className={`w-[40px] h-[40px] rounded-[10px] flex items-center justify-center mb-6 ${card.iconBg} ${card.iconColor}`}>
