@@ -29,10 +29,10 @@ export default function ComplianceScore() {
       </div>
 
       <div className="grid grid-cols-4 gap-[16px] max-[900px]:grid-cols-2 max-[600px]:grid-cols-1">
-        {loading && <p className="text-slate-500">Memuat compliance score...</p>}
+        {loading && <p className="text-slate-500">Loading compliance score...</p>}
         {error && <p className="text-red-600">{error}</p>}
         {!loading && !error && departments.length === 0 && (
-          <p className="text-slate-500">Belum ada data compliance.</p>
+          <p className="text-slate-500">No compliance data available.</p>
         )}
 
         {departments.map((item) => (

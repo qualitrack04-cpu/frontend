@@ -6,6 +6,18 @@ export interface ActivityMeta {
 }
 
 const ACTIVITY_MAP: Record<string, ActivityMeta> = {
+  AuditCompleted: {
+    title: 'Audit Completed',
+    badge: 'SUCCESS',
+    color: '#16a34a',
+    background: '#dcfce7',
+  },
+  AuditScheduled: {
+    title: 'Audit Scheduled',
+    badge: 'INFO',
+    color: '#2563eb',
+    background: '#dbeafe',
+  },
   CapaAction: {
     title: 'CAPA Action',
     badge: 'UPDATE',

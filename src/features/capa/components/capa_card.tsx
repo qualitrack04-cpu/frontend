@@ -58,7 +58,7 @@ export default function CapaCard({ capa, onStatusChange, updatingStatus }: CapaC
       <div className="flex justify-between items-center border-t border-[#f1f5f9] pt-[16px]">
         <span className="flex items-center gap-[8px] text-[13px] font-semibold text-[#0f2c52]">
           <span className="w-[28px] h-[28px] bg-[#e2e8f0] rounded-full flex items-center justify-center text-[11px] font-bold text-[#475569]">{initials(capa.picName)}</span>
-          {capa.picName || 'Belum ditugaskan'}
+          {capa.picName || 'Unassigned'}
         </span>
         <Link to={`/capa/${capa.id}`} className="inline-flex items-center gap-[4px] text-[#0f2c52] text-[14px] font-bold no-underline transition-opacity duration-200 hover:opacity-80">
           Details <ChevronRight size={16} />

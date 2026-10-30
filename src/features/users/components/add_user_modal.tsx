@@ -26,31 +26,31 @@ export default function AddUserModal({ onClose, onSuccess }: AddUserModalProps) 
     setError(null);
 
     if (!email.trim()) {
-      setError('Email wajib diisi');
+      setError('Email is required');
       return;
     }
     if (!username.trim()) {
-      setError('Username wajib diisi');
+      setError('Username is required');
       return;
     }
     if (username.trim().length > 60) {
-      setError('Username maksimal 60 karakter');
+      setError('Username must be 60 characters or less');
       return;
     }
     if (!password) {
-      setError('Password wajib diisi');
+      setError('Password is required');
       return;
     }
     if (password.length < 6) {
-      setError('Password minimal 6 karakter');
+      setError('Password must be at least 6 characters');
       return;
     }
     if (password !== verifyPassword) {
-      setError('Password dan konfirmasi password tidak cocok');
+      setError('Password and confirmation password do not match');
       return;
     }
     if (!role) {
-      setError('Silakan pilih role');
+      setError('Please select a role');
       return;
     }
 
@@ -79,7 +79,7 @@ export default function AddUserModal({ onClose, onSuccess }: AddUserModalProps) 
 
       onSuccess();
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Gagal menambahkan user');
+      setError(err.response?.data?.message || err.message || 'Failed to add user');
     } finally {
       setLoading(false);
     }
@@ -87,7 +87,7 @@ export default function AddUserModal({ onClose, onSuccess }: AddUserModalProps) 
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-[500px] overflow-hidden p-6 md:p-8 animate-[fadeIn_0.15s_ease-out] relative">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-[500px] max-h-[90vh] overflow-y-auto p-5 sm:p-7 md:p-8 animate-[fadeIn_0.15s_ease-out] relative">
         {/* Close Button */}
         <button
           type="button"
@@ -122,14 +122,16 @@ export default function AddUserModal({ onClose, onSuccess }: AddUserModalProps) 
               <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
                 Email
               </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter email address"
-                className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
-                required
-              />
+              <div className="relative flex items-center">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter email address"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all box-border"
+                  required
+                />
+              </div>
             </div>
 
             {/* Username */}
@@ -142,15 +144,17 @@ export default function AddUserModal({ onClose, onSuccess }: AddUserModalProps) 
                   {username.length}/60
                 </span>
               </div>
-              <input
-                type="text"
-                maxLength={60}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter username"
-                className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
-                required
-              />
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  maxLength={60}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter username"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all box-border"
+                  required
+                />
+              </div>
             </div>
 
             {/* Password */}
@@ -224,19 +228,19 @@ export default function AddUserModal({ onClose, onSuccess }: AddUserModalProps) 
           </div>
 
           {/* Modal Footer */}
-          <div className="flex items-center justify-end gap-3 mt-8 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 sm:gap-3 mt-8 pt-2">
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 font-medium text-[13.5px] transition-colors cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 font-medium text-[13.5px] transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2.5 rounded-lg bg-[#2563EB] hover:bg-blue-700 text-white font-medium text-[13.5px] transition-colors shadow-sm border-none cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-[#2563EB] hover:bg-blue-700 text-white font-medium text-[13.5px] transition-colors shadow-sm border-none cursor-pointer disabled:opacity-50"
             >
               {loading ? 'Creating...' : 'Create User'}
             </button>

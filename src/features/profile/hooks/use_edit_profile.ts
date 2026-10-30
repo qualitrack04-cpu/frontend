@@ -23,7 +23,7 @@ export function useEditProfile() {
         await changePassword({ newPassword, confirmPassword: newPassword });
       }
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Gagal menyimpan perubahan.');
+      setError(err.response?.data?.message || 'Failed to save changes.');
       throw err;
     } finally {
       setSaving(false);
@@ -37,7 +37,7 @@ export function useEditProfile() {
       const result = await uploadProfilePhoto(file);
       return result.url as string;
     } catch (err: any) {
-      setPhotoError(err.response?.data?.message || 'Gagal mengunggah foto.');
+      setPhotoError(err.response?.data?.message || 'Failed to upload photo.');
       throw err;
     } finally {
       setPhotoSaving(false);
@@ -50,7 +50,7 @@ export function useEditProfile() {
     try {
       await removeProfilePhoto();
     } catch (err: any) {
-      setPhotoError(err.response?.data?.message || 'Gagal menghapus foto.');
+      setPhotoError(err.response?.data?.message || 'Failed to delete photo.');
       throw err;
     } finally {
       setPhotoSaving(false);

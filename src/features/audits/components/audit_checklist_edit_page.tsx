@@ -34,7 +34,7 @@ export default function AuditChecklistEditPage() {
     ? departments
     : [...departments, department];
 
-  if (loading) return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Memuat checklist...</p></div>;
+  if (loading) return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Loading checklist...</p></div>;
   if (loadError) {
     return (
       <div className="max-w-full m-0 text-left">
@@ -47,9 +47,9 @@ export default function AuditChecklistEditPage() {
   return (
     <div className="max-w-full m-0 text-left">
       <button className="inline-flex items-center gap-[8px] bg-transparent border-none text-[#64748b] text-[14px] font-semibold cursor-pointer p-0 mb-[16px] hover:text-[#1e293b]" onClick={() => navigate(-1)}>← Back</button>
-      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Edit Audit Checklist</h1>
+      <h1 className="text-2xl sm:text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Edit Audit Checklist</h1>
 
-      <form onSubmit={handleSubmit} className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] max-w-[760px]">
+      <form onSubmit={handleSubmit} className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] max-w-[760px]">
         <div className="text-[14px] font-bold text-[#0f2c52] uppercase tracking-[0.5px] m-0 mb-[16px]">Checklist Details</div>
         <hr className="border-t border-[#e2e8f0] m-0 mb-[24px]" />
 
@@ -96,7 +96,7 @@ export default function AuditChecklistEditPage() {
         <hr className="border-t border-[#e2e8f0] m-0 mb-[24px]" />
 
         {items.length === 0 && (
-          <p className="text-[12px] text-[#94a3b8]">Belum ada item. Klik "Add Item" untuk menambahkan.</p>
+          <p className="text-[12px] text-[#94a3b8]">No items yet. Click "Add Item" to add one.</p>
         )}
 
         <div className="flex flex-col gap-[24px]">
@@ -129,7 +129,7 @@ export default function AuditChecklistEditPage() {
                       type="button"
                       className="bg-white border border-[#e2e8f0] text-[#64748b] w-[32px] h-[32px] rounded-[6px] flex items-center justify-center cursor-pointer transition-all duration-200 hover:not(:disabled):border-[#fca5a5] hover:not(:disabled):text-[#dc2626] hover:not(:disabled):bg-[#fef2f2] disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-[#f1f5f9]"
                       onClick={() => removeItem(item.key)}
-                      aria-label="Hapus item"
+                      aria-label="Delete item"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -148,7 +148,7 @@ export default function AuditChecklistEditPage() {
                     />
                     {questionMissing && (
                       <p className="text-[#dc2626] text-[13px] mt-[4px] flex items-center gap-[4px] m-0">
-                        <CircleAlert size={14} /> Pertanyaan wajib diisi
+                        <CircleAlert size={14} /> Question is required
                       </p>
                     )}
                   </div>
@@ -185,11 +185,11 @@ export default function AuditChecklistEditPage() {
 
         {submitError && <p className="text-[#dc2626] text-[13px] mt-[4px]">{submitError}</p>}
 
-        <div className="flex items-center justify-end gap-[12px] mt-[32px] pt-[20px] border-t border-[#e2e8f0]">
-          <button type="button" className="bg-[#f1f5f9] text-[#475569] border-none p-[12px_24px] rounded-[8px] text-[14px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#e2e8f0]" onClick={() => navigate(-1)}>
+        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 sm:gap-[12px] mt-[32px] pt-[20px] border-t border-[#e2e8f0]">
+          <button type="button" className="w-full sm:w-auto bg-[#f1f5f9] text-[#475569] border-none p-[12px_24px] rounded-[8px] text-[14px] font-semibold cursor-pointer transition-colors duration-200 hover:bg-[#e2e8f0]" onClick={() => navigate(-1)}>
             Cancel
           </button>
-          <button type="submit" className="bg-[#0f2c52] text-white border-none p-[12px_24px] rounded-[8px] text-[14px] font-semibold cursor-pointer flex items-center gap-[8px] transition-colors duration-200 hover:bg-[#0c2444] disabled:opacity-50 disabled:cursor-not-allowed" disabled={submitting}>
+          <button type="submit" className="w-full sm:w-auto bg-[#0f2c52] text-white border-none p-[12px_24px] rounded-[8px] text-[14px] font-semibold cursor-pointer flex items-center justify-center gap-[8px] transition-colors duration-200 hover:bg-[#0c2444] disabled:opacity-50 disabled:cursor-not-allowed" disabled={submitting}>
             <Save size={16} /> {submitting ? 'Saving...' : 'Save Changes'}
           </button>
         </div>

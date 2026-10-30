@@ -25,12 +25,12 @@ export default function AuditsPage() {
         </button>
       </div>
 
-      {loading && <p className="text-slate-500">Memuat daftar audit...</p>}
+      {loading && <p className="text-slate-500">Loading audit list...</p>}
       {error && <p className="text-red-600">{error}</p>}
 
       {!loading && !error && audits.length === 0 && (
         <p className="text-slate-500">
-          Belum ada audit plan.{canManageAuditPlans() && ' Klik "+ New Audit" untuk membuat yang baru.'}
+          No audit plans yet.{canManageAuditPlans() && ' Click "+ New Audit" to create one.'}
         </p>
       )}
 

@@ -55,29 +55,29 @@ export default function AuditChecklistPage() {
         navigate('/capa');
         return;
       }
-      setCapaError('Isi form CAPA untuk tiap temuan dulu sebelum submit (belum tersedia).');
+      setCapaError('Fill out CAPA form for each finding before submitting.');
     } catch (err: any) {
-      setCapaError(err.response?.data?.message ?? 'Gagal submit CAPA');
+      setCapaError(err.response?.data?.message ?? 'Failed to submit CAPA');
     } finally {
       setSubmittingCapa(false);
     }
   };
 
-  if (loading) return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Memuat checklist...</p></div>;
+  if (loading) return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Loading checklist...</p></div>;
   if (error) return <div className="max-w-full m-0 text-left"><p className="text-red-600">{error}</p></div>;
 
   if (needsChecklistSelection) {
     return (
       <div className="max-w-full m-0 text-left">
         <button className="inline-flex items-center gap-[8px] bg-transparent border-none text-[#64748b] text-[14px] font-semibold cursor-pointer p-0 mb-[16px] hover:text-[#1e293b]" onClick={() => navigate('/audits')}>← Back to Audits</button>
-        <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Pilih Checklist</h1>
+        <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Select Checklist</h1>
         <p className="text-slate-500 mt-[-6px] mb-[16px] text-[13px]">
-          Jadwal {schedule?.clauseRef} ({schedule?.department}) belum punya sesi audit.
-          Pilih checklist yang akan dipakai untuk memulai.
+          Schedule {schedule?.clauseRef} ({schedule?.department}) has no audit session yet.
+          Select a checklist to begin.
         </p>
 
         {checklistOptions.length === 0 && (
-          <p className="text-slate-500">Belum ada checklist yang tersedia.</p>
+          <p className="text-slate-500">No checklists available.</p>
         )}
 
         <div className="flex flex-col gap-[12px] mt-[16px]">

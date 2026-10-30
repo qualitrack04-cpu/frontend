@@ -20,11 +20,11 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!standardName.trim()) {
-      setError('ISO Standard Name wajib diisi');
+      setError('ISO Standard Name is required');
       return;
     }
     if (!category.trim()) {
-      setError('ISO Category wajib diisi');
+      setError('ISO Category is required');
       return;
     }
 
@@ -46,7 +46,7 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
 
       onSuccess();
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Gagal mengubah ISO Standard');
+      setError(err.response?.data?.message || err.message || 'Failed to update ISO Standard');
     } finally {
       setLoading(false);
     }
@@ -54,7 +54,7 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden p-6 md:p-7 animate-[fadeIn_0.15s_ease-out] relative">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto p-5 sm:p-7 animate-[fadeIn_0.15s_ease-out] relative">
         {/* Close Button */}
         <button
           type="button"
@@ -89,14 +89,16 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
               <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
                 ISO Standard Name
               </label>
-              <input
-                type="text"
-                value={standardName}
-                onChange={(e) => setStandardName(e.target.value)}
-                placeholder="e.g. ISO 45001:2018"
-                className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
-                required
-              />
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  value={standardName}
+                  onChange={(e) => setStandardName(e.target.value)}
+                  placeholder="e.g. ISO 45001:2018"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all box-border"
+                  required
+                />
+              </div>
             </div>
 
             {/* ISO Category */}
@@ -104,14 +106,16 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
               <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
                 ISO Category
               </label>
-              <input
-                type="text"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                placeholder="e.g. Occupational Health & Safety"
-                className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
-                required
-              />
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  placeholder="e.g. Occupational Health & Safety"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all box-border"
+                  required
+                />
+              </div>
             </div>
 
             {/* Account Status */}
@@ -149,19 +153,19 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
           </div>
 
           {/* Modal Footer */}
-          <div className="flex items-center justify-end gap-3 mt-6 pt-2">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 sm:gap-3 mt-6 pt-2">
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-5 py-2.5 rounded-lg border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 font-medium text-[13.5px] transition-colors cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 font-medium text-[13.5px] transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2.5 rounded-lg bg-[#2563EB] hover:bg-blue-700 text-white font-medium text-[13.5px] transition-colors shadow-sm border-none cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-[#2563EB] hover:bg-blue-700 text-white font-medium text-[13.5px] transition-colors shadow-sm border-none cursor-pointer disabled:opacity-50"
             >
               {loading ? 'Saving...' : 'Save Changes'}
             </button>

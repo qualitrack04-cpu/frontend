@@ -23,6 +23,16 @@ export default function EditTemplateModal({
   onClose,
   onSuccess,
 }: EditTemplateModalProps) {
+  const activeIsoStandards = isoStandards.filter((iso: any) => {
+    if (!iso) return false;
+    if (iso.code === template.isoStandardName) return true;
+    if (iso.isActive === false || iso.is_active === false) return false;
+    if (typeof iso.isActive === 'string' && (iso.isActive === 'false' || iso.isActive === 'Inactive')) return false;
+    if (iso.status === 'Inactive' || iso.status === 'inactive') return false;
+    return true;
+  });
+  const activeDepartments = departments.filter((dept) => (dept as any).isActive !== false || dept.name === template.departmentName);
+
   const [title, setTitle] = useState(template.title);
   const [standard, setStandard] = useState(template.isoStandardName);
   const [department, setDepartment] = useState(template.departmentName);
@@ -78,7 +88,7 @@ export default function EditTemplateModal({
 
       onSuccess();
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Gagal mengubah template');
+      setError(err.response?.data?.message || err.message || 'Failed to update template');
     } finally {
       setLoading(false);
     }
@@ -125,7 +135,7 @@ export default function EditTemplateModal({
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">
                   ISO Standart <span className="text-red-500">*</span>
@@ -136,13 +146,13 @@ export default function EditTemplateModal({
                   required
                   className="w-full bg-slate-50 border border-slate-200 rounded-[10px] px-3 py-2.5 text-[14px] outline-none focus:border-blue-500 focus:bg-white transition-colors text-slate-700 cursor-pointer"
                 >
-                  <option value="">Pilih Standart</option>
-                  {isoStandards.map((iso) => (
+                  <option value="">Select Standard</option>
+                  {activeIsoStandards.map((iso) => (
                     <option key={iso.id} value={iso.code}>
-                      {iso.code}
+                      {iso.code} {iso.isActive === false ? '(Inactive)' : ''}
                     </option>
                   ))}
-                  {!isoStandards.some((i) => i.code === standard) && standard && (
+                  {!activeIsoStandards.some((i) => i.code === standard) && standard && (
                     <option value={standard}>{standard}</option>
                   )}
                 </select>
@@ -158,8 +168,8 @@ export default function EditTemplateModal({
                   required
                   className="w-full bg-slate-50 border border-slate-200 rounded-[10px] px-3 py-2.5 text-[14px] outline-none focus:border-blue-500 focus:bg-white transition-colors text-slate-700 cursor-pointer"
                 >
-                  <option value="">Pilih Department</option>
-                  {departments.map((dept) => (
+                  <option value="">Select Department</option>
+                  {activeDepartments.map((dept) => (
                     <option key={dept.id} value={dept.name}>
                       {dept.name}
                     </option>
@@ -177,11 +187,11 @@ export default function EditTemplateModal({
           </form>
         </div>
 
-        <div className="px-6 py-4 border-t border-slate-100 flex justify-end gap-3 bg-[#f8fafc]">
+        <div className="px-4 sm:px-6 py-3.5 sm:py-4 border-t border-slate-100 flex flex-col-reverse sm:flex-row sm:justify-end gap-2.5 sm:gap-3 bg-[#f8fafc]">
           <button 
             type="button" 
             onClick={onClose}
-            className="px-4 py-2 rounded-lg text-sm font-semibold text-slate-500 hover:text-slate-700 bg-transparent border-none cursor-pointer hover:bg-slate-100 transition-colors"
+            className="w-full sm:w-auto px-4 py-2 rounded-lg text-sm font-semibold text-slate-500 hover:text-slate-700 bg-transparent border-none cursor-pointer hover:bg-slate-100 transition-colors"
           >
             Cancel
           </button>
@@ -189,7 +199,7 @@ export default function EditTemplateModal({
             type="submit" 
             form="edit-template-form"
             disabled={loading}
-            className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 border-none cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+            className="w-full sm:w-auto px-5 py-2 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 border-none cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           >
             {loading ? 'Saving...' : 'Save Changes'}
           </button>

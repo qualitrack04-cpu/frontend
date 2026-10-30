@@ -37,10 +37,10 @@ export function useAuditReport(planId: string, scheduleId: string) {
 
         const scheduleData = planData.schedules.find((s) => s.id === scheduleId) ?? null;
         setSchedule(scheduleData);
-        if (!scheduleData) throw new Error('Jadwal audit tidak ditemukan');
+        if (!scheduleData) throw new Error('Audit schedule not found');
 
         const sessionData = await getAuditSessionByScheduleId(scheduleId);
-        if (!sessionData) throw new Error('Sesi audit tidak ditemukan');
+        if (!sessionData) throw new Error('Audit session not found');
         if (cancelled) return;
         setSession(sessionData);
 
@@ -60,7 +60,7 @@ export function useAuditReport(planId: string, scheduleId: string) {
           })
         );
       } catch (err: any) {
-        if (!cancelled) setError(err.response?.data?.message ?? err.message ?? 'Gagal memuat laporan audit');
+        if (!cancelled) setError(err.response?.data?.message ?? err.message ?? 'Failed to load audit report');
       } finally {
         if (!cancelled) setLoading(false);
       }

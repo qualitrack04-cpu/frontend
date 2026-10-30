@@ -17,7 +17,7 @@ export default function SummaryCards() {
     <div className="flex flex-col">
       <p className="text-[11px] font-bold tracking-[0.8px] text-slate-500 mb-[4px] uppercase m-0">SUMMARY CARD</p>
       <div className="grid grid-cols-[1fr_1fr] gap-[12px]">
-        {loading && <p className="text-slate-500 col-span-2">Memuat ringkasan...</p>}
+        {loading && <p className="text-slate-500 col-span-2">Loading summary...</p>}
         {error && <p className="text-red-600 bg-red-50 border border-red-200 rounded-[8px] p-[10px_14px] my-[8px] text-[14px] col-span-2">{error}</p>}
 
         {items.map((item) => (

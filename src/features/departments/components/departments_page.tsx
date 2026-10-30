@@ -36,7 +36,7 @@ export default function DepartmentsPage() {
   const handleAddDepartment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newDeptName.trim()) {
-      setFormError('Nama departemen tidak boleh kosong');
+      setFormError('Department name cannot be empty');
       return;
     }
 
@@ -52,7 +52,13 @@ export default function DepartmentsPage() {
       setNewDeptActive(true);
       refetch();
     } catch (err: any) {
-      setFormError(err.response?.data?.message || err.message || 'Gagal menambahkan departemen');
+      const dMsg = err.response?.data?.message || err.message || 'Failed to add department';
+      const dMsgLower = String(dMsg).toLowerCase();
+      if (dMsgLower.includes('sama sudah ada') || dMsgLower.includes('already exists')) {
+        setFormError('A department with the same name or code already exists');
+      } else {
+        setFormError(dMsg);
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -288,20 +294,22 @@ export default function DepartmentsPage() {
           </div>
         )}
 
-        <form onSubmit={handleAddDepartment} className="flex flex-wrap items-end gap-6">
+        <form onSubmit={handleAddDepartment} className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6">
           {/* Department Name Input */}
-          <div className="flex-1 min-w-[280px]">
+          <div className="flex-1 w-full min-w-0">
             <label className="block text-[13px] font-semibold text-slate-700 mb-2">
               Department Name
             </label>
-            <input
-              type="text"
-              placeholder="Enter department name"
-              value={newDeptName}
-              onChange={(e) => setNewDeptName(e.target.value)}
-              disabled={isSubmitting}
-              className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all disabled:opacity-50"
-            />
+            <div className="relative flex items-center">
+              <input
+                type="text"
+                placeholder="Enter department name"
+                value={newDeptName}
+                onChange={(e) => setNewDeptName(e.target.value)}
+                disabled={isSubmitting}
+                className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all disabled:opacity-50 box-border"
+              />
+            </div>
           </div>
 
           {/* Status Toggle */}
@@ -331,11 +339,11 @@ export default function DepartmentsPage() {
           </div>
 
           {/* Add Department Button */}
-          <div className="shrink-0">
+          <div className="w-full sm:w-auto shrink-0">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center justify-center gap-1.5 bg-[#2563EB] hover:bg-blue-700 text-white font-medium px-5 h-[42px] rounded-lg text-[14px] transition-all shadow-sm active:scale-[0.98] cursor-pointer border-none disabled:opacity-50"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 bg-[#2563EB] hover:bg-blue-700 text-white font-medium px-5 h-[42px] rounded-lg text-[14px] transition-all shadow-sm active:scale-[0.98] cursor-pointer border-none disabled:opacity-50"
             >
               <Plus size={16} strokeWidth={2.5} />
               <span>{isSubmitting ? 'Adding...' : 'Add Department'}</span>

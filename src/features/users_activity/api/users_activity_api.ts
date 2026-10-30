@@ -7,6 +7,7 @@ export interface UserActivityItem {
   userEmail: string;
   userPhoto?: string;
   role: string;
+  status: 'Active' | 'Inactive';
   activityName: string;
   description: string;
   timestamp: string;
@@ -47,6 +48,7 @@ const DEFAULT_USER_ACTIVITIES: UserActivityItem[] = [
     userName: 'Quali Track',
     userEmail: 'admin@example.com',
     role: 'Quality Manager',
+    status: 'Active',
     activityName: 'Flagged Major NC',
     description: 'Flagged major non-conformity in Packaging Area',
     timestamp: '2026-10-19T15:30:00Z',
@@ -57,6 +59,7 @@ const DEFAULT_USER_ACTIVITIES: UserActivityItem[] = [
     userName: 'Black Cuking',
     userEmail: 'blackcuking@example.com',
     role: 'Auditor Internal',
+    status: 'Active',
     activityName: 'Logged Minor NC',
     description: 'Logged Minor NC: Spec sheet rev.3 missing signature',
     timestamp: '2026-10-19T14:30:00Z',
@@ -67,6 +70,7 @@ const DEFAULT_USER_ACTIVITIES: UserActivityItem[] = [
     userName: 'Amir Oakwood',
     userEmail: 'amiroakwood@gmail.com',
     role: 'Auditee',
+    status: 'Active',
     activityName: 'Submitted CAPA',
     description: 'Submitted CAPA response for finding #F-2026-031',
     timestamp: '2026-07-22T10:00:00Z',
@@ -77,6 +81,7 @@ const DEFAULT_USER_ACTIVITIES: UserActivityItem[] = [
     userName: 'Amara Jensen',
     userEmail: 'amarajensen@example.com',
     role: 'Auditor Internal',
+    status: 'Active',
     activityName: 'Uploaded Evidence',
     description: 'Uploaded evidence for expired calibration in QC Lab',
     timestamp: '2026-06-22T11:20:00Z',
@@ -87,6 +92,7 @@ const DEFAULT_USER_ACTIVITIES: UserActivityItem[] = [
     userName: 'Marcus Kane',
     userEmail: 'marcuskane@example.com',
     role: 'Auditee',
+    status: 'Inactive',
     activityName: 'Requested Extension',
     description: 'Requested deadline extension for CAPA #F-028',
     timestamp: '2026-04-29T09:15:00Z',
@@ -97,6 +103,7 @@ const DEFAULT_USER_ACTIVITIES: UserActivityItem[] = [
     userName: 'Sarah Lin',
     userEmail: 'sarahlin@example.com',
     role: 'Quality Manager',
+    status: 'Active',
     activityName: 'Assigned Auditor',
     description: 'Assigned internal auditor to ISO 14001 audit plan',
     timestamp: '2026-03-29T14:00:00Z',
@@ -107,6 +114,7 @@ const DEFAULT_USER_ACTIVITIES: UserActivityItem[] = [
     userName: 'Amir Oakwood',
     userEmail: 'amiroakwood@gmail.com',
     role: 'Auditee',
+    status: 'Active',
     activityName: 'Submitted CAPA',
     description: 'Submitted CAPA response for finding #F-2026-031',
     timestamp: '2026-03-21T16:30:00Z',
@@ -117,6 +125,7 @@ const DEFAULT_USER_ACTIVITIES: UserActivityItem[] = [
     userName: 'David Miller',
     userEmail: 'davidmiller@example.com',
     role: 'Auditor Internal',
+    status: 'Active',
     activityName: 'Audit Completed',
     description: 'Completed internal audit for ISO 9001 in Warehouse Area',
     timestamp: '2026-03-15T13:45:00Z',
@@ -127,6 +136,7 @@ const DEFAULT_USER_ACTIVITIES: UserActivityItem[] = [
     userName: 'Elena Rostova',
     userEmail: 'elenarostova@example.com',
     role: 'Quality Manager',
+    status: 'Active',
     activityName: 'CAPA Verified',
     description: 'Verified CAPA for finding #F-2026-015 as effective',
     timestamp: '2026-03-10T10:15:00Z',
@@ -137,6 +147,7 @@ const DEFAULT_USER_ACTIVITIES: UserActivityItem[] = [
     userName: 'Kevin Vance',
     userEmail: 'kevinvance@example.com',
     role: 'Auditee',
+    status: 'Inactive',
     activityName: 'CAPA Action',
     description: 'Submitted corrective action for finding #F-2026-019',
     timestamp: '2026-03-05T08:30:00Z',
@@ -158,6 +169,7 @@ for (let i = 11; i <= 86; i++) {
     userName: n,
     userEmail: `${n.toLowerCase().replace(/\s+/g, '')}@example.com`,
     role: r,
+    status: i % 4 === 0 ? 'Inactive' : 'Active',
     activityName: i % 3 === 0 ? 'Audit Completed' : i % 2 === 0 ? 'CAPA Verified' : 'Finding Reported',
     description: `User activity record #${i} related to compliance and audit findings`,
     timestamp: d.toISOString(),
@@ -176,6 +188,7 @@ export async function getUsersActivity(): Promise<UserActivityItem[]> {
         userName: b.userName || 'Unknown User',
         userEmail: b.userEmail || `${(b.userName || 'user').toLowerCase().replace(/\s+/g, '')}@example.com`,
         role: b.role || 'Auditor Internal',
+        status: b.status || (index % 6 === 1 ? 'Inactive' : 'Active'),
         activityName: b.activityType || 'Activity',
         description: b.description || 'Recent activity logged',
         timestamp: b.timestamp || new Date().toISOString(),

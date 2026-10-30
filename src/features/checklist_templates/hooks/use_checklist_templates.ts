@@ -30,7 +30,7 @@ export function useChecklistTemplates(isoStandardId?: string, departmentId?: str
       setDepartments(Array.isArray(deptRes) ? deptRes : []);
       setIsoStandards(Array.isArray(isoRes) ? isoRes : []);
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Gagal memuat template checklist');
+      setError(err.response?.data?.message || err.message || 'Failed to load checklist templates');
     } finally {
       setLoading(false);
     }

@@ -50,7 +50,7 @@ export default function UploadPhotoModal({ open, onClose, onUpload }: Props) {
     if (!picked) return;
 
     if (!picked.type.startsWith('image/')) {
-      setError('File harus berupa gambar (JPG, PNG, atau WEBP).');
+      setError('File must be an image (JPG, PNG, or WEBP).');
       return;
     }
     if (picked.size > MAX_SIZE_MB * 1024 * 1024) {
@@ -69,7 +69,7 @@ export default function UploadPhotoModal({ open, onClose, onUpload }: Props) {
       await onUpload(file);
       onClose();
     } catch (err: any) {
-      setError(err.response?.data?.message ?? 'Gagal mengunggah foto.');
+      setError(err.response?.data?.message ?? 'Failed to upload photo.');
       setUploading(false);
     }
   };
@@ -92,11 +92,11 @@ export default function UploadPhotoModal({ open, onClose, onUpload }: Props) {
 
         {previewUrl ? (
           <div className="relative w-full aspect-[4/3] rounded-[12px] overflow-hidden mb-[24px]">
-            <img src={previewUrl} alt="Preview foto yang dipilih" className="w-full h-full object-cover" />
+            <img src={previewUrl} alt="Selected photo preview" className="w-full h-full object-cover" />
             <button
               type="button"
               className="absolute top-[12px] right-[12px] w-[36px] h-[36px] bg-[rgba(0,0,0,0.6)] text-white border-none rounded-full flex items-center justify-center cursor-pointer transition-colors duration-200 hover:bg-[#dc2626]"
-              aria-label="Hapus foto"
+              aria-label="Delete photo"
               onClick={() => setFile(null)}
               disabled={uploading}
             >

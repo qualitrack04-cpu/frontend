@@ -29,10 +29,10 @@ export default function CreateCapaPage() {
       <Link to="/capa" className="inline-flex items-center gap-[8px] text-[#64748b] no-underline text-[14px] font-semibold mb-[16px] transition-colors hover:text-[#1e293b]">
         <ArrowLeft size={18} /> Back to CAPA List
       </Link>
-      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Create CAPA</h1>
+      <h1 className="text-2xl sm:text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Create CAPA</h1>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-[24px] items-start">
-        <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-[24px]">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 items-start">
+        <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-6 md:p-[24px]">
           <div className="flex flex-col gap-[8px] mb-[20px]">
             <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">TITLE</label>
             <input
@@ -47,7 +47,7 @@ export default function CreateCapaPage() {
 
           <div className="flex flex-col gap-[8px] mb-[20px]">
             <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">LINKED FINDING</label>
-            {loadingOptions && <p className="text-slate-500 m-0">Memuat finding...</p>}
+            {loadingOptions && <p className="text-slate-500 m-0">Loading findings...</p>}
             {!loadingOptions && findingsError && (
               <div className="flex items-center justify-between bg-[#fff3cd] text-[#856404] p-[10px_14px] rounded-[6px] text-[13.5px]">
                 <span className="flex items-center gap-[6px]">
@@ -96,7 +96,7 @@ export default function CreateCapaPage() {
         </div>
 
         <div className="flex flex-col">
-          <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-[24px] mb-[24px]">
+          <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-6 md:p-[24px] mb-[24px]">
             <div className="flex flex-col gap-[8px] mb-[20px]">
               <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">PERSON IN CHARGE</label>
               <select value={picId} onChange={(e) => setPicId(e.target.value)} className="w-full p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)]">

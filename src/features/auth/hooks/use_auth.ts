@@ -14,10 +14,10 @@ export function useAuth() {
       const result = await loginApi({ email, password });
 
       if (!result?.token) {
-        throw new Error('Response login tidak berisi token.')
+        throw new Error('Login response did not contain a token.')
       }
       if (result.role === 'Auditee') {
-        throw new Error('Role Auditee tidak diizinkan untuk login/masuk ke sistem web.');
+        throw new Error('Auditee role is not permitted to sign in to the web platform.');
       }
 
       localStorage.setItem('token', result.token);
@@ -27,7 +27,7 @@ export function useAuth() {
       navigate('/dashboard', {replace: true}); 
     } catch (err: any) {
       setError(
-        err.response?.data?.message ?? err.message ?? 'Email atau password salah.');
+        err.response?.data?.message ?? err.message ?? 'Invalid email or password.');
     } finally {
       setLoading(false);
     }

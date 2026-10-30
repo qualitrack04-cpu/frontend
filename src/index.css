@@ -1,6 +1,10 @@
 @import "tailwindcss/theme" layer(theme);
 @import "tailwindcss/utilities" layer(utilities);
 
+*, *::before, *::after, input, select, textarea, button {
+  box-sizing: border-box;
+}
+
 /* ============================================================
    VARIABLES & BASE
    ============================================================ */
@@ -71,6 +75,12 @@ body {
   place-items: center;
   min-width: 320px;
   margin: 0;
+}
+
+/* Hide native browser password reveal eye icon (Edge / IE / Chromium) to avoid duplicate eye icons */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none !important;
 }
 
 /* ============================================================

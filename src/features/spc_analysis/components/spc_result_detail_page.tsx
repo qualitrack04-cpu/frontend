@@ -31,7 +31,7 @@ export default function SpcResultDetailPage() {
         const data = await getSpcById(id!);
         setResult(data);
       } catch (err: any) {
-        setError(err.response?.data?.message ?? 'Gagal memuat detail analisis.');
+        setError(err.response?.data?.message ?? 'Failed to load analysis detail.');
       } finally {
         setLoading(false);
       }
@@ -39,7 +39,7 @@ export default function SpcResultDetailPage() {
     fetch();
   }, [id]);
 
-  if (loading) return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Memuat detail analisis...</p></div>;
+  if (loading) return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Loading analysis detail...</p></div>;
   if (error)   return <div className="max-w-full m-0 text-left"><p className="text-red-600">{error}</p></div>;
   if (!result) return null;
 

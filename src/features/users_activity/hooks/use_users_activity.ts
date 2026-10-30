@@ -18,7 +18,7 @@ export function useUsersActivity() {
       const data = await getUsersActivity();
       setActivities(data);
     } catch (err: any) {
-      setError(err?.message || 'Gagal memuat aktivitas user');
+      setError(err?.message || 'Failed to load user activity');
     } finally {
       setLoading(false);
     }
@@ -48,7 +48,7 @@ export function useUserOverview(userId?: string) {
       const data = await getUserOverview(userId);
       setOverview(data);
     } catch (err: any) {
-      setError(err?.message || 'Gagal memuat profil ringkasan user');
+      setError(err?.message || 'Failed to load user summary profile');
     } finally {
       setLoading(false);
     }

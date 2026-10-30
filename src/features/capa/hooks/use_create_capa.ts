@@ -41,7 +41,7 @@ export function useCreateCapa() {
           }
         } else {
           setFindingsError(
-            findingsResult.reason?.response?.data?.message ?? 'Gagal memuat daftar finding.'
+            findingsResult.reason?.response?.data?.message ?? 'Failed to load findings.'
           );
         }
 
@@ -63,7 +63,7 @@ export function useCreateCapa() {
         if (result.length === 0) setFindingsError('Tidak ada finding tersedia');
       })
       .catch((err: any) => {
-        setFindingsError(err.response?.data?.message ?? 'Gagal memuat daftar finding.');
+        setFindingsError(err.response?.data?.message ?? 'Failed to load findings.');
       })
       .finally(() => setLoadingOptions(false));
   }
@@ -89,11 +89,11 @@ export function useCreateCapa() {
       hasError = true;
     }
     if (!findingId) {
-      setSubmitError('Pilih Linked Finding terlebih dahulu.');
+      setSubmitError('Please select a Linked Finding first.');
       hasError = true;
     }
     if (!picId) {
-      setSubmitError('Pilih Assignee / PIC terlebih dahulu.');
+      setSubmitError('Please select an Assignee / PIC first.');
       hasError = true;
     }
     if (!deadline) {
@@ -112,7 +112,7 @@ export function useCreateCapa() {
       });
       navigate(`/capa/${capa.id}`);
     } catch (err: any) {
-      setSubmitError(err.response?.data?.message ?? 'Gagal membuat CAPA.');
+      setSubmitError(err.response?.data?.message ?? 'Failed to create CAPA.');
     } finally {
       setSubmitting(false);
     }

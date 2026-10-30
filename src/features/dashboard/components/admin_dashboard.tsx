@@ -13,8 +13,8 @@ export default function AdminDashboard() {
     nameLength > 30
       ? 'text-[20px] sm:text-[22px]'
       : nameLength > 20
-      ? 'text-[24px] sm:text-[26px]'
-      : 'text-[28px]';
+        ? 'text-[24px] sm:text-[26px]'
+        : 'text-[28px]';
 
   if (loading) return <div className="p-4">Loading dashboard...</div>;
   if (error) return <div className="p-4 text-red-600">Error: {error}</div>;
@@ -22,7 +22,7 @@ export default function AdminDashboard() {
   return (
     <div className="max-w-full m-0 text-left">
       <h1 className={`${headingSizeClass} font-bold text-[#0f2c52] !m-0 !mb-2 leading-[1.35] max-w-full break-words [overflow-wrap:anywhere] [word-break:break-word]`}>
-        Hello, {fullName}! <span className="inline-block">👋</span>
+        Hello, {fullName}! <span className="inline-block"></span>
       </h1>
       <p className="text-slate-500 m-0 mb-[32px] text-[15px]">Welcome back to your dashboard</p>
 

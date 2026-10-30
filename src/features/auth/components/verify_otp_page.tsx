@@ -4,6 +4,7 @@ import { ArrowLeft } from 'lucide-react';
 import { useForgotPasswordFlow } from '../hooks/use_forgot_password_flow';
 import { verifyEmail, resendOtp as resendSignupOtp } from '../api/auth_api';
 import AuthBrandPanel from './auth_brand_panel';
+import splashLogo from '../../../assets/splash.png';
 
 const OTP_LENGTH = 4;
 const RESEND_SECONDS = 60;
@@ -73,7 +74,7 @@ export default function VerifyOtpPage() {
       setDigits(Array(OTP_LENGTH).fill(''));
       inputsRef.current[0]?.focus();
     } catch (err: any) {
-      setLocalError(err.response?.data?.message ?? 'Gagal mengirim ulang OTP.');
+      setLocalError(err.response?.data?.message ?? 'Failed to resend OTP.');
     } finally {
       setLocalLoading(false);
     }
@@ -83,7 +84,7 @@ export default function VerifyOtpPage() {
     e.preventDefault();
     const otp = digits.join('');
     if (otp.length < OTP_LENGTH) {
-      setLocalError(`Masukkan ${OTP_LENGTH} digit kode OTP.`);
+      setLocalError(`Enter ${OTP_LENGTH}-digit OTP code.`);
       return;
     }
     setLocalError(null);
@@ -97,7 +98,7 @@ export default function VerifyOtpPage() {
         navigate('/reset-password', { state: { email, resetToken } });
       }
     } catch (err: any) {
-      setLocalError(err.response?.data?.message ?? 'Kode OTP salah atau kadaluarsa.');
+      setLocalError(err.response?.data?.message ?? 'Invalid or expired OTP code.');
     } finally {
       setLocalLoading(false);
     }
@@ -107,21 +108,30 @@ export default function VerifyOtpPage() {
   const shownError = localError ?? error;
 
   return (
-    <div className="relative flex min-h-screen w-full overflow-hidden bg-[#f3f4f6]">
-      {/* ── Left: Form area ── */}
-      <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 z-10">
-        <div className="w-full max-w-[420px] bg-white rounded-2xl shadow-2xl border border-slate-100 p-8 sm:p-[40px]">
-          <div className="text-[#0f2c52] text-[28px] sm:text-[32px] font-bold !m-0 !mb-2 text-center !tracking-normal">
-            Verification Code
+    <div className="relative flex min-h-screen w-full overflow-hidden bg-slate-50 lg:bg-white [&_*]:box-border">
+      {/* ── Left: Form area centered in left white area ── */}
+      <div className="flex flex-1 lg:w-[46%] lg:max-w-[46%] flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 z-10 min-h-screen">
+        <div className="w-full max-w-[400px] bg-white rounded-2xl shadow-xl sm:shadow-2xl border border-slate-100 p-6 sm:p-8 text-center">
+          {/* Logo on Mobile/Tablet */}
+          <div className="flex justify-center mb-5 lg:hidden">
+            <img
+              src={splashLogo}
+              alt="QualiTrack"
+              className="h-9 sm:h-11 w-auto object-contain"
+            />
           </div>
-          <p className="text-sm text-[#475569] text-center mb-8 leading-relaxed max-w-[280px] mx-auto !m-0 !mt-2">
-            We have sent a {OTP_LENGTH}-digit code to{' '}
-            <span className="font-semibold text-[#0f2c52]">{email}</span>
+
+          <div className="text-[#0f2c52] text-2xl sm:text-[27px] font-bold !m-0 !mb-2.5 text-center !tracking-normal">
+            Enter Verification Code
+          </div>
+          <p className="text-[13.5px] sm:text-[14px] text-[#64748b] text-center leading-relaxed max-w-[340px] mx-auto !m-0 !mb-6">
+            We have sent a {OTP_LENGTH}-digit verification code to your registered work email
+            <span className="block font-semibold text-[#0f2c52] mt-1">{email}</span>
           </p>
 
-          <form onSubmit={handleSubmit} className="flex flex-col gap-0">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-0 w-full">
             {/* OTP digit boxes */}
-            <div className="flex gap-4 justify-center mb-6 mt-2">
+            <div className="flex justify-between gap-2.5 sm:gap-3.5 mb-5">
               {digits.map((digit, index) => (
                 <input
                   key={index}
@@ -134,25 +144,27 @@ export default function VerifyOtpPage() {
                   onChange={(e) => handleDigitChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
                   onPaste={handlePaste}
-                  className="w-[56px] h-[56px] text-center text-[22px] font-bold bg-slate-50 border border-slate-200 rounded-xl text-[#0f2c52] outline-none transition-all focus:border-[#0f2c52] focus:ring-2 focus:ring-[#0f2c52]/10 focus:bg-white shadow-sm"
+                  className="w-13 h-13 sm:w-15 sm:h-15 text-center text-xl sm:text-2xl font-bold bg-[#f8fafc] border border-slate-200 rounded-xl text-[#0f2c52] outline-none transition-all focus:border-[#0f2c52] focus:ring-2 focus:ring-[#0f2c52]/10 focus:bg-white shadow-xs"
                 />
               ))}
             </div>
 
-            {/* Resend timer */}
-            <p className="text-sm text-[#475569] mb-5 text-center">
-              {secondsLeft > 0 ? (
-                <>Resend code in <span className="font-semibold">{formattedTime}</span></>
-              ) : (
-                <button
-                  type="button"
-                  onClick={handleResend}
-                  className="text-[#1e6fd9] font-bold bg-transparent border-none cursor-pointer p-0 text-sm"
-                >
-                  Resend code
-                </button>
-              )}
-            </p>
+            {/* Resend timer left-aligned with boxes */}
+            <div className="text-left mb-6">
+              <span className="text-[13px] text-[#64748b]">
+                {secondsLeft > 0 ? (
+                  <>Resend code in <span className="font-medium text-[#475569]">{formattedTime}</span></>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleResend}
+                    className="text-[#1e6fd9] hover:underline font-semibold bg-transparent border-none cursor-pointer p-0 text-[13px]"
+                  >
+                    Resend code
+                  </button>
+                )}
+              </span>
+            </div>
 
             {shownError && (
               <p className="text-red-600 text-sm mb-4 text-center">{shownError}</p>
@@ -161,18 +173,22 @@ export default function VerifyOtpPage() {
             <button
               type="submit"
               disabled={isBusy}
-              className="w-full bg-[#0f2c52] hover:bg-[#0c2444] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm tracking-wide"
+              className="w-full bg-[#0b3558] hover:bg-[#082843] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm tracking-wide shadow-xs cursor-pointer border-none"
             >
               {isBusy ? 'VERIFYING...' : 'VERIFY & PROCEED'}
             </button>
           </form>
 
-          <div className="flex justify-center mt-6">
+          {/* Divider line */}
+          <div className="w-full border-t border-slate-200 mt-6 mb-5" />
+
+          {/* Back button */}
+          <div className="flex justify-center">
             <Link
               to={fromSignup ? '/signup' : '/forgot-password'}
-              className="text-[#475569] hover:text-[#0f2c52] font-medium text-[13px] no-underline flex items-center gap-1.5 transition-colors"
+              className="text-[#64748b] hover:text-[#0f2c52] font-medium text-[14px] no-underline flex items-center gap-2 transition-colors"
             >
-              <ArrowLeft size={14} /> Back
+              <ArrowLeft size={16} /> Back
             </Link>
           </div>
         </div>

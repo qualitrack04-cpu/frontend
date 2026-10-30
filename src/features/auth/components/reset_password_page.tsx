@@ -3,6 +3,7 @@ import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { useForgotPasswordFlow } from '../hooks/use_forgot_password_flow';
 import AuthBrandPanel from './auth_brand_panel';
+import splashLogo from '../../../assets/splash.png';
 
 export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState('');
@@ -20,11 +21,11 @@ export default function ResetPasswordPage() {
     e.preventDefault();
     setLocalError(null);
     if (!email || !resetToken) {
-      setLocalError('Sesi reset tidak valid. Silakan ulangi dari halaman Forgot Password.');
+      setLocalError('Reset session is invalid. Please restart from the Forgot Password page.');
       return;
     }
     if (newPassword !== confirmPassword) {
-      setLocalError('Password tidak sama.');
+      setLocalError('Passwords do not match.');
       return;
     }
     try {
@@ -34,14 +35,23 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full overflow-hidden bg-[#f3f4f6]">
+    <div className="relative flex min-h-screen w-full overflow-hidden bg-slate-50 lg:bg-white [&_*]:box-border">
       {/* ── Left: Form area ── */}
-      <div className="flex flex-1 flex-col items-center justify-center px-6 py-12 z-10">
-        <div className="w-full max-w-[420px] bg-white rounded-2xl shadow-2xl border border-slate-100 p-8 sm:p-[40px]">
-          <div className="text-[#0f2c52] text-[28px] sm:text-[32px] font-bold !m-0 !mb-2 text-center !tracking-normal">
+      <div className="flex flex-1 lg:w-[46%] lg:max-w-[46%] flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12 z-10 min-h-screen">
+        <div className="w-full max-w-[400px] bg-white rounded-2xl shadow-xl sm:shadow-2xl border border-slate-100 p-6 sm:p-8 text-left">
+          {/* Logo on Mobile/Tablet */}
+          <div className="flex justify-center mb-5 lg:hidden">
+            <img
+              src={splashLogo}
+              alt="QualiTrack"
+              className="h-9 sm:h-11 w-auto object-contain"
+            />
+          </div>
+
+          <div className="text-[#0f2c52] text-2xl sm:text-[28px] md:text-[32px] font-bold !m-0 !mb-2 text-center !tracking-normal">
             Reset Password
           </div>
-          <p className="text-sm text-[#475569] text-center mb-8 leading-relaxed max-w-[280px] mx-auto !m-0 !mt-2">
+          <p className="text-sm text-[#475569] text-center mb-6 sm:mb-8 leading-relaxed max-w-[280px] mx-auto !m-0 !mt-2">
             Enter a new password for your account.
           </p>
 

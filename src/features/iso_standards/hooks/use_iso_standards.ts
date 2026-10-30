@@ -14,7 +14,7 @@ export function useIsoStandards(isActiveFilter?: boolean) {
       const res = await getIsoStandards(isActiveFilter);
       setData(res);
     } catch (err: any) {
-      setError(err.response?.data?.message || err.message || 'Gagal memuat ISO Standards');
+      setError(err.response?.data?.message || err.message || 'Failed to load ISO Standards');
     } finally {
       setLoading(false);
     }

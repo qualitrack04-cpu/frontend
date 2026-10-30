@@ -16,12 +16,16 @@ export interface DepartmentOption {
   id: string;
   name: string;
   code: string;
+  description?: string;
+  isActive?: boolean;
 }
 
 export interface IsoOption {
   id: string;
   name: string;
   code: string;
+  description?: string;
+  isActive?: boolean;
 }
 
 export async function getChecklistTemplates(
@@ -45,8 +49,9 @@ export async function getDepartments(): Promise<DepartmentOption[]> {
   return [];
 }
 
-export async function getIsoStandards(): Promise<IsoOption[]> {
-  const response = await api.get<any>('/admin/iso-standards');
+export async function getIsoStandards(isActive?: boolean): Promise<IsoOption[]> {
+  const url = isActive !== undefined ? `/admin/iso-standards?isActive=${isActive}` : '/admin/iso-standards';
+  const response = await api.get<any>(url);
   if (Array.isArray(response.data)) return response.data;
   if (Array.isArray(response.data?.data)) return response.data.data;
   return [];

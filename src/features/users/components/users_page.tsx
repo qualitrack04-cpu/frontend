@@ -193,13 +193,13 @@ export default function UsersPage() {
 
       {/* Filter & Search Bar */}
       <div className="bg-white rounded-xl shadow-[0_1px_3px_rgba(0,0,0,0.04)] border border-slate-200/80 p-4 mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-3.5 flex-1 min-w-[300px]">
+        <div className="flex flex-wrap items-center gap-3.5">
           {/* Search Box */}
-          <div className="relative flex-1 min-w-[240px] max-w-[340px]">
+          <div className="relative w-full sm:w-[260px] md:w-[300px] shrink-0">
             <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
             <input
               type="text"
-              placeholder="Search change"
+              placeholder="Search users..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full bg-white border border-slate-200 rounded-lg pl-10 pr-3.5 py-2 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
@@ -207,11 +207,11 @@ export default function UsersPage() {
           </div>
 
           {/* Role Dropdown */}
-          <div className="relative" ref={roleDropdownRef}>
+          <div className="relative shrink-0" ref={roleDropdownRef}>
             <button
               type="button"
               onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
-              className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3.5 py-2 text-[14px] text-slate-700 hover:border-slate-300 transition-colors cursor-pointer"
+              className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3.5 py-2 text-[14px] text-slate-700 hover:border-slate-300 transition-colors cursor-pointer whitespace-nowrap"
             >
               <SlidersHorizontal size={16} className="text-slate-600" />
               <span className="font-normal text-slate-700">
@@ -247,7 +247,7 @@ export default function UsersPage() {
           </div>
 
           {/* Status Segmented Pill */}
-          <div className="flex items-center gap-1 border border-slate-200/90 rounded-full p-1 bg-white">
+          <div className="flex items-center gap-1 border border-slate-200/90 rounded-full p-1 bg-white shrink-0">
             <button
               type="button"
               onClick={() => {

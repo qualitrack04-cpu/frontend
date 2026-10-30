@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getUsers } from '../api/users_api';
-import type { GetUsersResponse, User } from '../api/users_api';
+import type { GetUsersResponse } from '../api/users_api';
 
 export function useUsers(search?: string, role?: string, status?: string) {
   const [data, setData] = useState<GetUsersResponse | null>(null);

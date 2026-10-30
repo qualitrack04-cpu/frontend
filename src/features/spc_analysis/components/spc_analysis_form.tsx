@@ -50,18 +50,18 @@ export default function SpcAnalysisForm({ onResult }: Props) {
     setError(null);
 
     if (!formData.file) {
-      setError('Silakan upload file Excel terlebih dahulu.');
+      setError('Please upload an Excel file first.');
       return;
     }
 
     const lsl = parseFloat(formData.lsl);
     const usl = parseFloat(formData.usl);
     if (isNaN(lsl) || isNaN(usl)) {
-      setError('LSL dan USL harus berupa angka.');
+      setError('LSL and USL must be numeric.');
       return;
     }
     if (lsl >= usl) {
-      setError('LSL harus lebih kecil dari USL.');
+      setError('LSL must be less than USL.');
       return;
     }
 
@@ -78,7 +78,7 @@ export default function SpcAnalysisForm({ onResult }: Props) {
       });
       onResult(result);
     } catch (err: any) {
-      setError(err.response?.data?.message ?? 'Gagal melakukan analisis. Coba lagi.');
+      setError(err.response?.data?.message ?? 'Failed to run analysis. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -189,7 +189,7 @@ export default function SpcAnalysisForm({ onResult }: Props) {
         <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Description (opsional)</label>
         <textarea
           name="description"
-          placeholder="Catatan tambahan..."
+          placeholder="Additional notes..."
           value={formData.description}
           onChange={handleChange}
           className="p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border placeholder:text-[#94a3b8] font-inherit resize-y"
