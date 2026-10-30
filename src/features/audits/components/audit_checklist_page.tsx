@@ -90,7 +90,7 @@ export default function AuditChecklistPage() {
             >
               <div className="flex flex-col gap-[4px]">
                 <strong className="text-[15px] font-bold text-[#0f2c52]">{c.title}</strong>
-                <span className="text-[13px] text-[#64748b]">{c.standard} · {c.department}</span>
+                <span className="text-[13px] text-[#64748b]">{c.isoStandardName} · {c.departmentName}</span>
               </div>
             </button>
           ))}
