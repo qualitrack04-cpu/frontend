@@ -74,9 +74,9 @@ export default function CreateAuditPlanPage() {
         </div>
 
         <div className="flex flex-col md:flex-row gap-[16px] mb-[20px]">
-          <div className="flex-1 flex flex-col gap-[8px]">
+          <div className="flex-1 min-w-0 flex flex-col gap-[8px]">
             <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Lead Auditor</label>
-            <select value={leadAuditorId} onChange={(e) => setLeadAuditorId(e.target.value)} className="p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border font-inherit">
+            <select value={leadAuditorId} onChange={(e) => setLeadAuditorId(e.target.value)} className="truncate p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border font-inherit">
               <option value="">Select Auditor</option>
               {auditors.map((a) => (
                 <option key={a.id} value={a.id}>{a.fullName}</option>
@@ -144,7 +144,7 @@ export default function CreateAuditPlanPage() {
                 />
                 <div className="flex flex-col gap-[4px]">
                   <strong className="text-[14px] text-[#1e293b] font-semibold">{c.title}</strong>
-                  <span className="text-[12.5px] text-[#64748b]">{c.standard}</span>
+                  <span className="text-[12.5px] text-[#64748b]">{c.isoStandardName}</span>
                 </div>
                 {checklistId === c.id && <ShieldCheck size={22} className="ml-auto text-[#0f2c52]" />}
                 <Link

@@ -94,7 +94,7 @@ export function useCreateAuditPlan(planId?: string) {
           setLeadAuditorId(matchedAuditor?.id ?? '');
 
           const matchedChecklist = checklists.find(
-            (c) => c.title === schedule.clauseRef && c.standard === plan.standard
+            (c) => c.title === schedule.clauseRef && c.isoStandardName === plan.standard
           );
           setChecklistId(matchedChecklist?.id ?? '');
         }
@@ -115,7 +115,7 @@ export function useCreateAuditPlan(planId?: string) {
   }, [planId, loadingOptions]);
 
   const filteredChecklists = useMemo(
-    () => (department ? checklists.filter((c) => c.department === department) : []),
+    () => (department ? checklists.filter((c) => c.departmentName === department) : []),
     [department, checklists]
   );
 
@@ -179,7 +179,7 @@ export function useCreateAuditPlan(planId?: string) {
         await updateAuditPlan(planId, {
           title,
           year,
-          standard: selectedChecklist.standard,
+          standard: selectedChecklist.isoStandardName,
           priority,
           description: scopeDescription || undefined,
           schedules,
@@ -188,7 +188,7 @@ export function useCreateAuditPlan(planId?: string) {
         await createAuditPlan({
           title,
           year,
-          standard: selectedChecklist.standard,
+          standard: selectedChecklist.isoStandardName,
           priority,
           description: scopeDescription || undefined,
           schedules,

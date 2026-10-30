@@ -12,10 +12,13 @@ export interface ChecklistItem {
 export interface ChecklistListItem {
   id: string;
   title: string;
-  standard: string;
-  department: string;
+  isoStandardId: string | null;
+  isoStandardName: string;
+  departmentId: string | null;
+  departmentName: string;
+  isSystemTemplate: boolean;
+  itemCount: number;
   createdAt: string;
-  totalItems: ChecklistItem[];
 }
 
 export interface ChecklistDetail {
