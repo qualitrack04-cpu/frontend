@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { analyzeSpc, type SpcResult } from '../api/spc_api';
+import { useState, useEffect } from 'react';
+import { analyzeSpc, getSpcUnits, type SpcResult, type SpcUnit } from '../api/spc_api';
 import { FileText, X } from 'lucide-react';
 
 interface Props {
@@ -28,6 +28,22 @@ export default function SpcAnalysisForm({ onResult }: Props) {
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const [units, setUnits] = useState<SpcUnit[]>([]);
+  const [loadingUnits, setLoadingUnits] = useState(true);
+
+  useEffect(() => {
+    getSpcUnits()
+      .then((data) => {
+        setUnits(data);
+        // Set default unit ke urutan pertama jika ada
+        if (data.length > 0) {
+          setFormData((prev) => ({ ...prev, unit: data[0].symbol }));
+        }
+      })
+      .catch((err) => console.error("Gagal memuat units", err))
+      .finally(() => setLoadingUnits(false));
+  }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
@@ -143,14 +159,18 @@ export default function SpcAnalysisForm({ onResult }: Props) {
 
         <div className="flex-1 flex flex-col gap-[8px]">
           <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Unit</label>
-          <select name="unit" value={formData.unit} onChange={handleChange} className="p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border font-inherit">
-            <option value="mm">mm</option>
-            <option value="g">g</option>
-            <option value="kg">kg</option>
-            <option value="mL">mL</option>
-            <option value="L">L</option>
-            <option value="°C">°C</option>
-            <option value="%">%</option>
+          <select name="unit" value={formData.unit} onChange={handleChange} disabled={loadingUnits} className="p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border font-inherit">
+            {loadingUnits ? (
+              <option value="">Loading units...</option>
+            ) : units.length === 0 ? (
+              <option value="">No units available</option>
+            ) : (
+              units.map((u) => (
+                <option key={u.id} value={u.symbol}>
+                  {u.symbol} ({u.name})
+                </option>
+              ))
+            )}
           </select>
         </div>
       </div>

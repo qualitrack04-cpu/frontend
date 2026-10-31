@@ -8,8 +8,7 @@ import {
 } from '../api/audit_plan_api';
 import { getAuditors, type Auditor } from '../api/auditors_api';
 import { getChecklists, type ChecklistListItem } from '../api/checklist_api';
-
-export const DEPARTMENTS = ['Production', 'Packaging', 'Warehouse', 'QC'];
+import { getDepartments } from '../api/department_api'; 
 
 export function useCreateAuditPlan(planId?: string) {
   const isEdit = !! planId;
@@ -24,6 +23,7 @@ export function useCreateAuditPlan(planId?: string) {
 
   const [auditors, setAuditors] = useState<Auditor[]>([]);
   const [checklists, setChecklists] = useState<ChecklistListItem[]>([]);
+  const [departments, setDepartments] = useState<string[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
 
   const [loadingPlan, setLoadingPlan] = useState(isEdit);
@@ -37,7 +37,7 @@ export function useCreateAuditPlan(planId?: string) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    Promise.allSettled([getAuditors(), getChecklists()]).then(([auditorsResult, checklistsResult]) => {
+    Promise.allSettled([getAuditors(), getChecklists(), getDepartments()]).then(([auditorsResult, checklistsResult, departmentsResult]) => {
       const errors: string[] = [];
 
       if (auditorsResult.status === 'fulfilled') {
@@ -55,6 +55,12 @@ export function useCreateAuditPlan(planId?: string) {
         setChecklists(checklistsResult.value);
       } else {
         errors.push(checklistsResult.reason?.response?.data?.message ?? 'Failed to load checklist list.');
+      }
+      if (departmentsResult.status === 'fulfilled') {
+        setDepartments(departmentsResult.value.filter((d) => d.isActive).map((d) => d.name));
+      } else {
+        errors.push(departmentsResult.reason?.response?.data?.message ?? 'Gagal memuat daftar department.');
+
       }
 
       if (errors.length > 0) setSubmitError(errors.join(' '));
@@ -88,7 +94,7 @@ export function useCreateAuditPlan(planId?: string) {
           setLeadAuditorId(matchedAuditor?.id ?? '');
 
           const matchedChecklist = checklists.find(
-            (c) => c.title === schedule.clauseRef && c.standard === plan.standard
+            (c) => c.title === schedule.clauseRef && c.isoStandardName === plan.standard
           );
           setChecklistId(matchedChecklist?.id ?? '');
         }
@@ -109,7 +115,7 @@ export function useCreateAuditPlan(planId?: string) {
   }, [planId, loadingOptions]);
 
   const filteredChecklists = useMemo(
-    () => (department ? checklists.filter((c) => c.department === department) : []),
+    () => (department ? checklists.filter((c) => c.departmentName === department) : []),
     [department, checklists]
   );
 
@@ -161,7 +167,7 @@ export function useCreateAuditPlan(planId?: string) {
     const schedules = [
       {
         clauseRef: selectedChecklist.title,
-        auditorName: selectedAuditor.fullName,
+        auditorId: selectedAuditor.id,
         department,
         scheduledDate: new Date(scheduledDate).toISOString(),
       },
@@ -173,7 +179,7 @@ export function useCreateAuditPlan(planId?: string) {
         await updateAuditPlan(planId, {
           title,
           year,
-          standard: selectedChecklist.standard,
+          standard: selectedChecklist.isoStandardName,
           priority,
           description: scopeDescription || undefined,
           schedules,
@@ -182,7 +188,7 @@ export function useCreateAuditPlan(planId?: string) {
         await createAuditPlan({
           title,
           year,
-          standard: selectedChecklist.standard,
+          standard: selectedChecklist.isoStandardName,
           priority,
           description: scopeDescription || undefined,
           schedules,
@@ -218,6 +224,7 @@ export function useCreateAuditPlan(planId?: string) {
     checklistId, setChecklistId,
     highPriority, setHighPriority,
     auditors,
+    departments,
     checklists: filteredChecklists,
     loadingOptions,
     loadingPlan,

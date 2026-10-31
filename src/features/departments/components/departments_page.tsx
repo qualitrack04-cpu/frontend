@@ -161,7 +161,7 @@ export default function DepartmentsPage() {
           Department Management
         </h1>
         <p className="text-slate-500 text-[14px] m-0">
-          Manage ISO standards used in the QualiTrack audit process.
+          Manage Department standards used in the QualiTrack audit process.
         </p>
       </div>
 
