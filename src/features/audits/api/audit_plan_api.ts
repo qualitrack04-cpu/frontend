@@ -48,8 +48,9 @@ export async function getAuditPlanById(id: string): Promise<AuditPlan> {
 }
 
 export interface CreateSchedulePayload {
+  id?: string;
   clauseRef: string;
-  auditorName: string;
+  auditorId: string;
   scheduledDate: string; 
   department: string;
 }

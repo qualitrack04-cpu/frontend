@@ -167,7 +167,7 @@ export function useCreateAuditPlan(planId?: string) {
     const schedules = [
       {
         clauseRef: selectedChecklist.title,
-        auditorName: selectedAuditor.fullName,
+        auditorId: selectedAuditor.id,
         department,
         scheduledDate: new Date(scheduledDate).toISOString(),
       },
