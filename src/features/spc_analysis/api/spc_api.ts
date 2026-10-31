@@ -4,7 +4,7 @@ import axios_instance from '../../../shared/api/axios_instance';
 
 export interface SpcAnalyzePayload {
   file: File;
-  productName: string;   // digunakan sebagai ParameterName di BE
+  productName: string;   
   lsl: number;
   usl: number;
   target?: number;
@@ -29,6 +29,15 @@ export interface SpcResult {
   dataCount: number;
   analyzedAt: string;
   data: number[];
+  target?: number;
+  unit?: string;
+  outOfControlPoints: number[];
+}
+
+export interface SpcUnit {
+  id: string;
+  name: string;
+  symbol: string;
 }
 
 export interface SpcHistoryItem {
@@ -50,12 +59,7 @@ export interface SpcHistoryResponse {
   data: SpcHistoryItem[];
 }
 
-// ─── API Calls ────────────────────────────────────────────────────────────────
 
-/**
- * POST /api/spc/analyze
- * Upload Excel file + parameter, terima hasil analisis langsung.
- */
 export async function analyzeSpc(payload: SpcAnalyzePayload): Promise<SpcResult> {
   const formData = new FormData();
   formData.append('file', payload.file);
@@ -72,9 +76,7 @@ export async function analyzeSpc(payload: SpcAnalyzePayload): Promise<SpcResult>
   return res.data;
 }
 
-/**
- * GET /api/spc/history?period=3m&productName=xxx&status=xxx
- */
+
 export async function getSpcHistory(params?: {
   period?: string;
   productName?: string;
@@ -84,10 +86,14 @@ export async function getSpcHistory(params?: {
   return res.data;
 }
 
-/**
- * GET /api/spc/{id}
- */
+
 export async function getSpcById(id: string): Promise<SpcResult> {
   const res = await axios_instance.get<SpcResult>(`/spc/${id}`);
   return res.data;
+}
+
+
+export async function getSpcUnits(): Promise<SpcUnit[]> {
+  const res = await axios_instance.get<{ total: number; data: SpcUnit[] }>('/spc/list-units');
+  return res.data.data;
 }
