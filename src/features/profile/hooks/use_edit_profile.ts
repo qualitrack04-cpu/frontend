@@ -11,16 +11,23 @@ export function useEditProfile() {
   const [photoSaving, setPhotoSaving] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
 
-  async function saveProfile(fullName: string, email?: string, newPassword?: string) {
+  async function saveProfile(
+    fullName: string,
+    email?: string,
+    newPassword?: string,
+    confirmPassword?: string
+  ) {
     setSaving(true);
     setError(null);
     try {
       // Update nama dan email
       await updateProfile({ fullName, email });
 
-      // Kalau user isi field password baru, kirim request ganti password terpisah
+      // Kalau user isi field password baru, kirim request ganti password terpisah.
+      // confirmPassword harus berasal dari input user (bukan disamakan otomatis),
+      // karena backend memvalidasi kecocokannya.
       if (newPassword) {
-        await changePassword({ newPassword, confirmPassword: newPassword });
+        await changePassword({ newPassword, confirmPassword: confirmPassword ?? newPassword });
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to save changes.');

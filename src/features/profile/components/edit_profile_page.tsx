@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Camera, Lock, KeyRound, Pencil, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Camera, Lock, KeyRound, Pencil, Eye, EyeOff, AlertCircle, Check } from 'lucide-react';
 import { useProfile } from '../hooks/use_profile';
 import { useEditProfile } from '../hooks/use_edit_profile';
 import { fileUrl } from '../../../shared/utils/file_url';
+import { getPasswordChecks, countPasswordChecks, isPasswordStrong } from '../../../shared/utils/password_policy';
 import { getCurrentRole, ROLES } from '../../../shared/utils/role';
 import { MascotAvatar } from './profile_page';
 import ChangePhotoModal from './change_photo_modal';
@@ -93,9 +94,16 @@ export default function EditProfilePage() {
       return;
     }
 
-    if (newPassword && newPassword !== confirmPassword) {
-      setLocalError('New password and confirmation password do not match');
-      return;
+    if (newPassword) {
+      if (!isPasswordStrong(newPassword)) {
+        setLocalError('Password must be at least 8 characters and include uppercase, lowercase, number, and special character');
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        setLocalError('New password and confirmation password do not match');
+        return;
+      }
     }
 
     setShowSaveConfirmModal(true);
@@ -104,11 +112,8 @@ export default function EditProfilePage() {
   // Confirm Save Changes
   const handleConfirmSave = async () => {
     try {
-      await saveProfile(fullName.trim(), email.trim(), newPassword || undefined);
+      await saveProfile(fullName.trim(), email.trim(), newPassword || undefined, confirmPassword || undefined);
       localStorage.setItem('fullName', fullName.trim());
-      if (newPassword) {
-        localStorage.setItem('user_pin', newPassword);
-      }
       setShowSaveConfirmModal(false);
       await refetch();
       navigate('/profile');
@@ -118,6 +123,12 @@ export default function EditProfilePage() {
   };
 
   const displayError = localError || saveError || photoError;
+
+  // Checklist kekuatan password — aturannya sama dengan backend
+  // (AuthController.ValidatePasswordStrength) dan modal Change Password.
+  const passwordChecks = getPasswordChecks(newPassword);
+  const passwordCriteriaCount = countPasswordChecks(passwordChecks);
+  const isPasswordMatch = Boolean(confirmPassword && newPassword === confirmPassword);
 
   // ==========================================
   // 1. ADMIN EDIT PROFILE VIEW
@@ -519,6 +530,75 @@ export default function EditProfilePage() {
                   </div>
                 </div>
               </div>
+
+              {/* Checklist kekuatan password — hanya tampil saat field password diisi */}
+              {newPassword && (
+                <div className="mt-5 rounded-xl bg-[#F8FAFC] border border-slate-200/80 p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[12px] font-bold text-slate-600 uppercase tracking-wider">
+                      Password Strength
+                    </span>
+                    <span
+                      className={`text-[12px] font-semibold ${
+                        passwordCriteriaCount === 4
+                          ? 'text-[#16A34A]'
+                          : passwordCriteriaCount === 3
+                          ? 'text-amber-500'
+                          : passwordCriteriaCount === 2
+                          ? 'text-orange-500'
+                          : 'text-red-500'
+                      }`}
+                    >
+                      {passwordCriteriaCount === 4
+                        ? 'Strong'
+                        : passwordCriteriaCount === 3
+                        ? 'Good'
+                        : passwordCriteriaCount === 2
+                        ? 'Fair'
+                        : 'Weak'}
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+                    {[
+                      { ok: passwordChecks.hasMinLength, label: 'At least 8 characters' },
+                      { ok: passwordChecks.hasUpperLower, label: 'Upper & lowercase letters' },
+                      { ok: passwordChecks.hasNumber, label: 'At least one number' },
+                      { ok: passwordChecks.hasSpecial, label: 'One special character' },
+                    ].map((item) => (
+                      <div key={item.label} className="flex items-center gap-2">
+                        <span
+                          className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${
+                            item.ok ? 'bg-[#16A34A]' : 'bg-slate-300'
+                          }`}
+                        >
+                          <Check size={10} className="text-white" strokeWidth={4} />
+                        </span>
+                        <span
+                          className={`text-[12.5px] ${
+                            item.ok ? 'text-slate-700 font-medium' : 'text-slate-400'
+                          }`}
+                        >
+                          {item.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {confirmPassword && (
+                    <div className="flex items-center gap-1.5 text-[12.5px] font-medium mt-3">
+                      {isPasswordMatch ? (
+                        <>
+                          <Check size={14} className="text-[#16A34A]" strokeWidth={3} />
+                          <span className="text-[#16A34A]">Passwords match</span>
+                        </>
+                      ) : (
+                        <span className="text-red-500">Passwords do not match</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Form Action Buttons */}

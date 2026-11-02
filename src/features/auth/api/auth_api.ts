@@ -109,7 +109,10 @@ export async function updateProfile(payload: UpdateProfilePayload) {
   return response.data;
 }
 
-export async function changePassword(payload: { newPassword: string; confirmPassword: string }) {
+export async function changePassword(payload: {
+  newPassword: string;
+  confirmPassword: string;
+}) {
   const response = await axios_instance.post('/auth/change-password', payload);
   return response.data;
 }
