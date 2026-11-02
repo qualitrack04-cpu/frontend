@@ -89,11 +89,11 @@ export function useAuditChecklist(planId: string, scheduleId: string) {
           
           const matched =
             checklists.find(
-              (c) => c.title === scheduleData.clauseRef && c.department === scheduleData.department
+              (c) => c.title === scheduleData.clauseRef && c.departmentName === scheduleData.department
             ) ?? checklists.find((c) => c.title === scheduleData.clauseRef);
 
           if (!matched) {
-            const sameDept = checklists.filter((c) => c.department === scheduleData.department);
+            const sameDept = checklists.filter((c) => c.departmentName === scheduleData.department);
             setChecklistOptions(sameDept.length > 0 ? sameDept : checklists);
             setNeedsChecklistSelection(true);
             return;
