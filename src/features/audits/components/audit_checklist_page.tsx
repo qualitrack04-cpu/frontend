@@ -108,8 +108,8 @@ export default function AuditChecklistPage() {
         <span className="bg-[#fef3c7] text-[#92400e] p-[6px_16px] rounded-[20px] text-[14px] font-bold">{pendingCount} Pending Items</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_340px] gap-[32px] items-start">
-        <div className="flex flex-col gap-[24px]">
+      <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_340px] gap-[32px] items-start max-w-full min-w-0">
+        <div className="flex flex-col gap-[24px] min-w-0 max-w-full">
           {items.map((item) => (
             <ChecklistItemCard
               key={item.id}

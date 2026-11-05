@@ -21,11 +21,11 @@ export default function SpcResultCard({ result }: Props) {
   const chartData = result.data.map((value, i) => ({ sample: i + 1, value }));
 
   return (
-    <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] flex flex-col gap-[32px]">
-      <div>
-        <h3 className="text-[20px] text-[#0f2c52] m-0 mb-[8px] leading-[1.3] font-bold">SPC Analysis Result</h3>
-        <p className="text-[14px] font-bold text-[#475569] uppercase tracking-[0.5px] m-0 mb-[4px]">{result.parameterName}</p>
-        {result.description && <p className="text-[13.5px] text-[#64748b] m-0 mb-[24px]">{result.description}</p>}
+    <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] flex flex-col gap-[32px] overflow-hidden min-w-0 max-w-full">
+      <div className="min-w-0 max-w-full">
+        <h3 className="text-[20px] text-[#0f2c52] m-0 mb-[8px] leading-[1.3] font-bold break-words [overflow-wrap:anywhere] [word-break:break-word]">SPC Analysis Result</h3>
+        <p className="text-[14px] font-bold text-[#475569] uppercase tracking-[0.5px] m-0 mb-[4px] break-words [overflow-wrap:anywhere] [word-break:break-word]">{result.parameterName}</p>
+        {result.description && <p className="text-[13.5px] text-[#64748b] m-0 mb-[24px] break-words [overflow-wrap:anywhere] [word-break:break-word]">{result.description}</p>}
 
         <div className="flex justify-between items-center py-[12px] border-b border-[#f1f5f9] last:border-b-0 mt-[24px]">
           <span className="text-[#64748b] text-[14px]">Mean</span>

@@ -54,15 +54,15 @@ export default function DeleteUserModal({ user, onClose, onSuccess }: DeleteUser
 
           <div className="flex items-start gap-3.5 mb-4 p-3.5 bg-amber-50/70 border border-amber-200/60 rounded-xl text-amber-800 text-sm">
             <AlertTriangle size={20} className="shrink-0 text-amber-600 mt-0.5" />
-            <div>
+            <div className="min-w-0">
               <p className="font-semibold m-0 mb-1">Deactivation Confirmation</p>
-              <p className="m-0 text-[13px] text-amber-700 leading-relaxed">
+              <p className="m-0 text-[13px] text-amber-700 leading-relaxed break-words [overflow-wrap:anywhere] [word-break:break-word]">
                 Are you sure you want to deactivate account <strong className="break-words [overflow-wrap:anywhere] [word-break:break-word]">{user.fullName}</strong>?
               </p>
             </div>
           </div>
 
-          <p className="text-slate-500 text-sm m-0 leading-relaxed">
+          <p className="text-slate-500 text-sm m-0 leading-relaxed break-words [overflow-wrap:anywhere] [word-break:break-word]">
             The status of user <strong className="break-words [overflow-wrap:anywhere] [word-break:break-word]">{user.email}</strong> will be set to <span className="font-semibold text-rose-600">Inactive</span> and system access will be suspended.
           </p>
         </div>

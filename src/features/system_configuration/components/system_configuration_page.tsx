@@ -151,43 +151,7 @@ export default function SystemConfigurationPage() {
     setLoadingCategories(true);
     try {
       const data = await getFindingCategories();
-      // If backend returns empty array initially, provide mockup items for rich display
-      if (!data || data.length === 0) {
-        setCategories([
-          {
-            id: '22222222-2222-2222-2222-222222222222',
-            name: 'Major NC',
-            description: 'Major Non-Conformance — requires immediate corrective action',
-            severity: 1,
-            requiresImmediateAction: true,
-            isActive: true,
-            usageCount: 0,
-            createdAt: new Date().toISOString(),
-          },
-          {
-            id: '11111111-1111-1111-1111-111111111111',
-            name: 'Minor NC',
-            description: 'Minor Non-Conformance — requires corrective action',
-            severity: 2,
-            requiresImmediateAction: false,
-            isActive: true,
-            usageCount: 0,
-            createdAt: new Date().toISOString(),
-          },
-          {
-            id: '33333333-3333-3333-3333-333333333333',
-            name: 'OFI',
-            description: 'Opportunity for Improvement — no immediate action required',
-            severity: 3,
-            requiresImmediateAction: false,
-            isActive: true,
-            usageCount: 0,
-            createdAt: new Date().toISOString(),
-          },
-        ]);
-      } else {
-        setCategories(data);
-      }
+      setCategories(data || []);
     } catch (err) {
       console.error('Failed to load finding categories', err);
     } finally {
@@ -200,42 +164,7 @@ export default function SystemConfigurationPage() {
     setLoadingStatuses(true);
     try {
       const data = await getCapaStatuses();
-      if (!data || data.length === 0) {
-        setStatuses([
-          {
-            id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
-            name: 'Open',
-            description: 'CAPA has been assigned and is awaiting action',
-            orderIndex: 1,
-            isTerminal: false,
-            isActive: true,
-            usageCount: 0,
-            createdAt: new Date().toISOString(),
-          },
-          {
-            id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
-            name: 'In Progress',
-            description: 'Corrective action is currently being implemented',
-            orderIndex: 2,
-            isTerminal: false,
-            isActive: true,
-            usageCount: 0,
-            createdAt: new Date().toISOString(),
-          },
-          {
-            id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
-            name: 'Closed',
-            description: 'CAPA has been completed and verified',
-            orderIndex: 3,
-            isTerminal: true,
-            isActive: true,
-            usageCount: 0,
-            createdAt: new Date().toISOString(),
-          },
-        ]);
-      } else {
-        setStatuses(data);
-      }
+      setStatuses(data || []);
     } catch (err) {
       console.error('Failed to load capa statuses', err);
     } finally {
@@ -473,7 +402,7 @@ export default function SystemConfigurationPage() {
                 const displayName = getDisplayCategoryName(cat.name);
                 return (
                   <tr key={cat.id} className="hover:bg-slate-50/60 transition-colors">
-                    <td className="py-3.5 px-4 text-[13.5px] font-medium text-slate-800">
+                    <td className="py-3.5 px-4 text-[13.5px] font-medium text-slate-800 max-w-[200px] break-words [overflow-wrap:anywhere] [word-break:break-word]">
                       {displayName}
                     </td>
                     <td className="py-3.5 px-4">
@@ -487,7 +416,7 @@ export default function SystemConfigurationPage() {
                         </span>
                       </div>
                     </td>
-                    <td className="py-3.5 px-4 text-[13px] text-slate-600 max-w-xs truncate">
+                    <td className="py-3.5 px-4 text-[13px] text-slate-600 max-w-xs break-words [overflow-wrap:anywhere] [word-break:break-word]">
                       {cat.description || 'Assigned & awaiting root-cause analysis'}
                     </td>
                     <td className="py-3.5 px-4">
@@ -593,7 +522,7 @@ export default function SystemConfigurationPage() {
                 const displayName = getDisplayStatusName(st.name);
                 return (
                   <tr key={st.id} className="hover:bg-slate-50/60 transition-colors">
-                    <td className="py-3.5 px-4 text-[13.5px] font-medium text-slate-800">
+                    <td className="py-3.5 px-4 text-[13.5px] font-medium text-slate-800 max-w-[200px] break-words [overflow-wrap:anywhere] [word-break:break-word]">
                       {displayName}
                     </td>
                     <td className="py-3.5 px-4">
@@ -607,7 +536,7 @@ export default function SystemConfigurationPage() {
                         </span>
                       </div>
                     </td>
-                    <td className="py-3.5 px-4 text-[13px] text-slate-600 max-w-xs truncate">
+                    <td className="py-3.5 px-4 text-[13px] text-slate-600 max-w-xs break-words [overflow-wrap:anywhere] [word-break:break-word]">
                       {st.description || 'Assigned & awaiting root-cause analysis'}
                     </td>
                     <td className="py-3.5 px-4">
@@ -715,9 +644,9 @@ export default function SystemConfigurationPage() {
             <h3 className="text-[18px] font-bold text-slate-900 m-0 mb-1.5">
               Delete {deleteTarget.type === 'category' ? 'Category' : 'Status'}?
             </h3>
-            <p className="text-[13.5px] text-slate-500 m-0 mb-6 font-normal leading-relaxed">
+            <p className="text-[13.5px] text-slate-500 m-0 mb-6 font-normal leading-relaxed break-words [overflow-wrap:anywhere] [word-break:break-word]">
               Are you sure you want to delete{' '}
-              <strong className="text-slate-800">{deleteTarget.name}</strong>?{' '}
+              <strong className="text-slate-800 break-words [overflow-wrap:anywhere] [word-break:break-word]">{deleteTarget.name}</strong>?{' '}
               This action cannot be undone.
             </p>
 

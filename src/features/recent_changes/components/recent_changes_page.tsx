@@ -347,20 +347,6 @@ export default function RecentChangesPage() {
 
             {isModuleDropdownOpen && (
               <div className="absolute left-0 top-[calc(100%+6px)] w-[230px] bg-white rounded-xl shadow-lg border border-slate-100 py-1.5 z-50 animate-[fadeIn_0.15s_ease-out]">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedModule('');
-                    setCurrentPage(1);
-                    setIsModuleDropdownOpen(false);
-                  }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2 text-[13.5px] text-left border-none bg-transparent cursor-pointer transition-colors ${
-                    selectedModule === '' ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  <span>All Modules</span>
-                  {selectedModule === '' && <Check size={14} className="text-blue-600" />}
-                </button>
                 {MODULE_OPTIONS.map((mod) => {
                   const isSelected = selectedModule === mod;
                   return (

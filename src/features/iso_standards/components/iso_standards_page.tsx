@@ -150,18 +150,18 @@ export default function IsoStandardsPage() {
                     className="border-b border-slate-100/80 hover:bg-slate-50/70 transition-colors"
                   >
                     {/* STANDARD CODE & NAME Column */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3.5">
+                    <td className="px-6 py-4 max-w-[300px] md:max-w-[400px]">
+                      <div className="flex items-center gap-3.5 min-w-0">
                         <div
                           className={`w-10 h-10 rounded-xl ${iconConfig.bg} ${iconConfig.text} flex items-center justify-center shrink-0 shadow-xs`}
                         >
                           <IconComponent size={20} />
                         </div>
-                        <div>
-                          <div className="font-bold text-slate-800 text-[14.5px]">
+                        <div className="min-w-0">
+                          <div className="font-bold text-slate-800 text-[14.5px] break-words [overflow-wrap:anywhere] [word-break:break-word]">
                             {item.code}
                           </div>
-                          <div className="text-slate-400 text-[13px] font-normal">
+                          <div className="text-slate-400 text-[13px] font-normal break-words [overflow-wrap:anywhere] [word-break:break-word]">
                             ({item.name})
                           </div>
                         </div>

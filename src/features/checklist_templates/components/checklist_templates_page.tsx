@@ -117,36 +117,6 @@ export default function ChecklistTemplatesPage() {
       }
     }
 
-    const defaults = [
-      { id: 'def-9001', code: 'ISO 9001:2015', name: 'Quality Management' },
-      { id: 'def-14001', code: 'ISO 14001:2015', name: 'Environmental Management' },
-      { id: 'def-45001', code: 'ISO 45001:2018', name: 'Occupational Health and Safety' },
-      { id: 'def-27001', code: 'ISO/IEC 27001:2022', name: 'Information Security' },
-      { id: 'def-22000', code: 'ISO 22000:2018', name: 'Food Safety' },
-      { id: 'def-19011', code: 'ISO 19011:2018', name: 'Auditing Management' },
-      { id: 'def-50001', code: 'ISO 50001:2018', name: 'Energy Management' },
-    ];
-
-    for (const def of defaults) {
-      const defCodeLower = def.code.toLowerCase();
-      const defNum = def.code.match(/\d{4,5}/)?.[0];
-
-      // If this default standard is inactive in the database, SKIP IT!
-      if (inactiveCodes.has(defCodeLower) || (defNum && inactiveNums.has(defNum))) {
-        continue;
-      }
-
-      const exists = list.some(
-        (i) =>
-          i.code.toLowerCase() === defCodeLower ||
-          (defNum && i.code.includes(defNum))
-      );
-      if (!exists && !seenCodes.has(defCodeLower)) {
-        seenCodes.add(defCodeLower);
-        list.push(def);
-      }
-    }
-
     return list;
   }, [isoStandards]);
 
@@ -476,20 +446,6 @@ export default function ChecklistTemplatesPage() {
 
             {isIsoDropdownOpen && (
               <div className="absolute left-0 top-[calc(100%+6px)] w-[210px] bg-white rounded-xl shadow-lg border border-slate-100 py-1.5 z-50 animate-[fadeIn_0.15s_ease-out]">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedStandard('');
-                    setCurrentPage(1);
-                    setIsIsoDropdownOpen(false);
-                  }}
-                  className={`w-full flex items-center justify-between px-3.5 py-2 text-[13.5px] text-left border-none bg-transparent cursor-pointer transition-colors ${
-                    selectedStandard === '' ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  <span>All ISO Standards</span>
-                  {selectedStandard === '' && <Check size={14} className="text-blue-600" />}
-                </button>
                 {standardOptions.map((iso) => {
                   const isSelected = selectedStandard === iso.code;
                   return (
@@ -583,8 +539,8 @@ export default function ChecklistTemplatesPage() {
                     className="border-b border-slate-100/80 hover:bg-slate-50/70 transition-colors"
                   >
                     {/* TEMPLATE NAME */}
-                    <td className="px-6 py-4">
-                      <span className="font-semibold text-slate-900 text-[13.5px]">
+                    <td className="px-6 py-4 max-w-[260px] md:max-w-[320px]">
+                      <span className="font-semibold text-slate-900 text-[13.5px] break-words [overflow-wrap:anywhere] [word-break:break-word] inline-block max-w-full">
                         {template.title}
                       </span>
                     </td>
@@ -598,7 +554,7 @@ export default function ChecklistTemplatesPage() {
                     </td>
 
                     {/* DEPARTMENT */}
-                    <td className="px-6 py-4 text-[13px] text-slate-600 font-normal">
+                    <td className="px-6 py-4 text-[13px] text-slate-600 font-normal max-w-[200px] break-words [overflow-wrap:anywhere] [word-break:break-word]">
                       {template.departmentName}
                     </td>
 

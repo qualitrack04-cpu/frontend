@@ -86,13 +86,19 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
           <div className="space-y-4">
             {/* ISO Standard Name */}
             <div>
-              <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
-                ISO Standard Name
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[13px] font-semibold text-slate-800">
+                  ISO Standard Name
+                </label>
+                <span className="text-[12px] text-slate-400 font-medium">
+                  {standardName.length}/50
+                </span>
+              </div>
               <div className="relative flex items-center">
                 <input
                   type="text"
                   value={standardName}
+                  maxLength={50}
                   onChange={(e) => setStandardName(e.target.value)}
                   placeholder="e.g. ISO 45001:2018"
                   className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all box-border"
@@ -103,13 +109,19 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
 
             {/* ISO Category */}
             <div>
-              <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
-                ISO Category
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[13px] font-semibold text-slate-800">
+                  ISO Category
+                </label>
+                <span className="text-[12px] text-slate-400 font-medium">
+                  {category.length}/100
+                </span>
+              </div>
               <div className="relative flex items-center">
                 <input
                   type="text"
                   value={category}
+                  maxLength={100}
                   onChange={(e) => setCategory(e.target.value)}
                   placeholder="e.g. Occupational Health & Safety"
                   className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all box-border"

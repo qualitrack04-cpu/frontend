@@ -116,13 +116,19 @@ export default function AddTemplateModal({
 
           <form id="add-template-form" onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
-              <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">
-                Template Name <span className="text-red-500">*</span>
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[13px] font-semibold text-slate-700">
+                  Template Name <span className="text-red-500">*</span>
+                </label>
+                <span className="text-[12px] text-slate-400 font-medium">
+                  {title.length}/200
+                </span>
+              </div>
               <input
                 type="text"
                 placeholder="e.g. ISO 9001 Quality Inspection Form"
                 value={title}
+                maxLength={200}
                 onChange={(e) => setTitle(e.target.value)}
                 required
                 className="w-full bg-slate-50 border border-slate-200 rounded-[10px] px-3.5 py-2.5 text-[14px] outline-none focus:border-blue-500 focus:bg-white transition-colors text-slate-800"
@@ -170,13 +176,19 @@ export default function AddTemplateModal({
             </div>
 
             <div className="border-t border-slate-100 pt-3 mt-1">
-              <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">
-                Initial Checklist Question <span className="text-slate-400 font-normal">(Optional)</span>
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[13px] font-semibold text-slate-700">
+                  Initial Checklist Question <span className="text-slate-400 font-normal">(Optional)</span>
+                </label>
+                <span className="text-[12px] text-slate-400 font-medium">
+                  {firstQuestion.length}/500
+                </span>
+              </div>
               <input
                 type="text"
                 placeholder="e.g. Verify goods receiving procedure according to SOP"
                 value={firstQuestion}
+                maxLength={500}
                 onChange={(e) => setFirstQuestion(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-[10px] px-3.5 py-2.5 text-[14px] outline-none focus:border-blue-500 focus:bg-white transition-colors text-slate-800"
               />
@@ -184,13 +196,19 @@ export default function AddTemplateModal({
 
             {firstQuestion && (
               <div>
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">
-                  Clause Reference
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-[13px] font-semibold text-slate-700">
+                    Clause Reference
+                  </label>
+                  <span className="text-[12px] text-slate-400 font-medium">
+                    {clauseRef.length}/50
+                  </span>
+                </div>
                 <input
                   type="text"
                   placeholder="e.g. Clause 8.2"
                   value={clauseRef}
+                  maxLength={50}
                   onChange={(e) => setClauseRef(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-[10px] px-3.5 py-2 text-[14px] outline-none focus:border-blue-500 focus:bg-white transition-colors text-slate-800"
                 />

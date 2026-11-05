@@ -34,7 +34,7 @@ export default function AuditsPage() {
         </p>
       )}
 
-      <div className="grid grid-cols-2 gap-[20px] max-[900px]:grid-cols-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-[20px] min-w-0 max-w-full">
         {audits.map((audit) => (
           <AuditCard key={audit.id} audit={audit} onDelete={handleDelete} />
         ))}

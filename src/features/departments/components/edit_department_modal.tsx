@@ -74,13 +74,19 @@ export default function EditDepartmentModal({ department, onClose, onSuccess }: 
           <div className="space-y-4">
             {/* Department Name */}
             <div>
-              <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
-                Department Name
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[13px] font-semibold text-slate-800">
+                  Department Name
+                </label>
+                <span className="text-[12px] text-slate-400 font-medium">
+                  {name.length}/100
+                </span>
+              </div>
               <div className="relative flex items-center">
                 <input
                   type="text"
                   value={name}
+                  maxLength={100}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Enter department name"
                   className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all box-border"

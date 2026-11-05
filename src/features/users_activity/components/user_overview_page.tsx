@@ -33,15 +33,15 @@ export default function UserOverviewPage() {
   }
 
   const user = overview?.user || {
-    id: 'u-3',
-    fullName: 'Amir Lesley Oakwood',
-    email: 'amiroakwood@gmail.com',
-    role: 'Auditor Internal',
+    id: userId || '',
+    fullName: 'User',
+    email: '-',
+    role: '-',
     photoUrl: undefined as string | undefined,
   };
 
-  const successRate = overview?.successRate || { percentage: 90, achieved: 18, total: 20, target: 90 };
-  const qualityScore = overview?.qualityScore || { score: 90, auditStatusText: 'No Audits Yet', onTimeAuditsText: '0/0 On-Time Audits' };
+  const successRate = overview?.successRate || { percentage: 0, achieved: 0, total: 0, target: 0 };
+  const qualityScore = overview?.qualityScore || { score: 0, auditStatusText: 'No Audits Yet', onTimeAuditsText: '0/0 On-Time Audits' };
 
   // Donut SVG circumference calculation (r = 42, circumference ~ 264)
   const radius = 42;

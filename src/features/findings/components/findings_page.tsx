@@ -22,7 +22,7 @@ export default function FindingsPage() {
         <p className="text-slate-500">No findings yet. Add one via New FINDINGS button.</p>
       )}
 
-      <div className="grid grid-cols-2 gap-[20px] max-[900px]:grid-cols-1">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-[20px] min-w-0 max-w-full items-stretch">
         {data?.map((finding) => (
           <FindingCard key={finding.id} finding={finding} />
         ))}

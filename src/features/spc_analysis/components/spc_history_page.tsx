@@ -92,12 +92,12 @@ export default function SpcHistoryPage() {
         {items.map((item) => (
           <div
             key={item.id}
-            className="group bg-white border border-[#e2e8f0] rounded-[10px] p-[20px] flex justify-between items-center cursor-pointer transition-all duration-200 hover:border-[#0f2c52] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:-translate-y-[2px]"
+            className="group bg-white border border-[#e2e8f0] rounded-[10px] p-[20px] flex justify-between items-center cursor-pointer transition-all duration-200 hover:border-[#0f2c52] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:-translate-y-[2px] overflow-hidden min-w-0 max-w-full"
             onClick={() => navigate(`/spc-analysis/history/${item.id}`)}
           >
-            <div>
-              <h4 className="text-[16px] text-[#0f2c52] m-0 mb-[6px] font-bold">{item.productName}</h4>
-              {item.description && <p className="text-[14px] text-[#475569] m-0 mb-[6px]">{item.description}</p>}
+            <div className="min-w-0 flex-1 pr-4">
+              <h4 className="text-[16px] text-[#0f2c52] m-0 mb-[6px] font-bold break-words [overflow-wrap:anywhere] [word-break:break-word]">{item.productName}</h4>
+              {item.description && <p className="text-[14px] text-[#475569] m-0 mb-[6px] break-words [overflow-wrap:anywhere] [word-break:break-word]">{item.description}</p>}
               <p className="text-[13px] text-[#64748b] m-0 mb-[12px]">{formatDate(item.analyzedAt)}</p>
               <div className="flex gap-[16px] mb-[12px]">
                 <span className="text-[14px] font-semibold text-[#1e293b] bg-[#f1f5f9] p-[4px_10px] rounded-[6px]">Cp {item.cp}</span>

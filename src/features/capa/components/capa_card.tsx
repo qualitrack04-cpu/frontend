@@ -28,15 +28,15 @@ interface CapaCardProps {
 }
 
 export default function CapaCard({ capa, onStatusChange, updatingStatus }: CapaCardProps) {
-  const statusColor = (capa.status || 'Open').toLowerCase();
+  const statusColor = String(capa?.status || 'Open').toLowerCase();
   const borderColor = statusColor === 'open' ? 'border-red-500' : statusColor === 'in_progress' || statusColor === 'inprogress' ? 'border-orange-500' : 'border-emerald-600';
 
   return (
-    <article className={`bg-white border-2 rounded-[12px] p-6 flex flex-col transition-all duration-200 relative overflow-hidden ${borderColor}`}>
-      <div className="flex justify-between items-start gap-[16px] mb-[8px]">
+    <article className={`bg-white border-2 rounded-[12px] p-6 flex flex-col transition-all duration-200 relative overflow-hidden min-w-0 max-w-full ${borderColor}`}>
+      <div className="flex justify-between items-start gap-[16px] mb-[8px] min-w-0">
         {/* ⚠️ ASUMSI: CAPA tidak punya field title sendiri, jadi pakai
             findingTitle (judul finding terkait) sebagai judul kartu. */}
-        <h2 className="text-[18px] text-[#0f2c52] m-0 leading-tight font-bold line-clamp-2 break-words flex-1 pr-4">
+        <h2 className="text-[18px] text-[#0f2c52] m-0 leading-tight font-bold line-clamp-2 break-words [overflow-wrap:anywhere] [word-break:break-word] flex-1 min-w-0 pr-4">
           {capa.findingTitle || 'Untitled Finding'}
         </h2>
         <div className="shrink-0">
@@ -50,16 +50,16 @@ export default function CapaCard({ capa, onStatusChange, updatingStatus }: CapaC
 
       <p className="text-[14px] text-[#64748b] m-0 mb-5">Initiated: {formatDate(capa.createdAt)}</p>
 
-      <div className="bg-[#f8fafc] rounded-lg p-4 mb-6 flex-1">
+      <div className="bg-[#f8fafc] rounded-lg p-4 mb-6 flex-1 min-w-0">
         <span className="block text-[11px] font-bold tracking-widest text-[#475569] uppercase mb-2">Observation Summary</span>
         {/* ⚠️ ASUMSI: "Observation Summary" di desain dipetakan ke rootCause. */}
         <p className="text-[15px] text-[#0f2c52] m-0 leading-relaxed line-clamp-3 break-all">{capa.rootCause || '-'}</p>
       </div>
 
-      <div className="flex justify-between items-center border-t border-[#f1f5f9] pt-[16px]">
-        <span className="flex items-center gap-[8px] text-[13px] font-semibold text-[#0f2c52]">
-          <span className="w-[28px] h-[28px] bg-[#e2e8f0] rounded-full flex items-center justify-center text-[11px] font-bold text-[#475569]">{initials(capa.picName)}</span>
-          {capa.picName || 'Unassigned'}
+      <div className="flex justify-between items-center border-t border-[#f1f5f9] pt-[16px] gap-2">
+        <span className="flex items-center gap-[8px] text-[13px] font-semibold text-[#0f2c52] min-w-0">
+          <span className="w-[28px] h-[28px] bg-[#e2e8f0] rounded-full flex items-center justify-center text-[11px] font-bold text-[#475569] shrink-0">{initials(capa.picName)}</span>
+          <span className="truncate max-w-[160px]" title={capa.picName || 'Unassigned'}>{capa.picName || 'Unassigned'}</span>
         </span>
         <Link to={`/capa/${capa.id}`} className="inline-flex items-center gap-[4px] text-[#0f2c52] text-[14px] font-bold no-underline transition-opacity duration-200 hover:opacity-80">
           Details <ChevronRight size={16} />

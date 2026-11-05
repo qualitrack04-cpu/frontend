@@ -200,11 +200,17 @@ export default function FindingFormPage({ mode }: Props) {
         {/* ---------- Kolom kiri ---------- */}
         <div className="flex flex-col gap-[24px]">
           <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
-            <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]" htmlFor="fd-title">
-              Title
-            </label>
+            <div className="flex items-center justify-between mb-[8px]">
+              <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px]" htmlFor="fd-title">
+                Title
+              </label>
+              <span className="text-[11px] text-slate-400 font-medium">
+                {title.length}/200
+              </span>
+            </div>
             <input
               id="fd-title"
+              maxLength={200}
               className="w-full p-[14px_16px] border border-[#e2e8f0] rounded-[8px] font-inherit text-[14.5px] text-[#1e293b] bg-[#f8fafc] transition-all duration-200 appearance-none focus:outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] focus:bg-white aria-[invalid=true]:border-[#ef4444] aria-[invalid=true]:bg-[#fef2f2]"
               placeholder="Enter the finding title..."
               value={title}
@@ -257,11 +263,17 @@ export default function FindingFormPage({ mode }: Props) {
           </div>
 
           <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
-            <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]" htmlFor="fd-description">
-              Description
-            </label>
+            <div className="flex items-center justify-between mb-[8px]">
+              <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px]" htmlFor="fd-description">
+                Description
+              </label>
+              <span className="text-[11px] text-slate-400 font-medium">
+                {description.length}/1000
+              </span>
+            </div>
             <textarea
               id="fd-description"
+              maxLength={1000}
               className="w-full p-[14px_16px] border border-[#e2e8f0] rounded-[8px] font-inherit text-[14.5px] text-[#1e293b] bg-[#f8fafc] transition-all duration-200 appearance-none focus:outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] focus:bg-white aria-[invalid=true]:border-[#ef4444] aria-[invalid=true]:bg-[#fef2f2] resize-y"
               placeholder="Provide detailed context..."
               rows={6}
@@ -275,11 +287,17 @@ export default function FindingFormPage({ mode }: Props) {
           </section>
 
           <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
-            <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]" htmlFor="fd-clause">
-              Clause Reference <span className="normal-case font-normal text-[#94a3b8] tracking-normal ml-[4px]">(optional)</span>
-            </label>
+            <div className="flex items-center justify-between mb-[8px]">
+              <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px]" htmlFor="fd-clause">
+                Clause Reference <span className="normal-case font-normal text-[#94a3b8] tracking-normal ml-[4px]">(optional)</span>
+              </label>
+              <span className="text-[11px] text-slate-400 font-medium">
+                {clauseRef.length}/50
+              </span>
+            </div>
             <input
               id="fd-clause"
+              maxLength={50}
               className="w-full p-[14px_16px] border border-[#e2e8f0] rounded-[8px] font-inherit text-[14.5px] text-[#1e293b] bg-[#f8fafc] transition-all duration-200 appearance-none focus:outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] focus:bg-white"
               placeholder="e.g. ISO 9001:2015 Clause 7.1.5.2"
               value={clauseRef}

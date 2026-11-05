@@ -110,22 +110,22 @@ export default function SpcUnitsPage() {
               {paginatedUnits.map((unit) => (
                 <tr key={unit.id} className="hover:bg-slate-50/70 transition-colors">
                   {/* UNIT NAME */}
-                  <td className="px-6 py-4">
-                    <span className="font-medium text-slate-800 text-[14px]">
+                  <td className="px-6 py-4 max-w-[200px]">
+                    <span className="font-medium text-slate-800 text-[14px] break-words [overflow-wrap:anywhere] [word-break:break-word]">
                       {unit.name}
                     </span>
                   </td>
 
                   {/* SYMBOL */}
-                  <td className="px-6 py-4">
-                    <span className="text-slate-600 text-[14px]">
+                  <td className="px-6 py-4 max-w-[120px]">
+                    <span className="text-slate-600 text-[14px] break-words [overflow-wrap:anywhere] [word-break:break-word]">
                       {unit.symbol}
                     </span>
                   </td>
 
                   {/* DESCRIPTION */}
-                  <td className="px-6 py-4">
-                    <span className="text-slate-500 text-[13.5px] font-normal line-clamp-2">
+                  <td className="px-6 py-4 max-w-[260px]">
+                    <span className="text-slate-500 text-[13.5px] font-normal break-words [overflow-wrap:anywhere] [word-break:break-word] line-clamp-2">
                       {unit.description || '-'}
                     </span>
                   </td>

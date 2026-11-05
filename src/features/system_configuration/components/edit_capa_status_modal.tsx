@@ -108,9 +108,14 @@ export default function EditCapaStatusModal({
         <form onSubmit={handleSubmit} className="space-y-3">
           {/* STATUS NAME */}
           <div>
-            <label className="block text-[10.5px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              STATUS NAME
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-[10.5px] font-bold text-slate-700 uppercase tracking-wider">
+                STATUS NAME
+              </label>
+              <span className="text-[11px] text-slate-400 font-medium">
+                {name.length}/50
+              </span>
+            </div>
             <div className="relative flex items-center">
               <input
                 type="text"
@@ -139,9 +144,14 @@ export default function EditCapaStatusModal({
 
           {/* DESCRIPTION */}
           <div>
-            <label className="block text-[10.5px] font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-              DESCRIPTION
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-[10.5px] font-bold text-slate-700 uppercase tracking-wider">
+                DESCRIPTION
+              </label>
+              <span className="text-[11px] text-slate-400 font-medium">
+                {description.length}/200
+              </span>
+            </div>
             <div className="relative w-full">
               <textarea
                 rows={2}

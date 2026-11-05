@@ -308,7 +308,7 @@ export default function EditChecklistPage({
                       <span className="w-7 h-7 rounded-full bg-slate-100 text-slate-600 text-[12px] font-semibold flex items-center justify-center shrink-0">
                         {idx + 1}
                       </span>
-                      <span className="text-slate-700 text-[14px] font-normal break-words leading-relaxed">
+                      <span className="text-slate-700 text-[14px] font-normal break-words [overflow-wrap:anywhere] [word-break:break-word] leading-relaxed">
                         {task.question}
                       </span>
                     </div>
@@ -331,14 +331,20 @@ export default function EditChecklistPage({
 
             {/* ADD NEW TASK Section */}
             <div className="mt-5">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-2">
-                ADD NEW TASK
-              </label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                  ADD NEW TASK
+                </label>
+                <span className="text-[12px] text-slate-400 font-medium">
+                  {currentTaskInput.length}/500
+                </span>
+              </div>
               <div className="flex items-center gap-3">
                 <input
                   type="text"
                   placeholder="Enter new audit task..."
                   value={currentTaskInput}
+                  maxLength={500}
                   onChange={(e) => setCurrentTaskInput(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') {

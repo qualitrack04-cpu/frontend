@@ -5,45 +5,8 @@ import { formatUpdatedDate as formatRelativeTime } from '../../../shared/utils/d
 
 interface AdminRecentChangesProps {
   changes: AdminRecentChange[];
+  loading?: boolean;
 }
-
-const DEFAULT_CHANGES: AdminRecentChange[] = [
-  {
-    action: 'CREATE',
-    entityType: 'Department Management',
-    entityName: 'QC',
-    description: 'QC Department added',
-    timestamp: '2026-10-19T15:30:00Z',
-  },
-  {
-    action: 'UPDATE',
-    entityType: 'User Management',
-    entityName: 'Budi',
-    description: 'Role of Budi changed to Auditor',
-    timestamp: '2026-10-19T14:30:00Z',
-  },
-  {
-    action: 'ACTIVATE',
-    entityType: 'SPC Unit Management',
-    entityName: 'Celsius',
-    description: 'SPC Unit Celsius activated',
-    timestamp: '2026-06-22T10:15:00Z',
-  },
-  {
-    action: 'DEACTIVATE',
-    entityType: 'ISO Standard Management',
-    entityName: 'ISO 22000',
-    description: 'ISO 22000 Standard deactivated',
-    timestamp: '2026-04-29T11:20:00Z',
-  },
-  {
-    action: 'DELETE',
-    entityType: 'Checklist Template Management',
-    entityName: 'GMP checklist',
-    description: 'GMP checklist item removed',
-    timestamp: '2026-03-29T09:15:00Z',
-  },
-];
 
 function getIconAndColor(change: AdminRecentChange) {
   const desc = (change.description || '').toLowerCase();
@@ -69,11 +32,9 @@ function getIconAndColor(change: AdminRecentChange) {
 }
 
 
-export default function AdminRecentChanges({ changes }: AdminRecentChangesProps) {
-  const effectiveChanges = changes && changes.length > 0 ? changes : DEFAULT_CHANGES;
-
+export default function AdminRecentChanges({ changes, loading = false }: AdminRecentChangesProps) {
   // Hanya tampilkan 5 perubahan paling terbaru
-  const sortedChanges = [...effectiveChanges]
+  const sortedChanges = [...(changes ?? [])]
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, 5);
 
@@ -87,6 +48,18 @@ export default function AdminRecentChanges({ changes }: AdminRecentChangesProps)
       </div>
       
       <div className="flex flex-col divide-y divide-slate-100">
+        {loading && sortedChanges.length === 0 && (
+          <div className="px-6 py-10 text-center text-[13px] text-slate-400">
+            Loading changes...
+          </div>
+        )}
+
+        {!loading && sortedChanges.length === 0 && (
+          <div className="px-6 py-10 text-center text-[13px] text-slate-400">
+            No recent changes found.
+          </div>
+        )}
+
         {sortedChanges.map((change, idx) => {
           const { icon: Icon, color } = getIconAndColor(change);
           return (

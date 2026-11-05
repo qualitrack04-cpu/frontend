@@ -42,8 +42,8 @@ export default function AuditCard({ audit, onDelete }: AuditCardProps) {
 
       <div className="flex-1 min-w-0 p-[20px_24px] flex flex-col gap-[12px]">
         <div className="flex justify-between items-start gap-[12px] min-h-[48px]">
-          <h3 className={`flex-1 min-w-0 text-[19px] m-0 leading-[1.3] line-clamp-2 ${isFinished ? 'text-[#64748b]' : 'text-[#0f2c52]'}`}>{audit.title}</h3>
-          {canManageAuditPlans() && (
+          <h3 className={`flex-1 min-w-0 text-[19px] m-0 leading-[1.3] line-clamp-2 break-words [overflow-wrap:anywhere] [word-break:break-word] ${isFinished ? 'text-[#64748b]' : 'text-[#0f2c52]'}`}>{audit.title}</h3>
+          {canManageAuditPlans() && !isFinished && (
             <div className="flex gap-[6px] shrink-0">
               <Link to={`/audits/${audit.id}/edit`} className="w-[32px] h-[32px] rounded-[8px] border-none bg-transparent text-[#64748b] flex items-center justify-center hover:bg-[#f1f5f9]" aria-label="Edit">
                 <Pencil size={16} />
@@ -60,8 +60,16 @@ export default function AuditCard({ audit, onDelete }: AuditCardProps) {
         </div>
 
         <div className="flex gap-[8px] flex-wrap min-h-[28px] items-center">
-          {schedule && <span className="bg-[#f1f5f9] text-[#475569] text-[13px] font-medium px-[12px] py-[6px] rounded-[8px]">{schedule.department}</span>}
-          {schedule && <span className="bg-[#f1f5f9] text-[#475569] text-[13px] font-medium px-[12px] py-[6px] rounded-[8px]">{schedule.auditorName}</span>}
+          {schedule && (
+            <span className="bg-[#f1f5f9] text-[#475569] text-[13px] font-medium px-[12px] py-[6px] rounded-[8px] truncate max-w-[200px]" title={schedule.department}>
+              {schedule.department}
+            </span>
+          )}
+          {schedule && (
+            <span className="bg-[#f1f5f9] text-[#475569] text-[13px] font-medium px-[12px] py-[6px] rounded-[8px] truncate max-w-[200px]" title={schedule.auditorName}>
+              {schedule.auditorName}
+            </span>
+          )}
         </div>
 
         {schedule ? (

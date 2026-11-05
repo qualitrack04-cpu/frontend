@@ -32,8 +32,8 @@ export default function DeleteSpcUnitModal({ unit, onClose, onSuccess }: DeleteS
         </div>
 
         <h3 className="text-lg font-bold text-slate-800 m-0 mb-2">Delete SPC Unit</h3>
-        <p className="text-sm text-slate-500 m-0 mb-6">
-          Are you sure you want to deactivate <strong className="text-slate-800 font-semibold">{unit.name} ({unit.symbol})</strong>?
+        <p className="text-sm text-slate-500 m-0 mb-6 break-words [overflow-wrap:anywhere] [word-break:break-word]">
+          Are you sure you want to deactivate <strong className="text-slate-800 font-semibold break-words [overflow-wrap:anywhere] [word-break:break-word]">{unit.name} ({unit.symbol})</strong>?
           This action will set the unit status to inactive.
         </p>
 

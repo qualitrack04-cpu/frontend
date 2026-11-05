@@ -168,24 +168,24 @@ export default function AuditReportPreviewPage() {
       <button className="no-print inline-flex items-center gap-[8px] bg-transparent border-none text-[#64748b] text-[14px] font-semibold cursor-pointer p-0 mb-[16px] hover:text-[#1e293b]" onClick={() => navigate('/audits')}>← Back to Audits</button>
       <h1 className="no-print text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Audit Report Preview</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_340px] gap-[32px] items-start print-full">
-        <div className="flex flex-col gap-[24px] print-full">
-          <div className="bg-white rounded-[12px] p-[24px] border border-[#e2e8f0] flex flex-col">
+      <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_340px] gap-[32px] items-start print-full max-w-full min-w-0">
+        <div className="flex flex-col gap-[24px] print-full min-w-0 max-w-full">
+          <div className="bg-white rounded-[12px] p-[24px] border border-[#e2e8f0] flex flex-col min-w-0 max-w-full overflow-hidden">
             <h3 className="text-[15px] font-bold text-[#0f2c52] uppercase tracking-[0.5px] m-0 mb-[16px]">Audit Summary</h3>
             <hr className="border-t border-[#e2e8f0] m-0 mb-[24px]" />
-            <div className="bg-[#f8fafc] rounded-[8px] p-[20px] text-[14.5px] text-[#1e293b] leading-[1.6]">{summary?.content || '—'}</div>
+            <div className="bg-[#f8fafc] rounded-[8px] p-[20px] text-[14.5px] text-[#1e293b] leading-[1.6] break-words [overflow-wrap:anywhere] [word-break:break-word] whitespace-pre-wrap">{summary?.content || '—'}</div>
           </div>
 
-          <div className="bg-white rounded-[12px] p-[24px] border border-[#e2e8f0] flex flex-col">
+          <div className="bg-white rounded-[12px] p-[24px] border border-[#e2e8f0] flex flex-col min-w-0 max-w-full overflow-hidden">
             <h3 className="text-[15px] font-bold text-[#0f2c52] uppercase tracking-[0.5px] m-0 mb-[16px]">Checklist Result</h3>
             <hr className="border-t border-[#e2e8f0] m-0 mb-[24px]" />
             <div className="flex flex-col gap-[12px]">
               {results.map((item) => (
-                <div className="flex items-start gap-[12px] p-[16px] bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px]" key={item.id}>
+                <div className="flex items-start gap-[12px] p-[16px] bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] min-w-0 max-w-full overflow-hidden" key={item.id}>
                   <div className="bg-white w-[28px] h-[28px] rounded-[6px] flex items-center justify-center text-[#94a3b8] border border-[#e2e8f0] shrink-0">
                     <FileText size={16} />
                   </div>
-                  <span className="flex-1 text-[14px] text-[#1e293b] font-medium leading-[1.4]">{item.question}</span>
+                  <span className="flex-1 text-[14px] text-[#1e293b] font-medium leading-[1.4] break-words [overflow-wrap:anywhere] [word-break:break-word] min-w-0">{item.question}</span>
                   <span className={`p-[4px_10px] rounded-[12px] text-[12px] font-bold uppercase shrink-0 ${item.status === 'pass' ? 'bg-[#dcfce7] text-[#16a34a]' : item.status === 'fail' ? 'bg-[#fee2e2] text-[#dc2626]' : 'bg-[#f1f5f9] text-[#64748b]'}`}>
                     {item.status === 'pass' ? 'Pass' : item.status === 'fail' ? 'Fail' : 'Pending'}
                   </span>

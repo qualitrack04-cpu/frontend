@@ -192,12 +192,12 @@ export default function DepartmentsPage() {
                 return (
                   <tr key={dept.id} className="hover:bg-slate-50/70 transition-colors">
                     {/* DEPARTMENT CODE & NAME */}
-                    <td className="px-6 py-4">
-                      <div className="flex items-center gap-3.5">
+                    <td className="px-6 py-4 max-w-[280px] md:max-w-[360px]">
+                      <div className="flex items-center gap-3.5 min-w-0">
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${bgColor} ${iconColor}`}>
                           <Icon size={20} strokeWidth={2} />
                         </div>
-                        <span className="font-bold text-slate-800 text-[14px]">
+                        <span className="font-bold text-slate-800 text-[14px] break-words [overflow-wrap:anywhere] [word-break:break-word]">
                           {dept.name}
                         </span>
                       </div>
@@ -274,14 +274,20 @@ export default function DepartmentsPage() {
         <form onSubmit={handleAddDepartment} className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6">
           {/* Department Name Input */}
           <div className="flex-1 w-full min-w-0">
-            <label className="block text-[13px] font-semibold text-slate-700 mb-2">
-              Department Name
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-[13px] font-semibold text-slate-700">
+                Department Name
+              </label>
+              <span className="text-[12px] text-slate-400 font-medium">
+                {newDeptName.length}/100
+              </span>
+            </div>
             <div className="relative flex items-center">
               <input
                 type="text"
                 placeholder="Enter department name"
                 value={newDeptName}
+                maxLength={100}
                 onChange={(e) => setNewDeptName(e.target.value)}
                 disabled={isSubmitting}
                 className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all disabled:opacity-50 box-border"

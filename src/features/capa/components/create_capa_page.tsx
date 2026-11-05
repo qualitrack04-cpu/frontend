@@ -34,11 +34,17 @@ export default function CreateCapaPage() {
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 items-start">
         <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-6 md:p-[24px]">
           <div className="flex flex-col gap-[8px] mb-[20px]">
-            <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">TITLE</label>
+            <div className="flex items-center justify-between">
+              <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">TITLE</label>
+              <span className="text-[12px] text-slate-400 font-medium">
+                {title.length}/200
+              </span>
+            </div>
             <input
               type="text"
               placeholder="Enter CAPA title"
               value={title}
+              maxLength={200}
               onChange={(e) => setTitle(e.target.value)}
               className={`w-full p-[12px_14px] border-[1.5px] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none placeholder:text-[#94a3b8] ${titleError ? 'border-[#dc2626] focus:border-[#dc2626] focus:ring-[3px] focus:ring-[rgba(220,38,38,0.1)]' : 'border-[#e2e8f0] focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)]'}`}
             />
@@ -71,11 +77,17 @@ export default function CreateCapaPage() {
           </div>
 
           <div className="flex flex-col gap-[8px] mb-[20px]">
-            <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">DESCRIPTION</label>
+            <div className="flex items-center justify-between">
+              <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">DESCRIPTION</label>
+              <span className="text-[12px] text-slate-400 font-medium">
+                {description.length}/1000
+              </span>
+            </div>
             <textarea
               rows={5}
               placeholder="Detail the corrective action..."
               value={description}
+              maxLength={1000}
               onChange={(e) => setDescription(e.target.value)}
               className={`w-full p-[12px_14px] border-[1.5px] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none placeholder:text-[#94a3b8] font-inherit resize-y ${descriptionError ? 'border-[#dc2626] focus:border-[#dc2626] focus:ring-[3px] focus:ring-[rgba(220,38,38,0.1)]' : 'border-[#e2e8f0] focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)]'}`}
             />
@@ -83,11 +95,17 @@ export default function CreateCapaPage() {
           </div>
 
           <div className="flex flex-col gap-[8px] mb-0">
-            <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">ACTION PLAN</label>
+            <div className="flex items-center justify-between">
+              <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">ACTION PLAN</label>
+              <span className="text-[12px] text-slate-400 font-medium">
+                {actionPlan.length}/1000
+              </span>
+            </div>
             <textarea
               rows={5}
               placeholder="Step-by-step action plan..."
               value={actionPlan}
+              maxLength={1000}
               onChange={(e) => setActionPlan(e.target.value)}
               className={`w-full p-[12px_14px] border-[1.5px] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none placeholder:text-[#94a3b8] font-inherit resize-y ${actionPlanError ? 'border-[#dc2626] focus:border-[#dc2626] focus:ring-[3px] focus:ring-[rgba(220,38,38,0.1)]' : 'border-[#e2e8f0] focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)]'}`}
             />

@@ -1,5 +1,5 @@
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { BadgeCheck, CircleAlert, Save, Pencil } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { CircleAlert, Save } from 'lucide-react';
 import { useCreateAuditPlan } from '../hooks/use_create_audit_plan';
 import DatePicker from '../../../shared/components/date_picker';
 
@@ -68,9 +68,15 @@ export default function CreateAuditPlanPage() {
         <hr className="border-t border-[#e2e8f0] m-0 mb-[24px]" />
 
         <div className="flex flex-col gap-[8px] mb-[20px]">
-          <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Audit Title *</label>
+          <div className="flex items-center justify-between">
+            <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Audit Title *</label>
+            <span className="text-[11px] text-slate-400 font-medium">
+              {title.length}/200
+            </span>
+          </div>
           <input
             type="text"
+            maxLength={200}
             placeholder="e.g., Q3 Manufacturing Facility Audit"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
@@ -120,9 +126,15 @@ export default function CreateAuditPlanPage() {
         </div>
 
         <div className="flex flex-col gap-[8px] mb-[20px]">
-          <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Scope &amp; Description</label>
+          <div className="flex items-center justify-between">
+            <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Scope &amp; Description</label>
+            <span className="text-[11px] text-slate-400 font-medium">
+              {scopeDescription.length}/1000
+            </span>
+          </div>
           <textarea
             rows={4}
+            maxLength={1000}
             placeholder="Enter detailed scope and objectives for this audit..."
             value={scopeDescription}
             onChange={(e) => setScopeDescription(e.target.value)}
@@ -182,25 +194,6 @@ export default function CreateAuditPlanPage() {
                         </span>
                       )}
                     </div>
-                  </div>
-
-                  <div className="flex items-center gap-[12px]">
-                    {isSelected && (
-                      <BadgeCheck
-                        size={40}
-                        className="text-[#cbd5e1] shrink-0"
-                        strokeWidth={1.5}
-                      />
-                    )}
-                    <Link
-                      to={`/audits/checklists/${c.id}/edit`}
-                      className="bg-white border border-[#e2e8f0] rounded-[6px] w-[28px] h-[28px] flex items-center justify-center text-[#64748b] no-underline opacity-0 transition-all duration-200 group-hover:opacity-100 hover:text-[#0f2c52] hover:border-[#94a3b8]"
-                      aria-label={`Edit checklist ${c.title}`}
-                      title="Edit checklist"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <Pencil size={15} />
-                    </Link>
                   </div>
                 </label>
               );

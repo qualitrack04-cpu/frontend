@@ -75,13 +75,19 @@ export default function EditSpcUnitModal({ unit, onClose, onSuccess }: EditSpcUn
           <div className="space-y-5">
             {/* Unit Name */}
             <div>
-              <label className="block text-[14px] font-medium text-[#344054] mb-1.5">
-                Unit Name
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[14px] font-medium text-[#344054]">
+                  Unit Name
+                </label>
+                <span className="text-[12px] text-slate-400 font-medium">
+                  {unitName.length}/50
+                </span>
+              </div>
               <div className="relative flex items-center">
                 <input
                   type="text"
                   value={unitName}
+                  maxLength={50}
                   onChange={(e) => setUnitName(e.target.value)}
                   placeholder="e.g. milimeter"
                   className="w-full bg-white border border-[#D0D5DD] rounded-[12px] px-4 py-3 text-[14.5px] text-[#101828] placeholder-[#98A2B3] outline-none focus:border-[#1570EF] focus:ring-4 focus:ring-[#1570EF]/10 transition-all font-normal shadow-[0_1px_2px_rgba(16,24,40,0.05)] box-border"
@@ -92,13 +98,19 @@ export default function EditSpcUnitModal({ unit, onClose, onSuccess }: EditSpcUn
 
             {/* Symbol */}
             <div>
-              <label className="block text-[14px] font-medium text-[#344054] mb-1.5">
-                Symbol
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[14px] font-medium text-[#344054]">
+                  Symbol
+                </label>
+                <span className="text-[12px] text-slate-400 font-medium">
+                  {symbol.length}/20
+                </span>
+              </div>
               <div className="relative flex items-center">
                 <input
                   type="text"
                   value={symbol}
+                  maxLength={20}
                   onChange={(e) => setSymbol(e.target.value)}
                   placeholder="e.g. mm"
                   className="w-full bg-white border border-[#D0D5DD] rounded-[12px] px-4 py-3 text-[14.5px] text-[#101828] placeholder-[#98A2B3] outline-none focus:border-[#1570EF] focus:ring-4 focus:ring-[#1570EF]/10 transition-all font-normal shadow-[0_1px_2px_rgba(16,24,40,0.05)] box-border"
@@ -109,13 +121,19 @@ export default function EditSpcUnitModal({ unit, onClose, onSuccess }: EditSpcUn
 
             {/* Description */}
             <div>
-              <label className="block text-[14px] font-medium text-[#344054] mb-1.5">
-                Description
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[14px] font-medium text-[#344054]">
+                  Description
+                </label>
+                <span className="text-[12px] text-slate-400 font-medium">
+                  {description.length}/200
+                </span>
+              </div>
               <div className="relative flex items-center">
                 <input
                   type="text"
                   value={description}
+                  maxLength={200}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Enter description Here"
                   className="w-full bg-white border border-[#D0D5DD] rounded-[12px] px-4 py-3 text-[14.5px] text-[#101828] placeholder-[#98A2B3] outline-none focus:border-[#1570EF] focus:ring-4 focus:ring-[#1570EF]/10 transition-all font-normal shadow-[0_1px_2px_rgba(16,24,40,0.05)] box-border"

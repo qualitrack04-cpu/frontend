@@ -58,10 +58,10 @@ export default function DeleteTemplateModal({
 
           <div className="flex items-start gap-3.5 mb-4 p-3.5 bg-red-50/70 border border-red-200/60 rounded-xl text-red-800 text-sm">
             <AlertTriangle size={20} className="shrink-0 text-red-600 mt-0.5" />
-            <div>
+            <div className="min-w-0">
               <p className="font-semibold m-0 mb-1">Deletion Confirmation</p>
-              <p className="m-0 text-[13px] text-red-700 leading-relaxed">
-                Are you sure you want to delete template <strong>{template.title}</strong>?
+              <p className="m-0 text-[13px] text-red-700 leading-relaxed break-words [overflow-wrap:anywhere] [word-break:break-word]">
+                Are you sure you want to delete template <strong className="break-words [overflow-wrap:anywhere] [word-break:break-word]">{template.title}</strong>?
               </p>
             </div>
           </div>

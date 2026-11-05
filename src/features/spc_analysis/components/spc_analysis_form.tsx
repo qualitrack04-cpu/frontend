@@ -21,9 +21,9 @@ export default function SpcAnalysisForm({ onResult }: Props) {
     file: null,
     productName: '',
     targetValue: '',
-    unit: 'mm',
-    usl: '0.5',
-    lsl: '-0.5',
+    unit: '',
+    usl: '',
+    lsl: '',
     description: '',
   });
   const [submitting, setSubmitting] = useState(false);
@@ -138,10 +138,16 @@ export default function SpcAnalysisForm({ onResult }: Props) {
       </div>
 
       <div className="flex flex-col gap-[8px] mb-[20px]">
-        <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Product / Parameter Name</label>
+        <div className="flex items-center justify-between">
+          <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Product / Parameter Name</label>
+          <span className="text-[11px] text-slate-400 font-medium">
+            {formData.productName.length}/100
+          </span>
+        </div>
         <input
           type="text"
           name="productName"
+          maxLength={100}
           placeholder="e.g. Outer Diameter"
           value={formData.productName}
           onChange={handleChange}
@@ -152,7 +158,7 @@ export default function SpcAnalysisForm({ onResult }: Props) {
 
       <div className="flex flex-col md:flex-row gap-[16px] mb-[20px]">
         <div className="flex-1 flex flex-col gap-[8px]">
-          <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Target Value (opsional)</label>
+          <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Target Value (optional)</label>
           <input
             type="number"
             step="0.01"
@@ -189,7 +195,7 @@ export default function SpcAnalysisForm({ onResult }: Props) {
             type="number"
             step="0.01"
             name="lsl"
-            placeholder="-0.5"
+            placeholder="e.g. -0.5"
             value={formData.lsl}
             onChange={handleChange}
             required
@@ -203,7 +209,7 @@ export default function SpcAnalysisForm({ onResult }: Props) {
             type="number"
             step="0.01"
             name="usl"
-            placeholder="0.5"
+            placeholder="e.g. 0.5"
             value={formData.usl}
             onChange={handleChange}
             required
@@ -213,9 +219,15 @@ export default function SpcAnalysisForm({ onResult }: Props) {
       </div>
 
       <div className="flex flex-col gap-[8px] mb-[20px]">
-        <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Description (opsional)</label>
+        <div className="flex items-center justify-between">
+          <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Description (optional)</label>
+          <span className="text-[11px] text-slate-400 font-medium">
+            {formData.description.length}/500
+          </span>
+        </div>
         <textarea
           name="description"
+          maxLength={500}
           placeholder="Additional notes..."
           value={formData.description}
           onChange={handleChange}
@@ -226,7 +238,7 @@ export default function SpcAnalysisForm({ onResult }: Props) {
       {error && <p className="text-[#dc2626] bg-[#fef2f2] p-[12px_16px] rounded-[8px] border border-[#fecaca] text-[14px] mb-[20px]">{error}</p>}
 
       <button type="submit" className="bg-[#0f2c52] text-white border-none p-[14px] rounded-[8px] text-[15px] font-semibold w-full cursor-pointer transition-all duration-200 hover:bg-[#0c2444] disabled:opacity-70 disabled:cursor-not-allowed mt-[12px]" disabled={submitting}>
-        {submitting ? 'Menganalisis...' : 'Analyze'}
+        {submitting ? 'Analyzing...' : 'Analyze'}
       </button>
     </form>
   );

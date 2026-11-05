@@ -13,7 +13,6 @@ import { formatUpdatedDate as formatChangeDate } from '../../../shared/utils/dat
 import { useUsersActivity } from '../hooks/use_users_activity';
 
 const ROLE_OPTIONS = [
-  'All Roles',
   'Quality Manager',
   'Auditor Internal',
   'Auditee',
@@ -170,13 +169,13 @@ export default function UsersActivityPage() {
             {isRoleDropdownOpen && (
               <div className="absolute left-0 top-[calc(100%+6px)] w-[190px] bg-white rounded-xl shadow-lg border border-slate-100 py-1.5 z-50 animate-[fadeIn_0.15s_ease-out]">
                 {ROLE_OPTIONS.map((role) => {
-                  const isSelected = (selectedRole === '' && role === 'All Roles') || selectedRole === role;
+                  const isSelected = selectedRole === role;
                   return (
                     <button
                       key={role}
                       type="button"
                       onClick={() => {
-                        setSelectedRole(role === 'All Roles' ? '' : role);
+                        setSelectedRole(role);
                         setCurrentPage(1);
                         setIsRoleDropdownOpen(false);
                       }}
@@ -253,18 +252,6 @@ export default function UsersActivityPage() {
 
       {/* Users Activity Table Card */}
       <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(15,44,82,0.03)] border border-slate-100 overflow-hidden">
-        {loading && (
-          <div className="py-12 text-center text-slate-400 text-sm">
-            Loading users' activity...
-          </div>
-        )}
-
-        {!loading && paginatedActivities.length === 0 && (
-          <div className="py-12 text-center text-slate-400 text-sm">
-            No users' activity found matching your filters.
-          </div>
-        )}
-
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[850px]">
             <thead>
@@ -282,7 +269,23 @@ export default function UsersActivityPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {paginatedActivities.map((item) => {
+              {loading && (
+                <tr>
+                  <td colSpan={4} className="py-12 text-center text-slate-400 text-sm">
+                    Loading users' activity...
+                  </td>
+                </tr>
+              )}
+
+              {!loading && paginatedActivities.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="py-12 text-center text-slate-400 text-sm">
+                    No users' activity found matching your filters.
+                  </td>
+                </tr>
+              )}
+
+              {!loading && paginatedActivities.map((item) => {
                 const badgeStyle = getRoleBadgeStyle(item.role);
                 const avatarStyle = getAvatarBg(item.userName, item.role);
 
@@ -312,7 +315,7 @@ export default function UsersActivityPage() {
                     </td>
 
                     {/* Activity Description */}
-                    <td className="px-6 py-4 text-[13px] text-slate-600 font-normal truncate max-w-[360px]" title={item.description}>
+                    <td className="px-6 py-4 text-[13px] text-slate-600 font-normal max-w-[360px] break-words [overflow-wrap:anywhere] [word-break:break-word]" title={item.description}>
                       {item.description}
                     </td>
 

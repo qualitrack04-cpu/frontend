@@ -36,18 +36,18 @@ export default function FindingDetailPage() {
       {finding.error && <p className="text-red-600">{finding.error}</p>}
 
       {data && (
-        <div className="grid grid-cols-1 md:grid-cols-[1fr_340px] gap-[32px] items-start">
-          <div className="flex flex-col gap-[24px]">
-            <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px]">
-              <h2 className="text-[24px] text-[#0f2c52] m-0 mb-[24px] leading-[1.3] font-bold">{data.title}</h2>
+        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_340px] gap-[32px] items-start max-w-full min-w-0">
+          <div className="flex flex-col gap-[24px] min-w-0 max-w-full">
+            <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-[24px] sm:p-[32px] min-w-0 max-w-full overflow-hidden">
+              <h2 className="text-[24px] text-[#0f2c52] m-0 mb-[24px] leading-[1.3] font-bold break-words [overflow-wrap:anywhere] [word-break:break-word]">{data.title}</h2>
               <span className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]">Description</span>
-              <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] p-[20px] text-[14.5px] text-[#1e293b] leading-[1.6]">{data.description || '-'}</div>
+              <div className="bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] p-[20px] text-[14.5px] text-[#1e293b] leading-[1.6] break-words [overflow-wrap:anywhere] [word-break:break-word] whitespace-pre-wrap">{data.description || '-'}</div>
             </section>
 
-            <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px]">
+            <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-[24px] sm:p-[32px] min-w-0 max-w-full overflow-hidden">
               <div className="flex justify-between items-center mb-[24px]">
                 <h2 className="text-[14px] font-bold text-[#0f2c52] m-0 uppercase tracking-[0.5px]">EVIDENCE PHOTOS</h2>
-                <span className="bg-[#f1f5f9] text-[#475569] p-[4px_12px] rounded-[16px] text-[13px] font-semibold">
+                <span className="bg-[#f1f5f9] text-[#475569] p-[4px_12px] rounded-[16px] text-[13px] font-semibold shrink-0">
                   {photoList.length} {photoList.length === 1 ? 'photo' : 'photos'}
                 </span>
               </div>
@@ -64,33 +64,33 @@ export default function FindingDetailPage() {
             </section>
           </div>
 
-          <aside className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] flex flex-col gap-[24px]">
+          <aside className="bg-white border border-[#e2e8f0] rounded-[12px] p-[24px] sm:p-[32px] flex flex-col gap-[24px] min-w-0 max-w-full overflow-hidden">
             <h2 className="text-[14px] font-bold text-[#0f2c52] m-0 uppercase tracking-[0.5px] border-b border-[#e2e8f0] pb-[16px]">AUDIT METADATA</h2>
-            <div className="flex items-start gap-[16px]">
+            <div className="flex items-start gap-[16px] min-w-0">
               <span className="bg-[#f8fafc] text-[#64748b] w-[40px] h-[40px] rounded-[10px] flex items-center justify-center shrink-0">
                 <User size={18} />
               </span>
-              <div>
+              <div className="min-w-0 flex-1">
                 <span className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]">Reporter</span>
-                <p className="m-0 text-[15px] text-[#0f2c52] font-semibold">{data.reporterName || '-'}</p>
+                <p className="m-0 text-[15px] text-[#0f2c52] font-semibold break-words [overflow-wrap:anywhere] [word-break:break-word]">{data.reporterName || '-'}</p>
               </div>
             </div>
-            <div className="flex items-start gap-[16px]">
+            <div className="flex items-start gap-[16px] min-w-0">
               <span className="bg-[#f8fafc] text-[#64748b] w-[40px] h-[40px] rounded-[10px] flex items-center justify-center shrink-0">
                 <Building2 size={18} />
               </span>
-              <div>
+              <div className="min-w-0 flex-1">
                 <span className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]">Dept</span>
-                <p className="m-0 text-[15px] text-[#0f2c52] font-semibold">{data.department || '-'}</p>
+                <p className="m-0 text-[15px] text-[#0f2c52] font-semibold break-words [overflow-wrap:anywhere] [word-break:break-word]">{data.department || '-'}</p>
               </div>
             </div>
-            <div className="flex items-start gap-[16px]">
+            <div className="flex items-start gap-[16px] min-w-0">
               <span className="bg-[#f8fafc] text-[#64748b] w-[40px] h-[40px] rounded-[10px] flex items-center justify-center shrink-0">
                 <Calendar size={18} />
               </span>
-              <div>
+              <div className="min-w-0 flex-1">
                 <span className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]">Date</span>
-                <p className="m-0 text-[15px] text-[#0f2c52] font-semibold">{formatDate(data.foundAt ?? data.createdAt)}</p>
+                <p className="m-0 text-[15px] text-[#0f2c52] font-semibold break-words [overflow-wrap:anywhere] [word-break:break-word]">{formatDate(data.foundAt ?? data.createdAt)}</p>
               </div>
             </div>
           </aside>

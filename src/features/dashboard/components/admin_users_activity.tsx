@@ -4,40 +4,8 @@ import { formatUpdatedDate as formatRelativeTime } from '../../../shared/utils/d
 
 interface AdminUsersActivityProps {
   activities: AdminActivity[];
+  loading?: boolean;
 }
-
-const DEFAULT_ACTIVITIES: AdminActivity[] = [
-  {
-    activityType: 'Quality Manager',
-    description: 'Flagged major non-conformity in Packaging Area',
-    userName: 'Quali Track',
-    timestamp: '2026-10-19T15:30:00Z',
-  },
-  {
-    activityType: 'Auditor Internal',
-    description: 'Logged Minor NC: Spec sheet rev.3 missing signature',
-    userName: 'Black Cuking',
-    timestamp: '2026-10-19T14:30:00Z',
-  },
-  {
-    activityType: 'Auditee',
-    description: 'Submitted CAPA response for finding #F-2026-031',
-    userName: 'Amir Oakwood',
-    timestamp: '2026-07-22T10:00:00Z',
-  },
-  {
-    activityType: 'Auditor Internal',
-    description: 'Uploaded evidence for expired calibration in QC Lab',
-    userName: 'Amara Jensen',
-    timestamp: '2026-06-22T11:20:00Z',
-  },
-  {
-    activityType: 'Auditee',
-    description: 'Requested deadline extension for CAPA #F-028',
-    userName: 'Marcus Kane',
-    timestamp: '2026-04-29T09:15:00Z',
-  },
-];
 
 function getRoleBadge(roleOrType: string) {
   const r = (roleOrType || '').toLowerCase();
@@ -75,15 +43,11 @@ function getAvatarBg(roleOrType: string) {
   return 'bg-[#F0FDF4] text-[#16A34A]';
 }
 
-
-export default function AdminUsersActivity({ activities }: AdminUsersActivityProps) {
+export default function AdminUsersActivity({ activities, loading = false }: AdminUsersActivityProps) {
   const navigate = useNavigate();
 
-  // Gunakan data fallback jika data dari backend kosong
-  const effectiveActivities = activities && activities.length > 0 ? activities : DEFAULT_ACTIVITIES;
-
   // Hanya tampilkan 5 aktivitas user paling terbaru
-  const sortedActivities = [...effectiveActivities]
+  const sortedActivities = [...(activities ?? [])]
     .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
     .slice(0, 5);
 
@@ -95,7 +59,7 @@ export default function AdminUsersActivity({ activities }: AdminUsersActivityPro
           View All &rarr;
         </Link>
       </div>
-      
+
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[800px]">
           <thead>
@@ -113,6 +77,22 @@ export default function AdminUsersActivity({ activities }: AdminUsersActivityPro
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
+            {loading && sortedActivities.length === 0 && (
+              <tr>
+                <td colSpan={4} className="px-6 py-10 text-center text-[13px] text-slate-400">
+                  Loading activities...
+                </td>
+              </tr>
+            )}
+
+            {!loading && sortedActivities.length === 0 && (
+              <tr>
+                <td colSpan={4} className="px-6 py-10 text-center text-[13px] text-slate-400">
+                  No users' activity found.
+                </td>
+              </tr>
+            )}
+
             {sortedActivities.map((item, idx) => {
               const displayRole = formatRole(item.activityType);
               const badgeStyle = getRoleBadge(displayRole);
@@ -134,8 +114,8 @@ export default function AdminUsersActivity({ activities }: AdminUsersActivityPro
               };
 
               return (
-                <tr 
-                  key={idx} 
+                <tr
+                  key={`${item.activityType}-${item.relatedId ?? ''}-${item.timestamp}-${idx}`}
                   onClick={handleClickRow}
                   className="hover:bg-slate-50/70 transition-colors cursor-pointer group"
                 >

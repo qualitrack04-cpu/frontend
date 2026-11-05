@@ -20,7 +20,6 @@ import TablePagination from '../../../shared/components/table_pagination';
 import type { User } from '../api/users_api';
 
 const ROLE_OPTIONS = [
-  { value: '', label: 'Select Role' },
   { value: 'QualityManager', label: 'Quality Manager' },
   { value: 'AuditorInternal', label: 'Auditor Internal' },
   { value: 'Auditee', label: 'Auditee' },

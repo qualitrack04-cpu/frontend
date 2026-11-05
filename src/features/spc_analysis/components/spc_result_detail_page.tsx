@@ -53,10 +53,10 @@ export default function SpcResultDetailPage() {
       </button>
       <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Analysis Result</h1>
 
-      <div className="flex flex-col lg:flex-row gap-[24px] bg-white rounded-[12px] border border-[#e2e8f0] p-[24px]">
-        <div className="flex-[0_0_auto] lg:flex-[0_0_320px] w-full lg:w-auto box-border bg-[#f8fafc] p-[20px] rounded-[8px] border border-[#e2e8f0]">
-          <p className="text-[18px] font-bold text-[#0f2c52] m-0 mb-[4px]">{result.parameterName}</p>
-          {result.description && <p className="text-[14px] text-[#475569] m-0 mb-[6px]">{result.description}</p>}
+      <div className="flex flex-col lg:flex-row gap-[24px] bg-white rounded-[12px] border border-[#e2e8f0] p-[24px] overflow-hidden min-w-0 max-w-full">
+        <div className="flex-[0_0_auto] lg:flex-[0_0_320px] w-full lg:w-auto box-border bg-[#f8fafc] p-[20px] rounded-[8px] border border-[#e2e8f0] min-w-0 max-w-full overflow-hidden">
+          <p className="text-[18px] font-bold text-[#0f2c52] m-0 mb-[4px] break-words [overflow-wrap:anywhere] [word-break:break-word]">{result.parameterName}</p>
+          {result.description && <p className="text-[14px] text-[#475569] m-0 mb-[6px] break-words [overflow-wrap:anywhere] [word-break:break-word]">{result.description}</p>}
           <p className="text-[13px] text-[#64748b] m-0 mb-[20px]">Analysis completed on {formatDate(result.analyzedAt)}</p>
 
           <div className="flex justify-between items-center py-[8px] border-b border-[#e2e8f0] text-[14px] last:border-b-0">

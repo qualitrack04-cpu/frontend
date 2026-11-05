@@ -32,8 +32,8 @@ export default function DeleteDepartmentModal({ department, onClose, onSuccess }
         </div>
 
         <h3 className="text-lg font-bold text-slate-800 m-0 mb-2">Delete Department</h3>
-        <p className="text-sm text-slate-500 m-0 mb-6">
-          Are you sure you want to delete <strong className="text-slate-800 font-semibold">{department.name}</strong>?
+        <p className="text-sm text-slate-500 m-0 mb-6 break-words [overflow-wrap:anywhere] [word-break:break-word]">
+          Are you sure you want to delete <strong className="text-slate-800 font-semibold break-words [overflow-wrap:anywhere] [word-break:break-word]">{department.name}</strong>?
           This action cannot be undone.
         </p>
 
