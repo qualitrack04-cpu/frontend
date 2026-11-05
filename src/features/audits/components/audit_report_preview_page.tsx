@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { Calendar, FileText, Download, Check, Eye, Share2, Mail, MessageCircle, Copy } from 'lucide-react';
+import { Calendar, FileText, Download, Check, Eye, Share2, Mail, MessageCircle, Copy, Printer } from 'lucide-react';
 import { useState } from 'react';
 import { useAuditReport } from '../hooks/use_audit_report';
 import { generatePdfReport, downloadPdfReport, type PdfReportResult } from '../api/pdf_api';
@@ -88,12 +88,88 @@ export default function AuditReportPreviewPage() {
   const auditIdShort = session?.id.slice(0, 8).toUpperCase();
 
   return (
-    <div className="max-w-full m-0 text-left">
-      <button className="inline-flex items-center gap-[8px] bg-transparent border-none text-[#64748b] text-[14px] font-semibold cursor-pointer p-0 mb-[16px] hover:text-[#1e293b]" onClick={() => navigate('/audits')}>← Back to Audits</button>
-      <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Audit Report Preview</h1>
+    <div className="max-w-full m-0 text-left print-container">
+      <style>{`
+        @media print {
+          header, aside, .no-print, [role="presentation"] {
+            display: none !important;
+          }
+          body, main, #root, .print-container {
+            overflow: visible !important;
+            height: auto !important;
+            max-height: none !important;
+            background: #ffffff !important;
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+          .print-full {
+            width: 100% !important;
+            max-width: 100% !important;
+          }
+          .print-only {
+            display: block !important;
+          }
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          @page {
+            size: A4 portrait;
+            margin: 15mm;
+          }
+        }
+        @media screen {
+          .print-only {
+            display: none !important;
+          }
+        }
+      `}</style>
 
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_340px] gap-[32px] items-start">
-        <div className="flex flex-col gap-[24px]">
+      {/* Printable Official Report Header (visible only on print) */}
+      <div className="print-only mb-6 border-b-2 border-[#0f2c52] pb-4">
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h2 className="text-2xl font-black text-[#0f2c52] m-0 tracking-wider">QUALITRACK</h2>
+            <p className="text-xs text-[#64748b] font-semibold tracking-wide uppercase m-0 mt-1">Quality Management System — Internal Audit Report</p>
+          </div>
+          <div className="text-right">
+            <span className="text-xs font-bold text-slate-400">AUDIT ID</span>
+            <p className="text-sm font-black text-[#0f2c52] m-0">{auditIdShort ?? '—'}</p>
+          </div>
+        </div>
+        <table className="w-full text-[13px] border-collapse mt-4">
+          <tbody>
+            <tr className="border-b border-slate-200">
+              <td className="py-2 font-bold text-slate-500 w-1/4">DEPARTMENT</td>
+              <td className="py-2 font-semibold text-slate-800 w-1/4">{schedule?.department || '—'}</td>
+              <td className="py-2 font-bold text-slate-500 w-1/4">AUDIT DATE</td>
+              <td className="py-2 font-semibold text-slate-800 w-1/4">
+                {schedule?.scheduledDate
+                  ? new Date(schedule.scheduledDate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })
+                  : '—'}
+              </td>
+            </tr>
+            <tr className="border-b border-slate-200">
+              <td className="py-2 font-bold text-slate-500">AUDITOR</td>
+              <td className="py-2 font-semibold text-slate-800">{schedule?.auditorName || '—'}</td>
+              <td className="py-2 font-bold text-slate-500">STANDARD</td>
+              <td className="py-2 font-semibold text-slate-800">{plan?.standard || '—'}</td>
+            </tr>
+            <tr>
+              <td className="py-2 font-bold text-slate-500">AUDIT STATUS</td>
+              <td className="py-2 font-semibold text-slate-800" colSpan={3}>
+                ● {session?.status === 'InProgress' ? 'In Progress' : session?.status ?? 'Completed'}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button className="no-print inline-flex items-center gap-[8px] bg-transparent border-none text-[#64748b] text-[14px] font-semibold cursor-pointer p-0 mb-[16px] hover:text-[#1e293b]" onClick={() => navigate('/audits')}>← Back to Audits</button>
+      <h1 className="no-print text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Audit Report Preview</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_340px] gap-[32px] items-start print-full">
+        <div className="flex flex-col gap-[24px] print-full">
           <div className="bg-white rounded-[12px] p-[24px] border border-[#e2e8f0] flex flex-col">
             <h3 className="text-[15px] font-bold text-[#0f2c52] uppercase tracking-[0.5px] m-0 mb-[16px]">Audit Summary</h3>
             <hr className="border-t border-[#e2e8f0] m-0 mb-[24px]" />
@@ -117,9 +193,27 @@ export default function AuditReportPreviewPage() {
               ))}
             </div>
           </div>
+
+          {/* Printable Sign-off Section (visible only on print) */}
+          <div className="print-only mt-10 pt-6 border-t border-slate-300">
+            <div className="grid grid-cols-2 gap-8 text-center">
+              <div>
+                <p className="text-xs font-bold text-slate-500 uppercase mb-16">Lead Auditor Signature</p>
+                <p className="text-sm font-bold text-slate-900 border-t border-slate-400 pt-2 inline-block min-w-[200px]">
+                  {schedule?.auditorName || 'Auditor'}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-500 uppercase mb-16">Auditee Representative Signature</p>
+                <p className="text-sm font-bold text-slate-900 border-t border-slate-400 pt-2 inline-block min-w-[200px]">
+                  {schedule?.department || 'Department Head'}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="sticky top-[24px] flex flex-col gap-[24px]">
+        <div className="sticky top-[24px] flex flex-col gap-[24px] no-print">
           <div className="bg-white rounded-[12px] p-[24px] border border-[#e2e8f0] flex flex-col">
             <h3 className="text-[16px] m-0 mb-[20px] text-[#0f2c52] font-bold">Audit Detail</h3>
 
@@ -169,6 +263,14 @@ export default function AuditReportPreviewPage() {
 
             <button className="bg-[#0f2c52] text-white border-none p-[14px] rounded-[8px] text-[14.5px] font-semibold w-full flex items-center justify-center gap-[8px] cursor-pointer transition-colors duration-200 hover:bg-[#0c2444] disabled:opacity-60 disabled:cursor-not-allowed" onClick={handleCreatePdf} disabled={generating}>
               <Download size={16} /> {generating ? 'Generating...' : 'Create PDF Report'}
+            </button>
+
+            <button
+              type="button"
+              className="w-full mt-[10px] bg-white text-[#0f2c52] border border-[#cbd5e1] p-[12px] rounded-[8px] text-[14px] font-semibold flex items-center justify-center gap-[8px] cursor-pointer transition-all duration-200 hover:bg-[#f8fafc] hover:border-[#0f2c52]"
+              onClick={() => window.print()}
+            >
+              <Printer size={16} /> Print to PDF
             </button>
           </div>
         </div>
