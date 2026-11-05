@@ -18,7 +18,8 @@ import {
   User,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { canManageAuditPlans, getCurrentRole, ROLES } from '../../utils/role';
+import { canManageAuditPlansFor, ROLES } from '../../utils/role';
+import { useRole } from '../../context/role_context';
 
 const baseMenuItems: { label: string; path: string; icon: LucideIcon }[] = [
   { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -56,7 +57,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     navigate('/login', { replace: true });
   };
 
-  const role = getCurrentRole();
+  const { role } = useRole();
   const menuItems = role === ROLES.Admin ? adminMenuItems : baseMenuItems;
 
   return (
@@ -70,7 +71,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           </button>
         </div>
 
-        {canManageAuditPlans() && role !== ROLES.Admin && (
+        {canManageAuditPlansFor(role) && role !== ROLES.Admin && (
           <button
             className="flex items-center justify-center gap-[8px] bg-transparent border border-[#2ecc71] text-[#2ecc71] py-[10px] rounded-[8px] text-[14px] font-semibold mb-[24px] cursor-pointer no-underline hover:bg-[rgba(46,204,113,0.1)]"
             onClick={() => navigate('/audits/new')}

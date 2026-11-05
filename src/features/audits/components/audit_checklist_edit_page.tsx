@@ -76,7 +76,7 @@ export default function AuditChecklistEditPage() {
           <div className="flex-1 flex flex-col gap-[8px]">
             <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Standard</label>
             <select value={standard} onChange={(e) => setStandard(e.target.value)} className="p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border font-inherit">
-              <option value="">Select Standard</option>
+              <option value="" disabled hidden>Select Standard</option>
               {standardOptions.map((s) => (
                 <option key={s.value} value={s.value}>{s.label}</option>
               ))}
@@ -85,7 +85,7 @@ export default function AuditChecklistEditPage() {
           <div className="flex-1 flex flex-col gap-[8px]">
             <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Department</label>
             <select value={department} onChange={(e) => setDepartment(e.target.value)} className="p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border font-inherit">
-              <option value="">Select Department</option>
+              <option value="" disabled hidden>Select Department</option>
               {departmentOptions.map((d) => (
                 <option key={d} value={d}>{d}</option>
               ))}

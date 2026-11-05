@@ -5,7 +5,8 @@ import { useProfile } from '../hooks/use_profile';
 import { useEditProfile } from '../hooks/use_edit_profile';
 import { fileUrl } from '../../../shared/utils/file_url';
 import { getPasswordChecks, countPasswordChecks, isPasswordStrong } from '../../../shared/utils/password_policy';
-import { getCurrentRole, ROLES } from '../../../shared/utils/role';
+import { ROLES } from '../../../shared/utils/role';
+import { useRole } from '../../../shared/context/role_context';
 import { MascotAvatar } from './profile_page';
 import ChangePhotoModal from './change_photo_modal';
 
@@ -21,7 +22,7 @@ export default function EditProfilePage() {
     photoError,
   } = useEditProfile();
 
-  const currentRole = getCurrentRole();
+  const { role: currentRole } = useRole();
   const isAdmin = currentRole === ROLES.Admin;
 
   const [fullName, setFullName] = useState('');
@@ -294,7 +295,7 @@ export default function EditProfilePage() {
 
         {/* Remove Photo Confirm Modal */}
         {showRemovePhotoConfirm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-[360px] p-6 text-center">
               <h3 className="text-[17px] font-bold text-[#0F294A] m-0 mb-2">Remove Photo</h3>
               <p className="text-[13.5px] text-slate-500 m-0 mb-6 font-normal">
@@ -636,7 +637,7 @@ export default function EditProfilePage() {
 
       {/* Modal 2: Save Confirmation Modal (Image 4) */}
       {showSaveConfirmModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-[fadeIn_0.15s_ease-out]">
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-[fadeIn_0.15s_ease-out]">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-[360px] p-6 text-center animate-[scaleIn_0.15s_ease-out]">
             {/* Top rounded bar handle */}
             <div className="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-4" />
@@ -670,7 +671,7 @@ export default function EditProfilePage() {
 
       {/* Modal 3: Remove Photo Confirmation Modal */}
       {showRemovePhotoConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-[fadeIn_0.15s_ease-out]">
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-[fadeIn_0.15s_ease-out]">
           <div className="bg-white rounded-2xl shadow-xl w-full max-w-[360px] p-6 text-center animate-[scaleIn_0.15s_ease-out]">
             <h3 className="text-[17px] font-bold text-[#0F294A] m-0 mb-2">Remove Photo</h3>
             <p className="text-[13.5px] text-slate-500 m-0 mb-6 font-normal">

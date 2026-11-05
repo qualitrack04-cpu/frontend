@@ -57,7 +57,7 @@ export default function EditUserModal({ user, onClose, onSuccess }: EditUserModa
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-[500px] max-h-[90vh] overflow-y-auto p-5 sm:p-7 md:p-8 animate-[fadeIn_0.15s_ease-out] relative">
         {/* Close Button */}
         <button
@@ -132,6 +132,9 @@ export default function EditUserModal({ user, onClose, onSuccess }: EditUserModa
             <div>
               <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
                 Role
+                <span className="block font-normal text-[11px] text-slate-400 mt-0.5">
+                  Takes effect after this user signs in again
+                </span>
               </label>
               <div className="relative flex items-center">
                 <select

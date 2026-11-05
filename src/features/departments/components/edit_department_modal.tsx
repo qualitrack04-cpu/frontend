@@ -44,7 +44,7 @@ export default function EditDepartmentModal({ department, onClose, onSuccess }: 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto p-5 sm:p-7 animate-[fadeIn_0.15s_ease-out] relative">
         {/* Close Button */}
         <button

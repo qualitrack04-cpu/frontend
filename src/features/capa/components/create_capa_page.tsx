@@ -66,7 +66,7 @@ export default function CreateCapaPage() {
             )}
             {!loadingOptions && findings.length > 0 && (
               <select value={findingId} onChange={(e) => setFindingId(e.target.value)} className="w-full p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)]">
-                <option value="">Select Finding</option>
+                <option value="" disabled hidden>Select Finding</option>
                 {findings.map((f) => (
                   <option key={f.id} value={f.id}>
                     {f.clauseRef ? `${f.clauseRef} - ${f.title}` : f.title}
@@ -118,7 +118,7 @@ export default function CreateCapaPage() {
             <div className="flex flex-col gap-[8px] mb-[20px]">
               <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">PERSON IN CHARGE</label>
               <select value={picId} onChange={(e) => setPicId(e.target.value)} className="w-full p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)]">
-                <option value="">Select Assignee</option>
+                <option value="" disabled hidden>Select Assignee</option>
                 {pics.map((p) => (
                   <option key={p.id} value={p.id}>{p.fullName}</option>
                 ))}

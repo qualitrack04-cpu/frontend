@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { Pencil, Trash2, TriangleAlert, ClipboardCheck, CheckCircle2 } from 'lucide-react';
 import type { AuditPlan } from '../api/audit_plan_api';
-import { canManageAuditPlans } from '../../../shared/utils/role';
+import { canManageAuditPlansFor } from '../../../shared/utils/role';
+import { useRole } from '../../../shared/context/role_context';
 
 interface AuditCardProps {
   audit: AuditPlan;
@@ -10,6 +11,7 @@ interface AuditCardProps {
 
 export default function AuditCard({ audit, onDelete }: AuditCardProps) {
   const schedule = audit.schedules[0];
+  const { role } = useRole();
   const isPriority = audit.priority === 'Priority';
   const isFinished = !!schedule?.isFinished;
 
@@ -21,7 +23,7 @@ export default function AuditCard({ audit, onDelete }: AuditCardProps) {
   return (
     <div className={`flex bg-white border border-[#e2e8f0] rounded-[12px] overflow-hidden min-w-0 min-h-[185px] ${isFinished ? 'opacity-70 grayscale-[0.5] bg-[#f8fafc]' : ''}`}>
       <div
-        className={`shrink-0 w-[110px] flex flex-col items-center justify-center p-[20px_12px] text-center ${
+        className={`shrink-0 w-[84px] sm:w-[110px] flex flex-col items-center justify-center p-[20px_8px] sm:p-[20px_12px] text-center ${
           isFinished ? 'bg-[#e2e8f0] text-[#64748b]' : isPriority ? 'bg-[#0f2c52] text-white' : 'bg-[#f1f5f9] text-[#0f2c52]'
         }`}
       >
@@ -40,10 +42,10 @@ export default function AuditCard({ audit, onDelete }: AuditCardProps) {
         )}
       </div>
 
-      <div className="flex-1 min-w-0 p-[20px_24px] flex flex-col gap-[12px]">
+      <div className="flex-1 min-w-0 p-4 sm:p-[20px_24px] flex flex-col gap-[12px]">
         <div className="flex justify-between items-start gap-[12px] min-h-[48px]">
           <h3 className={`flex-1 min-w-0 text-[19px] m-0 leading-[1.3] line-clamp-2 break-words [overflow-wrap:anywhere] [word-break:break-word] ${isFinished ? 'text-[#64748b]' : 'text-[#0f2c52]'}`}>{audit.title}</h3>
-          {canManageAuditPlans() && !isFinished && (
+          {canManageAuditPlansFor(role) && !isFinished && (
             <div className="flex gap-[6px] shrink-0">
               <Link to={`/audits/${audit.id}/edit`} className="w-[32px] h-[32px] rounded-[8px] border-none bg-transparent text-[#64748b] flex items-center justify-center hover:bg-[#f1f5f9]" aria-label="Edit">
                 <Pencil size={16} />
@@ -74,11 +76,11 @@ export default function AuditCard({ audit, onDelete }: AuditCardProps) {
 
         {schedule ? (
           isFinished ? (
-            <span className="inline-flex items-center gap-[8px] text-[14px] font-semibold px-[18px] py-[10px] rounded-[8px] w-fit mt-auto self-end text-white bg-[#94a3b8] cursor-not-allowed opacity-80">
+            <span className="inline-flex items-center gap-[8px] text-[14px] font-semibold px-[18px] py-[10px] rounded-[8px] w-fit max-w-full whitespace-nowrap mt-auto self-end text-white bg-[#94a3b8] cursor-not-allowed opacity-80">
               <ClipboardCheck size={16} /> Audit Checklist
             </span>
           ) : (
-            <Link to={`/audits/${audit.id}/schedule/${schedule.id}/checklist`} className="inline-flex items-center gap-[8px] text-[14px] font-semibold px-[18px] py-[10px] rounded-[8px] no-underline w-fit mt-auto self-end text-white bg-[#0f2c52] hover:bg-[#0c2444]">
+            <Link to={`/audits/${audit.id}/schedule/${schedule.id}/checklist`} className="inline-flex items-center gap-[8px] text-[14px] font-semibold px-[18px] py-[10px] rounded-[8px] no-underline w-fit max-w-full whitespace-nowrap mt-auto self-end text-white bg-[#0f2c52] hover:bg-[#0c2444]">
               <ClipboardCheck size={16} /> Audit Checklist
             </Link>
           )

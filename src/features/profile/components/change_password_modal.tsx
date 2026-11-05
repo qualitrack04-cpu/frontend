@@ -244,7 +244,7 @@ export default function ChangePasswordModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden bg-black/40 backdrop-blur-xs p-4 sm:p-6 flex items-center justify-center min-h-screen animate-[fadeIn_0.15s_ease-out]">
+    <div className="fixed inset-0 z-[1000] overflow-y-auto overflow-x-hidden bg-black/40 backdrop-blur-xs p-4 sm:p-6 flex items-center justify-center min-h-screen animate-[fadeIn_0.15s_ease-out]">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-[440px] my-auto overflow-hidden p-6 sm:p-8 relative box-border">
         {step === 'success' ? (
           /* ============================================================

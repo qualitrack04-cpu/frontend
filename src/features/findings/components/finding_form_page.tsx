@@ -232,7 +232,7 @@ export default function FindingFormPage({ mode }: Props) {
                 onChange={(e) => setCategory(e.target.value as FindingCategory | '')}
                 aria-invalid={submitted && !!errors.category}
               >
-                <option value="">Select Category...</option>
+                <option value="" disabled hidden>Select Category...</option>
                 {categoryOptions.map((o) => (
                   <option key={o.value} value={o.value}>
                     {o.label}
@@ -252,7 +252,7 @@ export default function FindingFormPage({ mode }: Props) {
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
               >
-                <option value="">Select Department...</option>
+                <option value="" disabled hidden>Select Department...</option>
                 {deptOptions.map((d) => (
                   <option key={d} value={d}>
                     {d}

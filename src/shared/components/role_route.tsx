@@ -1,7 +1,8 @@
 import { Navigate, Outlet } from 'react-router-dom';
-import { hasRole } from '../utils/role';
+import { useRole } from '../context/role_context';
 
 // Hanya role di `allow` yang boleh membuka route ini, selain itu dialihkan ke `redirectTo`
 export default function RoleRoute({ allow, redirectTo = '/dashboard' }: { allow: string[]; redirectTo?: string }) {
-  return hasRole(...allow) ? <Outlet /> : <Navigate to={redirectTo} replace />;
+  const { role } = useRole();
+  return allow.includes(role) ? <Outlet /> : <Navigate to={redirectTo} replace />;
 }

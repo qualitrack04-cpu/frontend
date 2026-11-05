@@ -44,7 +44,7 @@ export default function AddSpcUnitModal({ onClose, onSuccess }: AddSpcUnitModalP
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 overflow-y-auto">
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 overflow-y-auto">
       <div className="bg-white rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.12)] w-full max-w-[480px] p-7 sm:p-8 my-auto overflow-hidden animate-[fadeIn_0.15s_ease-out]">
         {/* Modal Header */}
         <div className="mb-6">
