@@ -24,7 +24,19 @@ export default function AuditReportPreviewPage() {
       const result = await generatePdfReport(session.id);
       setPdfResult(result);
     } catch (err: any) {
-      setPdfError(err.response?.data?.message ?? 'Failed to generate PDF');
+      // Fallback: jika endpoint /link gagal (misal storage S3 bermasalah di cloud), coba ambil direct blob stream
+      try {
+        const blob = await downloadPdfReport(session.id);
+        const blobUrl = URL.createObjectURL(blob);
+        setPdfResult({ pdfUrl: blobUrl });
+      } catch (directErr: any) {
+        const msg =
+          err.response?.data?.message ||
+          directErr.response?.data?.message ||
+          err.response?.data?.detail ||
+          'Failed to generate PDF. Please try direct download or contact administrator.';
+        setPdfError(msg);
+      }
     } finally {
       setGenerating(false);
     }
@@ -35,6 +47,15 @@ export default function AuditReportPreviewPage() {
     setDownloading(true);
     setPdfError(null);
     try {
+      if (pdfResult?.pdfUrl && pdfResult.pdfUrl.startsWith('blob:')) {
+        const link = document.createElement('a');
+        link.href = pdfResult.pdfUrl;
+        link.download = `audit-report-${session.id.slice(0, 8)}.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        return;
+      }
       const blob = await downloadPdfReport(session.id);
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -44,8 +65,8 @@ export default function AuditReportPreviewPage() {
       link.click();
       link.remove();
       URL.revokeObjectURL(url);
-    } catch {
-      setPdfError('Failed to download PDF');
+    } catch (err: any) {
+      setPdfError(err.response?.data?.message ?? 'Failed to download PDF');
     } finally {
       setDownloading(false);
     }

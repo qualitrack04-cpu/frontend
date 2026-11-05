@@ -4,6 +4,7 @@ import { User, Mail, Lock, Eye, EyeOff, Briefcase } from 'lucide-react';
 import { register } from '../api/auth_api';
 import AuthBrandPanel from './auth_brand_panel';
 import splashLogo from '../../../assets/splash.png';
+import { isPasswordStrong } from '../../../shared/utils/password_policy';
 
 const ROLE_OPTIONS = [
   { value: 'AuditorInternal', label: 'Auditor Internal' },
@@ -38,6 +39,10 @@ export default function SignUpPage() {
     }
     if (password !== confirmPassword) {
       setError('Password and confirm password do not match.');
+      return;
+    }
+    if (!isPasswordStrong(password)) {
+      setError('Password must be at least 8 characters and contain uppercase, lowercase, number, and special character');
       return;
     }
     setLoading(true);

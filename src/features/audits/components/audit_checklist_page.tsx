@@ -171,7 +171,7 @@ export default function AuditChecklistPage() {
           )}
           {!summaryExists && completionPercent === 100 && items.length > 0 && !showSummaryModal && (
             <button className="bg-white text-[#0f2c52] border-[2px] border-[#0f2c52] p-[14px] rounded-[8px] text-[15px] font-bold w-full cursor-pointer transition-all duration-200 text-center hover:bg-[#f8fafc]" onClick={() => setShowSummaryModal(true)}>
-              Isi Audit Summary
+              Fill Audit Summary
             </button>
           )}
 

@@ -7,6 +7,7 @@ import {
   ShieldCheck 
 } from 'lucide-react';
 import TablePagination from '../../../shared/components/table_pagination';
+import { formatUpdatedDate as formatChangeDate } from '../../../shared/utils/date_utils';
 import { useUserOverview } from '../hooks/use_users_activity';
 
 export default function UserOverviewPage() {
@@ -25,32 +26,7 @@ export default function UserOverviewPage() {
     return activities.slice(start, start + pageSize);
   }, [activities, currentPage, pageSize]);
 
-  const formatChangeDate = (dateStr: string) => {
-    if (!dateStr) return '-';
-    try {
-      const d = new Date(dateStr);
-      const now = new Date();
-      const isToday =
-        d.getDate() === now.getDate() &&
-        d.getMonth() === now.getMonth() &&
-        d.getFullYear() === now.getFullYear();
 
-      if (isToday) {
-        const hours = String(d.getHours()).padStart(2, '0');
-        const minutes = String(d.getMinutes()).padStart(2, '0');
-        return `Today, ${hours}:${minutes}`;
-      }
-
-      const day = d.getDate();
-      const months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-      ];
-      return `${day} ${months[d.getMonth()]} ${d.getFullYear()}`;
-    } catch {
-      return dateStr;
-    }
-  };
 
   if (loading && !overview) {
     return <div className="p-8 text-center text-slate-400">Loading user overview...</div>;

@@ -132,7 +132,7 @@ export default function AddTemplateModal({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">
-                  ISO Standart <span className="text-red-500">*</span>
+                  ISO Standard <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={isoStandardId}
@@ -175,7 +175,7 @@ export default function AddTemplateModal({
               </label>
               <input
                 type="text"
-                placeholder="e.g. Verifikasi prosedur penerimaan barang sesuai SOP"
+                placeholder="e.g. Verify goods receiving procedure according to SOP"
                 value={firstQuestion}
                 onChange={(e) => setFirstQuestion(e.target.value)}
                 className="w-full bg-slate-50 border border-slate-200 rounded-[10px] px-3.5 py-2.5 text-[14px] outline-none focus:border-blue-500 focus:bg-white transition-colors text-slate-800"

@@ -37,7 +37,7 @@ export function useCreateCapa() {
         if (findingsResult.status === 'fulfilled') {
           setFindings(findingsResult.value);
           if (findingsResult.value.length === 0) {
-            setFindingsError('Tidak ada finding tersedia');
+            setFindingsError('No findings available');
           }
         } else {
           setFindingsError(
@@ -60,7 +60,7 @@ export function useCreateCapa() {
     getFindingsWithoutCapa()
       .then((result: Finding[]) => {
         setFindings(result);
-        if (result.length === 0) setFindingsError('Tidak ada finding tersedia');
+        if (result.length === 0) setFindingsError('No findings available');
       })
       .catch((err: any) => {
         setFindingsError(err.response?.data?.message ?? 'Failed to load findings.');

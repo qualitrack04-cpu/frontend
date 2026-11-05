@@ -20,11 +20,14 @@ export default function AuditChecklistEditPage() {
   } = useEditChecklist(checklistId!);
 
 
-  const [departments, setDepartments] = useState<string[]>([]);
+  const [departments, setDepartments] = useState<string[]>(['Production', 'Packaging', 'Warehouse', 'QC']);
   useEffect(() => {
     getDepartments()
-      .then((data) => setDepartments(data.filter((d) => d.isActive).map((d) => d.name)))
-      .catch(() => setDepartments([]));
+      .then((data) => {
+        const activeDepts = data.filter((d) => d.isActive).map((d) => d.name);
+        if (activeDepts.length > 0) setDepartments(activeDepts);
+      })
+      .catch(() => {});
   }, []);
 
   const standardOptions = STANDARDS.some((s) => s.value === standard) || !standard
@@ -49,7 +52,7 @@ export default function AuditChecklistEditPage() {
       <button className="inline-flex items-center gap-[8px] bg-transparent border-none text-[#64748b] text-[14px] font-semibold cursor-pointer p-0 mb-[16px] hover:text-[#1e293b]" onClick={() => navigate(-1)}>← Back</button>
       <h1 className="text-2xl sm:text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Edit Audit Checklist</h1>
 
-      <form onSubmit={handleSubmit} className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] max-w-[760px]">
+      <form onSubmit={handleSubmit} className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] w-full max-w-full">
         <div className="text-[14px] font-bold text-[#0f2c52] uppercase tracking-[0.5px] m-0 mb-[16px]">Checklist Details</div>
         <hr className="border-t border-[#e2e8f0] m-0 mb-[24px]" />
 
@@ -112,7 +115,7 @@ export default function AuditChecklistEditPage() {
                       className="bg-white border border-[#e2e8f0] text-[#64748b] w-[32px] h-[32px] rounded-[6px] flex items-center justify-center cursor-pointer transition-all duration-200 hover:not(:disabled):border-[#94a3b8] hover:not(:disabled):text-[#0f2c52] disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-[#f1f5f9]"
                       onClick={() => moveItem(item.key, -1)}
                       disabled={index === 0}
-                      aria-label="Naikkan item"
+                      aria-label="Move item up"
                     >
                       <ArrowUp size={16} />
                     </button>
@@ -121,7 +124,7 @@ export default function AuditChecklistEditPage() {
                       className="bg-white border border-[#e2e8f0] text-[#64748b] w-[32px] h-[32px] rounded-[6px] flex items-center justify-center cursor-pointer transition-all duration-200 hover:not(:disabled):border-[#94a3b8] hover:not(:disabled):text-[#0f2c52] disabled:opacity-40 disabled:cursor-not-allowed disabled:bg-[#f1f5f9]"
                       onClick={() => moveItem(item.key, 1)}
                       disabled={index === items.length - 1}
-                      aria-label="Turunkan item"
+                      aria-label="Move item down"
                     >
                       <ArrowDown size={16} />
                     </button>

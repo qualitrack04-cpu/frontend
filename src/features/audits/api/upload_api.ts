@@ -5,7 +5,7 @@ export async function uploadAuditResponseEvidence(responseId: string, file: File
   formData.append('file', file);
 
   const response = await axios_instance.post(`/uploads/audit-response/${responseId}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
+    headers: { 'Content-Type': undefined },
   });
   return response.data;
 }

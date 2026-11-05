@@ -31,7 +31,7 @@ const baseMenuItems: { label: string; path: string; icon: LucideIcon }[] = [
 const adminMenuItems: { label: string; path: string; icon: LucideIcon }[] = [
   { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
   { label: 'Users', path: '/users', icon: Users },
-  { label: 'ISO Standarts', path: '/iso-standards', icon: ShieldCheck },
+  { label: 'ISO Standards', path: '/iso-standards', icon: ShieldCheck },
   { label: 'Departments', path: '/departments', icon: Building2 },
   { label: 'Checklists Templates', path: '/templates', icon: CheckSquare },
   { label: 'SPC Units', path: '/spc-units', icon: Activity },

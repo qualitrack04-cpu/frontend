@@ -149,7 +149,7 @@ export default function AddCapaStatusModal({
               disabled={loading}
               className="px-4 py-2 rounded-lg bg-[#2563EB] hover:bg-blue-700 text-white font-medium text-[13px] transition-colors shadow-2xs border-none cursor-pointer disabled:opacity-50"
             >
-              {loading ? 'Adding...' : 'Add Category'}
+              {loading ? 'Adding...' : 'Add Status'}
             </button>
           </div>
         </form>

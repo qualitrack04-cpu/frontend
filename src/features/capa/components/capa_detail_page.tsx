@@ -2,10 +2,11 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Calendar, ClipboardList } from 'lucide-react';
 import { useCapaDetail } from '../hooks/use_capa_detail';
 import CapaStatusBadge from './capa_status_badge';
+import { parseUtcDate } from '../../../shared/utils/date_utils';
 
 function formatDate(iso?: string | null) {
   if (!iso) return '-';
-  const date = new Date(iso);
+  const date = parseUtcDate(iso) ?? new Date(iso);
   if (Number.isNaN(date.getTime())) return '-';
   return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
@@ -46,7 +47,7 @@ export default function CapaDetailPage() {
               <span className="block text-[14px] font-bold text-[#0f2c52] m-0 mb-[16px] uppercase tracking-[0.5px]">FINDINGS</span>
               <Link to={`/findings/${capa.findingId}`} className="inline-flex items-center gap-[8px] bg-[#f1f5f9] text-[#0f2c52] p-[8px_16px] rounded-[8px] text-[14px] font-semibold no-underline transition-all duration-200 border border-transparent hover:bg-[#e2e8f0] hover:border-[#cbd5e1]">
                 <ClipboardList size={16} />
-                {capa.findingTitle || 'Finding tidak diketahui'}
+                {capa.findingTitle || 'Unknown Finding'}
               </Link>
             </section>
 

@@ -12,6 +12,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { fileUrl } from '../../../shared/utils/file_url';
+import { formatUpdatedDate } from '../../../shared/utils/date_utils';
 import EditUserModal from './edit_user_modal';
 import AddUserModal from './add_user_modal';
 import DeleteUserModal from './delete_user_modal';
@@ -101,33 +102,6 @@ export default function UsersPage() {
     return filteredUsers.slice(start, start + pageSize);
   }, [filteredUsers, currentPage, pageSize]);
 
-  // Format updated date (e.g., "Today, 14:30" or "22 December 2026")
-  const formatUpdatedDate = (dateStr: string) => {
-    if (!dateStr) return '-';
-    try {
-      const d = new Date(dateStr);
-      const now = new Date();
-      const isToday =
-        d.getDate() === now.getDate() &&
-        d.getMonth() === now.getMonth() &&
-        d.getFullYear() === now.getFullYear();
-
-      if (isToday) {
-        const hours = String(d.getHours()).padStart(2, '0');
-        const minutes = String(d.getMinutes()).padStart(2, '0');
-        return `Today, ${hours}:${minutes}`;
-      }
-
-      const day = d.getDate();
-      const months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-      ];
-      return `${day} ${months[d.getMonth()]} ${d.getFullYear()}`;
-    } catch {
-      return dateStr;
-    }
-  };
 
   const getRoleBadge = (role: string) => {
     switch (role) {

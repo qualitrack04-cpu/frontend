@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { CreditCard, RefreshCw, CheckCircle2, PauseCircle, Trash2, Settings } from 'lucide-react';
 import type { AdminRecentChange } from '../api/admin_api';
+import { formatUpdatedDate as formatRelativeTime } from '../../../shared/utils/date_utils';
 
 interface AdminRecentChangesProps {
   changes: AdminRecentChange[];
@@ -67,32 +68,6 @@ function getIconAndColor(change: AdminRecentChange) {
   return { icon: Settings, color: 'bg-slate-100 text-slate-500' };
 }
 
-function formatRelativeTime(dateString: string) {
-  if (!dateString) return '-';
-  try {
-    const d = new Date(dateString);
-    const now = new Date();
-    const isToday =
-      d.getDate() === now.getDate() &&
-      d.getMonth() === now.getMonth() &&
-      d.getFullYear() === now.getFullYear();
-
-    if (isToday) {
-      const hours = String(d.getHours()).padStart(2, '0');
-      const minutes = String(d.getMinutes()).padStart(2, '0');
-      return `Today, ${hours}:${minutes}`;
-    }
-
-    const day = d.getDate();
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    return `${day} ${months[d.getMonth()]} ${d.getFullYear()}`;
-  } catch {
-    return dateString;
-  }
-}
 
 export default function AdminRecentChanges({ changes }: AdminRecentChangesProps) {
   const effectiveChanges = changes && changes.length > 0 ? changes : DEFAULT_CHANGES;

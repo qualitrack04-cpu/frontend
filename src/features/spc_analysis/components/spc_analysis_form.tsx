@@ -41,12 +41,19 @@ export default function SpcAnalysisForm({ onResult }: Props) {
           setFormData((prev) => ({ ...prev, unit: data[0].symbol }));
         }
       })
-      .catch((err) => console.error("Gagal memuat units", err))
+      .catch((err) => console.error("Failed to load units", err))
       .finally(() => setLoadingUnits(false));
   }, []);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
+    if (selectedFile && selectedFile.size > 10 * 1024 * 1024) {
+      setError('File size must not exceed 10 MB.');
+      e.target.value = '';
+      setFormData((prev) => ({ ...prev, file: null }));
+      return;
+    }
+    setError(null);
     setFormData((prev) => ({ ...prev, file: selectedFile }));
   };
   

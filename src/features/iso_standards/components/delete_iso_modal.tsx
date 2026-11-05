@@ -35,7 +35,7 @@ export default function DeleteIsoModal({ iso, onClose, onSuccess }: DeleteIsoMod
             <div className="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center">
               <Trash2 size={18} />
             </div>
-            <h2 className="text-[19px] font-bold text-[#0f2c52] m-0">Deactivate Standart</h2>
+            <h2 className="text-[19px] font-bold text-[#0f2c52] m-0">Deactivate Standard</h2>
           </div>
           <button 
             onClick={onClose} 
@@ -81,7 +81,7 @@ export default function DeleteIsoModal({ iso, onClose, onSuccess }: DeleteIsoMod
             disabled={loading}
             className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-red-600 hover:bg-red-700 border-none cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
           >
-            {loading ? 'Processing...' : 'Deactivate Standart'}
+            {loading ? 'Processing...' : 'Deactivate Standard'}
           </button>
         </div>
 

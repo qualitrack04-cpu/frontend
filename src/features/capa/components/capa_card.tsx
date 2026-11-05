@@ -2,10 +2,11 @@ import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { type Capa, type CapaStatus } from '../api/capa_api';
 import CapaStatusBadge from './capa_status_badge';
+import { parseUtcDate } from '../../../shared/utils/date_utils';
 
 function formatDate(iso?: string | null) {
   if (!iso) return '-';
-  const date = new Date(iso);
+  const date = parseUtcDate(iso) ?? new Date(iso);
   if (Number.isNaN(date.getTime())) return '-';
   return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
 }
@@ -27,8 +28,8 @@ interface CapaCardProps {
 }
 
 export default function CapaCard({ capa, onStatusChange, updatingStatus }: CapaCardProps) {
-  const statusColor = capa.status.toLowerCase();
-  const borderColor = statusColor === 'open' ? 'border-red-500' : statusColor === 'in_progress' || statusColor === 'inprogress' ? 'border-blue-400' : 'border-emerald-600';
+  const statusColor = (capa.status || 'Open').toLowerCase();
+  const borderColor = statusColor === 'open' ? 'border-red-500' : statusColor === 'in_progress' || statusColor === 'inprogress' ? 'border-orange-500' : 'border-emerald-600';
 
   return (
     <article className={`bg-white border-2 rounded-[12px] p-6 flex flex-col transition-all duration-200 relative overflow-hidden ${borderColor}`}>

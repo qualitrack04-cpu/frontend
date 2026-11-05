@@ -24,12 +24,43 @@ import AddCategoryModal from './add_category_modal';
 import EditCategoryModal from './edit_category_modal';
 import AddCapaStatusModal from './add_capa_status_modal';
 import EditCapaStatusModal from './edit_capa_status_modal';
+import { parseUtcDate } from '../../../shared/utils/date_utils';
 import {
   getCategoryColor,
   getStatusColor,
   getCategoryActive,
   getStatusActive,
 } from '../utils/color_storage';
+
+function getDisplayCategoryName(name: string): string {
+  const n = (name || '').trim().toLowerCase();
+  if (n === 'observation') return 'OFI';
+  if (n === 'major') return 'Major NC';
+  if (n === 'minor') return 'Minor NC';
+  return name;
+}
+
+function getDisplayStatusName(name: string): string {
+  const n = (name || '').trim().toLowerCase();
+  if (n === 'closed') return 'Done';
+  return name;
+}
+
+function getSyncedCategoryColor(cat: FindingCategoryItem): string {
+  const n = (cat.name || '').trim().toLowerCase();
+  if (n.includes('major')) return '#EF4444'; // Red
+  if (n.includes('minor')) return '#F59E0B'; // Amber
+  if (n.includes('ofi') || n.includes('observation')) return '#3B82F6'; // Blue
+  return getCategoryColor(cat.id, cat.name);
+}
+
+function getSyncedStatusColor(st: CapaStatusItem): string {
+  const n = (st.name || '').trim().toLowerCase();
+  if (n === 'open') return '#EF4444'; // Red
+  if (n === 'in progress' || n === 'inprogress') return '#F59E0B'; // Orange
+  if (n === 'closed' || n === 'done') return '#10B981'; // Green
+  return getStatusColor(st.id, st.name);
+}
 
 const TIMEZONE_OPTIONS = [
   { value: 'WIB', label: 'Asia/Jakarta (UTC+07:00)' },
@@ -46,8 +77,8 @@ const DATE_FORMAT_OPTIONS = [
 
 function formatUpdatedDate(dateStr?: string): string {
   if (!dateStr) return 'Today, 14:30';
-  const date = new Date(dateStr);
-  if (isNaN(date.getTime())) return 'Today, 14:30';
+  const date = parseUtcDate(dateStr);
+  if (!date || isNaN(date.getTime())) return 'Today, 14:30';
 
   const now = new Date();
   const isToday =
@@ -124,19 +155,9 @@ export default function SystemConfigurationPage() {
       if (!data || data.length === 0) {
         setCategories([
           {
-            id: '1',
-            name: 'Conform',
-            description: 'Assigned & awaiting root-cause analysis',
-            severity: 3,
-            requiresImmediateAction: false,
-            isActive: true,
-            usageCount: 0,
-            createdAt: new Date().toISOString(),
-          },
-          {
-            id: '2',
-            name: 'Major',
-            description: 'Assigned & awaiting root-cause analysis',
+            id: '22222222-2222-2222-2222-222222222222',
+            name: 'Major NC',
+            description: 'Major Non-Conformance — requires immediate corrective action',
             severity: 1,
             requiresImmediateAction: true,
             isActive: true,
@@ -144,9 +165,9 @@ export default function SystemConfigurationPage() {
             createdAt: new Date().toISOString(),
           },
           {
-            id: '3',
-            name: 'Minor',
-            description: 'Assigned & awaiting root-cause analysis',
+            id: '11111111-1111-1111-1111-111111111111',
+            name: 'Minor NC',
+            description: 'Minor Non-Conformance — requires corrective action',
             severity: 2,
             requiresImmediateAction: false,
             isActive: true,
@@ -154,10 +175,10 @@ export default function SystemConfigurationPage() {
             createdAt: new Date().toISOString(),
           },
           {
-            id: '4',
-            name: 'Observation',
-            description: 'Assigned & awaiting root-cause analysis',
-            severity: 4,
+            id: '33333333-3333-3333-3333-333333333333',
+            name: 'OFI',
+            description: 'Opportunity for Improvement — no immediate action required',
+            severity: 3,
             requiresImmediateAction: false,
             isActive: true,
             usageCount: 0,
@@ -182,9 +203,9 @@ export default function SystemConfigurationPage() {
       if (!data || data.length === 0) {
         setStatuses([
           {
-            id: '1',
+            id: 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa',
             name: 'Open',
-            description: 'Assigned & awaiting root-cause analysis',
+            description: 'CAPA has been assigned and is awaiting action',
             orderIndex: 1,
             isTerminal: false,
             isActive: true,
@@ -192,9 +213,9 @@ export default function SystemConfigurationPage() {
             createdAt: new Date().toISOString(),
           },
           {
-            id: '2',
+            id: 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb',
             name: 'In Progress',
-            description: 'Assigned & awaiting root-cause analysis',
+            description: 'Corrective action is currently being implemented',
             orderIndex: 2,
             isTerminal: false,
             isActive: true,
@@ -202,20 +223,10 @@ export default function SystemConfigurationPage() {
             createdAt: new Date().toISOString(),
           },
           {
-            id: '3',
-            name: 'Pending Review',
-            description: 'Assigned & awaiting root-cause analysis',
-            orderIndex: 3,
-            isTerminal: false,
-            isActive: true,
-            usageCount: 0,
-            createdAt: new Date().toISOString(),
-          },
-          {
-            id: '4',
+            id: 'cccccccc-cccc-cccc-cccc-cccccccccccc',
             name: 'Closed',
-            description: 'Assigned & awaiting root-cause analysis',
-            orderIndex: 4,
+            description: 'CAPA has been completed and verified',
+            orderIndex: 3,
             isTerminal: true,
             isActive: true,
             usageCount: 0,
@@ -457,12 +468,13 @@ export default function SystemConfigurationPage() {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {categories.map((cat) => {
-                const catColor = cat.hexaCode || getCategoryColor(cat.id, cat.name);
+                const catColor = getSyncedCategoryColor(cat);
                 const catActive = getCategoryActive(cat.id, cat.isActive ?? true);
+                const displayName = getDisplayCategoryName(cat.name);
                 return (
                   <tr key={cat.id} className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3.5 px-4 text-[13.5px] font-medium text-slate-800">
-                      {cat.name}
+                      {displayName}
                     </td>
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-2">
@@ -576,12 +588,13 @@ export default function SystemConfigurationPage() {
             </thead>
             <tbody className="divide-y divide-slate-50">
               {statuses.map((st) => {
-                const stColor = st.hexaCode || getStatusColor(st.id, st.name);
+                const stColor = getSyncedStatusColor(st);
                 const stActive = getStatusActive(st.id, st.isActive ?? true);
+                const displayName = getDisplayStatusName(st.name);
                 return (
                   <tr key={st.id} className="hover:bg-slate-50/60 transition-colors">
                     <td className="py-3.5 px-4 text-[13.5px] font-medium text-slate-800">
-                      {st.name}
+                      {displayName}
                     </td>
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-2">
@@ -704,7 +717,7 @@ export default function SystemConfigurationPage() {
             </h3>
             <p className="text-[13.5px] text-slate-500 m-0 mb-6 font-normal leading-relaxed">
               Are you sure you want to delete{' '}
-              <strong className="text-slate-800">{deleteTarget.name}</strong>? Tindakan
+              <strong className="text-slate-800">{deleteTarget.name}</strong>?{' '}
               This action cannot be undone.
             </p>
 

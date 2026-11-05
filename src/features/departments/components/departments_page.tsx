@@ -15,6 +15,7 @@ import { createDepartment, type DepartmentItem } from '../api/departments_api';
 import EditDepartmentModal from './edit_department_modal';
 import DeleteDepartmentModal from './delete_department_modal';
 import TablePagination from '../../../shared/components/table_pagination';
+import { formatUpdatedDate } from '../../../shared/utils/date_utils';
 
 export default function DepartmentsPage() {
   const { departments, loading, error, refetch } = useDepartments();
@@ -101,38 +102,14 @@ export default function DepartmentsPage() {
     };
   };
 
-  const formatUpdatedDate = (dateStr?: string | null) => {
-    if (!dateStr) return '-';
-    try {
-      const d = new Date(dateStr);
-      const now = new Date();
-      const isToday =
-        d.getDate() === now.getDate() &&
-        d.getMonth() === now.getMonth() &&
-        d.getFullYear() === now.getFullYear();
 
-      if (isToday) {
-        const hours = String(d.getHours()).padStart(2, '0');
-        const minutes = String(d.getMinutes()).padStart(2, '0');
-        return `Today, ${hours}:${minutes}`;
-      }
-
-      const day = d.getDate();
-      const months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-      ];
-      return `${day} ${months[d.getMonth()]} ${d.getFullYear()}`;
-    } catch {
-      return dateStr;
-    }
-  };
 
   const preferredOrder = [
-    'quality control & assurance',
     'production',
     'packaging',
-    'warehouse'
+    'warehouse',
+    'qc',
+    'quality control',
   ];
 
   const sortedDepartments = [...departments].sort((a, b) => {

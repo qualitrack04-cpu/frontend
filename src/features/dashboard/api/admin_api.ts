@@ -3,8 +3,9 @@ import api from '../../../shared/api/axios_instance';
 export interface AdminActivity {
   activityType: string;
   description: string;
-  userName: string;
+  userName?: string;
   timestamp: string;
+  relatedId?: string;
 }
 
 export interface AdminRecentChange {

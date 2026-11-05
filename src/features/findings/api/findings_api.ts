@@ -1,8 +1,17 @@
 import axios_instance from '../../../shared/api/axios_instance';
 
-// Enum dari Swagger.
-export type FindingCategory = 'MajorNC' | 'MinorNC' | 'Observation' | 'OFI';
+// Enum dari Swagger & Sistem.
+export type FindingCategory = 'Major NC' | 'Minor NC' | 'OFI' | 'MajorNC' | 'MinorNC' | 'Observation';
 export type FindingStatus = 'Open' | 'InProgress' | 'Closed';
+
+export const FINDING_CATEGORY_IDS: Record<string, string> = {
+  'Major NC': '22222222-2222-2222-2222-222222222222',
+  'MajorNC': '22222222-2222-2222-2222-222222222222',
+  'Minor NC': '11111111-1111-1111-1111-111111111111',
+  'MinorNC': '11111111-1111-1111-1111-111111111111',
+  'OFI': '33333333-3333-3333-3333-333333333333',
+  'Observation': '33333333-3333-3333-3333-333333333333',
+};
 
 // ⚠️ Field selain yang ada di UpdateFindingRequest (id, status, sessionId,
 // createdAt) masih ASUMSI. Cocokkan dengan response GET /api/findings.
@@ -13,6 +22,8 @@ export interface Finding {
   reporterName?: string | null;
   reporterId?: string | null;
   category: FindingCategory;
+  categoryId?: string | null;
+  categoryName?: string | null;
   description?: string | null;
   clauseRef?: string | null;
   status: FindingStatus;
@@ -39,6 +50,7 @@ export interface CreateFindingPayload {
   reporterName?: string;
   reporterId?: string;
   category: FindingCategory;
+  categoryId?: string;
   description?: string;
   clauseRef?: string;
 }
@@ -50,6 +62,7 @@ export interface UpdateFindingPayload {
   reporterName?: string | null;
   reporterId?: string | null;
   category: FindingCategory;
+  categoryId?: string;
   description?: string | null;
   clauseRef?: string | null;
 }
@@ -64,16 +77,18 @@ export interface FindingListParams {
 
 // Label di dropdown form.
 export const categoryOptions: { value: FindingCategory; label: string }[] = [
-  { value: 'MajorNC', label: 'Major NC' },
-  { value: 'MinorNC', label: 'Minor NC' },
+  { value: 'Major NC', label: 'Major NC' },
+  { value: 'Minor NC', label: 'Minor NC' },
   { value: 'OFI', label: 'OFI' },
 ];
 
-// Label badge di kartu list (desain memakai "Observe").
-export const categoryBadgeLabel: Record<FindingCategory, string> = {
+// Label badge di kartu list.
+export const categoryBadgeLabel: Record<string, string> = {
   MajorNC: 'Major NC',
+  'Major NC': 'Major NC',
   MinorNC: 'Minor NC',
-  Observation: 'Observe',
+  'Minor NC': 'Minor NC',
+  Observation: 'OFI',
   OFI: 'OFI',
 };
 
@@ -83,31 +98,54 @@ export const statusLabel: Record<FindingStatus, string> = {
   Closed: 'Closed',
 };
 
-// ⚠️ Dashboard memakai key "QC", desain detail menampilkan "Quality Control".
-// Ganti sesuai nilai department yang dipakai backend.
 export const departmentOptions = ['Production', 'Packaging', 'Warehouse', 'QC'];
+
+export function normalizeFindingCategory(raw?: string | null): FindingCategory {
+  if (!raw) return 'Minor NC';
+  const s = raw.toLowerCase().replace(/[\s_-]/g, '');
+  if (s === 'majornc' || s === 'major') return 'Major NC';
+  if (s === 'observation' || s === 'ofi') return 'OFI';
+  return 'Minor NC';
+}
 
 // GET /api/findings?status=&category=&from=&to=
 export async function getFindings(params: FindingListParams = {}): Promise<Finding[]> {
   const res = await axios_instance.get<Finding[]>('/findings', { params });
-  return res.data;
+  return (res.data || []).map((f: any) => ({
+    ...f,
+    category: normalizeFindingCategory(f.categoryName || f.category),
+  }));
 }
 
 // GET /api/findings/{id}
 export async function getFinding(id: string): Promise<Finding> {
   const res = await axios_instance.get<Finding>(`/findings/${id}`);
-  return res.data;
+  const f = res.data;
+  return {
+    ...f,
+    category: normalizeFindingCategory(f.categoryName || f.category),
+  };
 }
 
 // POST /api/findings
 export async function createFinding(payload: CreateFindingPayload): Promise<Finding> {
-  const res = await axios_instance.post<Finding>('/findings', payload);
+  const catKey = payload.category;
+  const categoryId = payload.categoryId || (catKey ? FINDING_CATEGORY_IDS[catKey] : undefined);
+  const res = await axios_instance.post<Finding>('/findings', {
+    ...payload,
+    categoryId,
+  });
   return res.data;
 }
 
 // PUT /api/findings/{id}
 export async function updateFinding(id: string, payload: UpdateFindingPayload) {
-  const res = await axios_instance.put(`/findings/${id}`, payload);
+  const catKey = payload.category;
+  const categoryId = payload.categoryId || (catKey ? FINDING_CATEGORY_IDS[catKey] : undefined);
+  const res = await axios_instance.put(`/findings/${id}`, {
+    ...payload,
+    categoryId,
+  });
   return res.data;
 }
 
@@ -130,7 +168,7 @@ export async function uploadFindingPhoto(findingId: string, file: File) {
   const form = new FormData();
   form.append('file', file); // ⚠️ cek nama field yang diminta backend
   const res = await axios_instance.post(`/uploads/finding/${findingId}`, form, {
-    headers: { 'Content-Type': 'multipart/form-data' },
+    headers: { 'Content-Type': undefined },
   });
   return res.data;
 }

@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import type { AdminActivity } from '../api/admin_api';
+import { formatUpdatedDate as formatRelativeTime } from '../../../shared/utils/date_utils';
 
 interface AdminUsersActivityProps {
   activities: AdminActivity[];
@@ -53,6 +54,13 @@ function formatRole(activityType: string) {
   return activityType || 'Auditee';
 }
 
+function extractUserName(item: AdminActivity): string {
+  if (item.userName) return item.userName;
+  const match = (item.description || '').match(/oleh\s+(.+)$/i);
+  if (match && match[1]) return match[1].trim();
+  return 'System User';
+}
+
 function getInitials(name: string) {
   if (!name) return '??';
   const parts = name.trim().split(/\s+/);
@@ -67,32 +75,6 @@ function getAvatarBg(roleOrType: string) {
   return 'bg-[#F0FDF4] text-[#16A34A]';
 }
 
-function formatRelativeTime(dateString: string) {
-  if (!dateString) return '-';
-  try {
-    const d = new Date(dateString);
-    const now = new Date();
-    const isToday =
-      d.getDate() === now.getDate() &&
-      d.getMonth() === now.getMonth() &&
-      d.getFullYear() === now.getFullYear();
-
-    if (isToday) {
-      const hours = String(d.getHours()).padStart(2, '0');
-      const minutes = String(d.getMinutes()).padStart(2, '0');
-      return `Today, ${hours}:${minutes}`;
-    }
-
-    const day = d.getDate();
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    return `${day} ${months[d.getMonth()]} ${d.getFullYear()}`;
-  } catch {
-    return dateString;
-  }
-}
 
 export default function AdminUsersActivity({ activities }: AdminUsersActivityProps) {
   const navigate = useNavigate();
@@ -135,20 +117,35 @@ export default function AdminUsersActivity({ activities }: AdminUsersActivityPro
               const displayRole = formatRole(item.activityType);
               const badgeStyle = getRoleBadge(displayRole);
               const avatarStyle = getAvatarBg(displayRole);
+              const displayName = extractUserName(item);
+
+              const handleClickRow = () => {
+                if (item.relatedId) {
+                  if (item.activityType === 'FindingReported') {
+                    navigate(`/findings/${item.relatedId}`);
+                    return;
+                  }
+                  if (item.activityType === 'CapaAction' || item.activityType === 'CapaVerified') {
+                    navigate(`/capa/${item.relatedId}`);
+                    return;
+                  }
+                }
+                navigate('/users-activity');
+              };
 
               return (
                 <tr 
                   key={idx} 
-                  onClick={() => navigate('/user-overview')}
+                  onClick={handleClickRow}
                   className="hover:bg-slate-50/70 transition-colors cursor-pointer group"
                 >
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-[12px] shrink-0 ${avatarStyle}`}>
-                        {getInitials(item.userName)}
+                        {getInitials(displayName)}
                       </div>
                       <span className="text-[14px] font-semibold text-slate-900 group-hover:text-blue-600 transition-colors max-w-[200px] break-words [overflow-wrap:anywhere] [word-break:break-word]">
-                        {item.userName}
+                        {displayName}
                       </span>
                     </div>
                   </td>

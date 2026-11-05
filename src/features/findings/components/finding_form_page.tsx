@@ -62,7 +62,14 @@ export default function FindingFormPage({ mode }: Props) {
   useEffect(() => {
     if (!loaded) return;
     setTitle(loaded.title);
-    setCategory(loaded.category);
+    const rawCat = (loaded as any).categoryName || loaded.category;
+    const normalizedCat = 
+      rawCat === 'Observation' || rawCat === 'OFI' 
+        ? 'OFI' 
+        : (rawCat === 'MajorNC' || rawCat === 'Major NC')
+        ? 'Major NC'
+        : 'Minor NC';
+    setCategory(normalizedCat);
     setDepartment(loaded.department ?? '');
     setDescription(loaded.description ?? '');
     setClauseRef(loaded.clauseRef ?? '');

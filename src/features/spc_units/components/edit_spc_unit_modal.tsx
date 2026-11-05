@@ -123,10 +123,10 @@ export default function EditSpcUnitModal({ unit, onClose, onSuccess }: EditSpcUn
               </div>
             </div>
 
-            {/* Departement Status Toggle Container */}
+            {/* Unit Status Toggle */}
             <div>
               <label className="block text-[14px] font-medium text-[#344054] mb-1.5">
-                Departement Status
+                Unit Status
               </label>
               <div className="border border-[#D0D5DD] rounded-[12px] px-4 py-3 flex items-center justify-between bg-white shadow-[0_1px_2px_rgba(16,24,40,0.05)]">
                 <div className="flex items-center gap-2.5">

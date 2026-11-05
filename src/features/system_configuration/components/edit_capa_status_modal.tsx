@@ -22,7 +22,13 @@ export default function EditCapaStatusModal({
   onSuccess,
 }: EditCapaStatusModalProps) {
   const [name, setName] = useState(status.name);
-  const [color, setColor] = useState(() => status.hexaCode || getStatusColor(status.id, status.name));
+  const [color, setColor] = useState(() => {
+    const n = (status.name || '').toLowerCase();
+    if (n === 'open') return '#EF4444';
+    if (n === 'in progress' || n === 'inprogress') return '#F59E0B';
+    if (n === 'closed' || n === 'done') return '#10B981';
+    return status.hexaCode || getStatusColor(status.id, status.name);
+  });
   const [description, setDescription] = useState(status.description || '');
   const [isActive, setIsActive] = useState(() =>
     getStatusActive(status.id, status.isActive ?? true)

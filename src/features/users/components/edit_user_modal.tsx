@@ -40,12 +40,12 @@ export default function EditUserModal({ user, onClose, onSuccess }: EditUserModa
       if (username !== user.fullName || email !== user.email) {
         await updateUser(user.id, { fullName: username.trim(), email: email.trim() });
       }
-      if (role !== user.role) {
-        await updateUserRole(user.id, role);
-      }
       const newStatus = isActive ? 'Active' : 'Inactive';
       if (newStatus !== user.status) {
         await updateUserStatus(user.id, newStatus);
+      }
+      if (role !== user.role) {
+        await updateUserRole(user.id, role);
       }
 
       onSuccess();

@@ -18,6 +18,7 @@ import AddIsoModal from './add_iso_modal';
 import EditIsoModal from './edit_iso_modal';
 import DeleteIsoModal from './delete_iso_modal';
 import TablePagination from '../../../shared/components/table_pagination';
+import { formatUpdatedDate } from '../../../shared/utils/date_utils';
 import type { IsoStandard } from '../api/iso_standards_api';
 
 interface IconConfig {
@@ -64,32 +65,7 @@ export default function IsoStandardsPage() {
     return { icon: ShieldCheck, bg: 'bg-[#e0f2fe]', text: 'text-[#2563eb]' };
   };
 
-  const formatUpdatedDate = (dateStr: string) => {
-    if (!dateStr) return '-';
-    try {
-      const d = new Date(dateStr);
-      const now = new Date();
-      const isToday =
-        d.getDate() === now.getDate() &&
-        d.getMonth() === now.getMonth() &&
-        d.getFullYear() === now.getFullYear();
 
-      if (isToday) {
-        const hours = String(d.getHours()).padStart(2, '0');
-        const minutes = String(d.getMinutes()).padStart(2, '0');
-        return `Today, ${hours}:${minutes}`;
-      }
-
-      const day = d.getDate();
-      const months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-      ];
-      return `${day} ${months[d.getMonth()]} ${d.getFullYear()}`;
-    } catch {
-      return dateStr;
-    }
-  };
 
   const standards = data?.data || [];
   const totalResults = standards.length;
@@ -104,7 +80,7 @@ export default function IsoStandardsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-[28px] md:text-[32px] font-bold text-[#0F294A] tracking-tight m-0 mb-1.5">
-            ISO Standarts Management
+            ISO Standards Management
           </h1>
           <p className="text-slate-500 text-[14.5px] m-0">
             Manage ISO standards used in the QualiTrack audit process.
@@ -116,7 +92,7 @@ export default function IsoStandardsPage() {
           className="inline-flex items-center justify-center gap-2 bg-[#2563EB] hover:bg-blue-700 text-white font-medium px-4 py-2.5 rounded-lg text-[14px] transition-all shadow-sm active:scale-[0.98] cursor-pointer border-none"
         >
           <Plus size={18} strokeWidth={2.5} />
-          <span>Add Standart</span>
+          <span>Add Standard</span>
         </button>
       </div>
 
@@ -134,7 +110,7 @@ export default function IsoStandardsPage() {
             <thead>
               <tr className="border-b border-slate-100">
                 <th className="px-6 py-4 text-[12px] font-bold text-slate-700 uppercase tracking-wider">
-                  STANDART CODE & NAME
+                  STANDARD CODE & NAME
                 </th>
                 <th className="px-6 py-4 text-[12px] font-bold text-slate-700 uppercase tracking-wider">
                   STATUS
@@ -173,7 +149,7 @@ export default function IsoStandardsPage() {
                     key={item.id}
                     className="border-b border-slate-100/80 hover:bg-slate-50/70 transition-colors"
                   >
-                    {/* STANDART CODE & NAME Column */}
+                    {/* STANDARD CODE & NAME Column */}
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3.5">
                         <div

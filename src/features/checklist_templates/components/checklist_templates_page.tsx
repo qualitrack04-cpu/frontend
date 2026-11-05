@@ -16,6 +16,7 @@ import CreateChecklistPage from './create_checklist_page';
 import EditChecklistPage from './edit_checklist_page';
 import DeleteTemplateModal from './delete_template_modal';
 import TablePagination from '../../../shared/components/table_pagination';
+import { formatUpdatedDate } from '../../../shared/utils/date_utils';
 import type { ChecklistTemplateItem } from '../api/checklist_templates_api';
 
 export default function ChecklistTemplatesPage() {
@@ -379,32 +380,7 @@ export default function ChecklistTemplatesPage() {
     return filteredTemplates.slice(start, start + pageSize);
   }, [filteredTemplates, currentPage, pageSize]);
 
-  const formatUpdatedDate = (dateStr: string) => {
-    if (!dateStr) return '-';
-    try {
-      const d = new Date(dateStr);
-      const now = new Date();
-      const isToday =
-        d.getDate() === now.getDate() &&
-        d.getMonth() === now.getMonth() &&
-        d.getFullYear() === now.getFullYear();
 
-      if (isToday) {
-        const hours = String(d.getHours()).padStart(2, '0');
-        const minutes = String(d.getMinutes()).padStart(2, '0');
-        return `Today, ${hours}:${minutes}`;
-      }
-
-      const day = d.getDate();
-      const months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-      ];
-      return `${day} ${months[d.getMonth()]} ${d.getFullYear()}`;
-    } catch {
-      return dateStr;
-    }
-  };
 
   const handleResetFilters = () => {
     setSearchTerm('');
@@ -484,7 +460,7 @@ export default function ChecklistTemplatesPage() {
             />
           </div>
 
-          {/* Select ISO Standart Dropdown */}
+          {/* Select ISO Standard Dropdown */}
           <div className="relative shrink-0" ref={isoDropdownRef}>
             <button
               type="button"
@@ -493,7 +469,7 @@ export default function ChecklistTemplatesPage() {
             >
               <SlidersHorizontal size={16} className="text-slate-600" />
               <span className="font-normal text-slate-700">
-                {selectedStandard || 'Select ISO Standart'}
+                {selectedStandard || 'Select ISO Standard'}
               </span>
               <ChevronDown size={15} className={`text-slate-400 transition-transform ${isIsoDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -511,7 +487,7 @@ export default function ChecklistTemplatesPage() {
                     selectedStandard === '' ? 'bg-blue-50 text-blue-600 font-semibold' : 'text-slate-700 hover:bg-slate-50'
                   }`}
                 >
-                  <span>All ISO Standarts</span>
+                  <span>All ISO Standards</span>
                   {selectedStandard === '' && <Check size={14} className="text-blue-600" />}
                 </button>
                 {standardOptions.map((iso) => {
@@ -567,7 +543,7 @@ export default function ChecklistTemplatesPage() {
                   TEMPLATE NAME
                 </th>
                 <th className="px-6 py-4 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                  ISO STANDART
+                  ISO STANDARD
                 </th>
                 <th className="px-6 py-4 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                   DEPARTMENT
@@ -613,7 +589,7 @@ export default function ChecklistTemplatesPage() {
                       </span>
                     </td>
 
-                    {/* ISO STANDART with colored dot */}
+                    {/* ISO STANDARD with colored dot */}
                     <td className="px-6 py-4">
                       <span className="inline-flex items-center gap-2 text-[13px] font-normal text-slate-700">
                         <span className={`w-2 h-2 rounded-full ${dotColor}`}></span>

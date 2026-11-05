@@ -60,10 +60,10 @@ export async function updateUser(id: string, data: { fullName: string; email: st
 
 export async function updateUserRole(id: string, role: string): Promise<void> {
   try {
-    await api.patch(`/users/${id}/role`, { role });
+    await api.patch(`/admin/users/${id}/role`, { role });
   } catch (err: any) {
     if (err.response?.status === 404) {
-      await api.patch(`/admin/users/${id}/role`, { role });
+      await api.patch(`/users/${id}/role`, { role });
       return;
     }
     throw err;
@@ -72,10 +72,10 @@ export async function updateUserRole(id: string, role: string): Promise<void> {
 
 export async function updateUserStatus(id: string, status: string): Promise<void> {
   try {
-    await api.patch(`/users/${id}/status`, { status });
+    await api.patch(`/admin/users/${id}/status`, { status });
   } catch (err: any) {
     if (err.response?.status === 404) {
-      await api.patch(`/admin/users/${id}/status`, { status });
+      await api.patch(`/users/${id}/status`, { status });
       return;
     }
     throw err;

@@ -13,7 +13,7 @@ const departmentColors: Record<string, string> = {
 const colorFor = (dept: string) => departmentColors[dept] ?? '#64748b';
 
 function formatDate(year: number, month: number, day: number) {
-  return new Date(year, month - 1, day).toLocaleDateString('id-ID', {
+  return new Date(year, month - 1, day).toLocaleDateString('en-US', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -26,10 +26,10 @@ function daysLeftLabel(year: number, month: number, day: number) {
   const target = new Date(year, month - 1, day);
   const diff = Math.round((target.getTime() - today.getTime()) / 86_400_000);
 
-  if (diff < 0) return `${Math.abs(diff)} hari lalu`;
-  if (diff === 0) return 'Hari ini';
-  if (diff === 1) return 'Besok';
-  return `${diff} hari lagi`;
+  if (diff < 0) return `${Math.abs(diff)} day${Math.abs(diff) > 1 ? 's' : ''} ago`;
+  if (diff === 0) return 'Today';
+  if (diff === 1) return 'Tomorrow';
+  return `${diff} days left`;
 }
 
 export default function AuditSchedule() {

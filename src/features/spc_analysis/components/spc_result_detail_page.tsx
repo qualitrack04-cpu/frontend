@@ -6,11 +6,12 @@ import {
 } from 'recharts';
 import { getSpcById, type SpcResult } from '../api/spc_api';
 import { getStatusColor } from '../utils/status_color';
+import { parseUtcDate } from '../../../shared/utils/date_utils';
 
 function formatDate(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleString('id-ID', {
-    day: '2-digit', month: 'long', year: 'numeric',
+  const d = parseUtcDate(iso) ?? new Date(iso);
+  return d.toLocaleString('en-US', {
+    day: '2-digit', month: 'short', year: 'numeric',
     hour: '2-digit', minute: '2-digit',
   });
 }

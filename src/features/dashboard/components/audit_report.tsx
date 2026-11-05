@@ -4,8 +4,11 @@ import { Link } from 'react-router-dom';
 import { useFetch } from '../../../shared/hooks/use_fetch';
 import { getMonthlyReport, downloadAuditReportPdf } from '../api/dashboard_api';
 
+import { parseUtcDate } from '../../../shared/utils/date_utils';
+
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('id-ID', {
+  const d = parseUtcDate(iso) ?? new Date(iso);
+  return d.toLocaleDateString('en-US', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -86,7 +89,7 @@ export default function AuditReport() {
                     <strong className="text-[#0f2c52] text-[14px] leading-[1.3] block">{row.department} Audit Report</strong>
                     <p className="text-slate-500 text-[12px] m-0">
                       {formatDate(row.scheduledDate)} · {row.status}
-                      {row.totalFindings > 0 && ` · ${row.totalFindings} temuan`}
+                      {row.totalFindings > 0 && ` · ${row.totalFindings} findings`}
                     </p>
                   </div>
                 </div>

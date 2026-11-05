@@ -22,7 +22,13 @@ export default function EditCategoryModal({
   onSuccess,
 }: EditCategoryModalProps) {
   const [name, setName] = useState(category.name);
-  const [color, setColor] = useState(() => category.hexaCode || getCategoryColor(category.id, category.name));
+  const [color, setColor] = useState(() => {
+    const n = (category.name || '').toLowerCase();
+    if (n.includes('major')) return '#EF4444';
+    if (n.includes('minor')) return '#F59E0B';
+    if (n.includes('ofi') || n.includes('observation')) return '#3B82F6';
+    return category.hexaCode || getCategoryColor(category.id, category.name);
+  });
   const [description, setDescription] = useState(category.description || '');
   const [isActive, setIsActive] = useState(() =>
     getCategoryActive(category.id, category.isActive ?? true)

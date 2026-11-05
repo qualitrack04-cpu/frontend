@@ -34,7 +34,7 @@ export default function FindingPhotoView({ url, alt }: Props) {
             alt={alt}
             className="w-full h-full object-cover"
             onError={() => {
-              console.error(`[findings] foto ${url} gagal dimuat`);
+              console.error(`[findings] photo ${url} failed to load`);
               setFailed(true);
             }}
           />

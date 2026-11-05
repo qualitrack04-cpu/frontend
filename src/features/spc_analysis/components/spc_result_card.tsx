@@ -13,7 +13,7 @@ export default function SpcResultCard({ result }: Props) {
   if (!result) {
     return (
       <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] flex flex-col gap-[32px] items-center justify-center min-h-[400px] !bg-[#f8fafc] border-dashed text-center text-[#64748b]">
-        <p className="m-0 text-[15px]">Isi formulir dan klik <strong className="font-bold">Analyze</strong> untuk melihat hasil analisis SPC.</p>
+        <p className="m-0 text-[15px]">Fill in the form and click <strong className="font-bold">Analyze</strong> to view the SPC analysis result.</p>
       </div>
     );
   }

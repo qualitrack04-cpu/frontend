@@ -1,7 +1,7 @@
 import axios_instance from '../../../shared/api/axios_instance';
 
 // Enum dari Swagger (Models/CAPA.cs -> CAPAStatus).
-export type CapaStatus = 'Open' | 'InProgress' | 'PendingVerification' | 'Closed';
+export type CapaStatus = 'Open' | 'InProgress' | 'Closed';
 
 export interface CapaAction {
   id: string;
@@ -33,6 +33,8 @@ export interface Capa {
   preventiveAction?: string | null;
   deadline: string; // DateOnly -> "yyyy-MM-dd"
   status: CapaStatus;
+  statusId?: string;
+  statusName?: string;
   picId?: string | null;
   picName?: string | null;
   createdAt: string;
@@ -40,6 +42,32 @@ export interface Capa {
   updatedAt?: string | null;
   actions: CapaAction[];
   closeOut?: CapaCloseOut | null;
+}
+
+export function normalizeCapa(c: any): Capa {
+  if (!c) return c;
+  const rawStatus = c.status || c.statusName || 'Open';
+  const s = String(rawStatus).toLowerCase().replace(/[\s_-]/g, '');
+
+  let mappedStatus: CapaStatus = 'Open';
+  if (s === 'open') {
+    mappedStatus = 'Open';
+  } else if (s === 'closed' || s === 'done') {
+    mappedStatus = 'Closed';
+  } else {
+    mappedStatus = 'InProgress';
+  }
+
+  return {
+    ...c,
+    status: mappedStatus,
+    statusId: c.statusId || c.status?.id,
+    statusName: c.statusName || c.status?.name || mappedStatus,
+    findingTitle: c.findingTitle || 'Untitled Finding',
+    rootCause: c.rootCause || '',
+    correctiveAction: c.correctiveAction || '',
+    actions: Array.isArray(c.actions) ? c.actions : [],
+  };
 }
 
 // Body POST /api/capas/finding/{findingId} (CreateCapaRequest).
@@ -87,26 +115,25 @@ export interface CapaListParams {
 export const capaStatusLabel: Record<CapaStatus, string> = {
   Open: 'Open',
   InProgress: 'In Progress',
-  PendingVerification: 'Pending Verification',
   Closed: 'Done',
 };
 
 // GET /api/capas?status=
 export async function getCapas(params: CapaListParams = {}): Promise<Capa[]> {
-  const res = await axios_instance.get<Capa[]>('/capas', { params });
-  return res.data;
+  const res = await axios_instance.get<any[]>('/capas', { params });
+  return (res.data || []).map(normalizeCapa);
 }
 
 // GET /api/capas/overdue
 export async function getOverdueCapas(): Promise<Capa[]> {
-  const res = await axios_instance.get<Capa[]>('/capas/overdue');
-  return res.data;
+  const res = await axios_instance.get<any[]>('/capas/overdue');
+  return (res.data || []).map(normalizeCapa);
 }
 
 // GET /api/capas/{id}
 export async function getCapa(id: string): Promise<Capa> {
-  const res = await axios_instance.get<Capa>(`/capas/${id}`);
-  return res.data;
+  const res = await axios_instance.get<any>(`/capas/${id}`);
+  return normalizeCapa(res.data);
 }
 
 // POST /api/capas/finding/{findingId}

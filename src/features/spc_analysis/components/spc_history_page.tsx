@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getSpcHistory, type SpcHistoryItem } from '../api/spc_api';
 import { getStatusColor } from '../utils/status_color';
+import { parseUtcDate } from '../../../shared/utils/date_utils';
 
 const PERIOD_MAP: Record<string, string> = {
   'All Time': 'all',
@@ -19,9 +20,9 @@ const STATUS_MAP: Record<string, string> = {
 };
 
 function formatDate(iso: string) {
-  const d = new Date(iso);
-  return d.toLocaleString('id-ID', {
-    day: '2-digit', month: 'long', year: 'numeric',
+  const d = parseUtcDate(iso) ?? new Date(iso);
+  return d.toLocaleString('en-US', {
+    day: '2-digit', month: 'short', year: 'numeric',
     hour: '2-digit', minute: '2-digit',
   });
 }

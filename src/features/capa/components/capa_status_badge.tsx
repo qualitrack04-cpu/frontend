@@ -1,25 +1,25 @@
 import { ChevronDown } from 'lucide-react';
 import { capaStatusLabel, type CapaStatus } from '../api/capa_api';
 
-const STATUS_OPTIONS: CapaStatus[] = ['Open', 'InProgress', 'PendingVerification', 'Closed'];
+const STATUS_OPTIONS: CapaStatus[] = ['Open', 'InProgress', 'Closed'];
 
 // Helper function to get color classes based on status
-function getStatusClasses(status: CapaStatus) {
+function getStatusClasses(status?: CapaStatus) {
   const base = "inline-flex items-center justify-between min-w-[100px] px-3 py-1.5 rounded-md text-[13px] font-semibold shrink-0 whitespace-nowrap transition-colors";
-  const s = status.toLowerCase();
+  const s = String(status || 'Open').toLowerCase();
   if (s === 'open') return `${base} bg-red-100 text-red-700 hover:bg-red-200`;
-  if (s === 'inprogress') return `${base} bg-blue-100 text-blue-700 hover:bg-blue-200`;
+  if (s === 'inprogress' || s === 'in_progress') return `${base} bg-orange-100 text-orange-800 hover:bg-orange-200`;
   return `${base} bg-emerald-100 text-emerald-700 hover:bg-emerald-200`;
 }
 
 interface CapaStatusBadgeProps {
-  status: CapaStatus;
+  status?: CapaStatus;
   /** Kalau diisi, badge jadi dropdown yang bisa diubah (dipakai di list). */
   onChange?: (status: CapaStatus) => void;
   disabled?: boolean;
 }
 
-export default function CapaStatusBadge({ status, onChange, disabled }: CapaStatusBadgeProps) {
+export default function CapaStatusBadge({ status = 'Open', onChange, disabled }: CapaStatusBadgeProps) {
   if (!onChange || status === 'Closed') {
     // Varian statis, dipakai di sidebar Detail CAPA atau jika status sudah Closed (selesai).
     return (

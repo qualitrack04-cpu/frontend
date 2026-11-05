@@ -52,7 +52,7 @@ export default function ComplianceScore() {
               />
             </div>
             <p className="text-slate-500 text-[13px] m-0 mt-[6px]">
-              {item.conformResponses}/{item.totalResponses} sesuai · {item.totalAudit} audit
+              {item.conformResponses}/{item.totalResponses} conform · {item.totalAudit} audit
             </p>
           </div>
         ))}

@@ -3,10 +3,11 @@ import { ArrowLeft, Building2, Calendar, User } from 'lucide-react';
 import { useFetch } from '../../../shared/hooks/use_fetch';
 import { getFinding, getFindingPhotos } from '../api/findings_api';
 import FindingPhotoView from './finding_photo';
+import { parseUtcDate } from '../../../shared/utils/date_utils';
 
 function formatDate(iso?: string | null) {
   if (!iso) return '-';
-  const date = new Date(iso);
+  const date = parseUtcDate(iso) ?? new Date(iso);
   if (Number.isNaN(date.getTime())) return '-';
   // Desain memakai format "27 Aug 2026"
   return date.toLocaleDateString('en-GB', {

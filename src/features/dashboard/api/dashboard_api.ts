@@ -8,8 +8,10 @@ export interface SummaryResponse {
   capaOverdue: number;
 }
 
-export async function getSummary(): Promise<SummaryResponse> {
-  const response = await axios_instance.get('/dashboard/summary');
+export async function getSummary(year?: number): Promise<SummaryResponse> {
+  const response = await axios_instance.get('/dashboard/summary', {
+    params: year ? { year } : {}
+  });
   return response.data;
 }
 
@@ -65,12 +67,20 @@ export async function getQualityTrend(months: number = 6): Promise<QualityTrendR
 }
 
 // ---------- Compliance Score ----------
+export interface MonthlyBreakdown {
+  month: number;
+  score: number;
+  totalResponses: number;
+  conformResponses: number;
+}
+
 export interface ComplianceDepartment {
   department: string;
   score: number;
   totalAudit: number;
   totalResponses: number;
   conformResponses: number;
+  monthlyBreakdown?: MonthlyBreakdown[];
 }
 
 export interface ComplianceScoreResponse {
@@ -78,8 +88,10 @@ export interface ComplianceScoreResponse {
   data: ComplianceDepartment[];
 }
 
-export async function getComplianceScore(): Promise<ComplianceScoreResponse> {
-  const response = await axios_instance.get('/dashboard/compliance-score');
+export async function getComplianceScore(year?: number): Promise<ComplianceScoreResponse> {
+  const response = await axios_instance.get('/dashboard/compliance-score', {
+    params: year ? { year } : {}
+  });
   return response.data;
 }
 

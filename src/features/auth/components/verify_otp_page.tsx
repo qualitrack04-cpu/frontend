@@ -12,6 +12,7 @@ const RESEND_SECONDS = 60;
 export default function VerifyOtpPage() {
   const [digits, setDigits] = useState<string[]>(Array(OTP_LENGTH).fill(''));
   const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS);
+  const [lockoutSeconds, setLockoutSeconds] = useState(0);
   const [localLoading, setLocalLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
@@ -32,6 +33,12 @@ export default function VerifyOtpPage() {
     const timer = setInterval(() => setSecondsLeft((s) => s - 1), 1000);
     return () => clearInterval(timer);
   }, [secondsLeft]);
+
+  useEffect(() => {
+    if (lockoutSeconds <= 0) return;
+    const timer = setInterval(() => setLockoutSeconds((s) => s - 1), 1000);
+    return () => clearInterval(timer);
+  }, [lockoutSeconds]);
 
   const formattedTime = `${String(Math.floor(secondsLeft / 60)).padStart(2, '0')}:${String(
     secondsLeft % 60
@@ -74,7 +81,13 @@ export default function VerifyOtpPage() {
       setDigits(Array(OTP_LENGTH).fill(''));
       inputsRef.current[0]?.focus();
     } catch (err: any) {
-      setLocalError(err.response?.data?.message ?? 'Failed to resend OTP.');
+      if (err.response?.status === 429) {
+        const remaining = err.response?.data?.remainingTime ?? 900;
+        setLockoutSeconds(remaining);
+        setLocalError(err.response?.data?.message || 'Too many OTP attempts. Please wait before trying again.');
+      } else {
+        setLocalError(err.response?.data?.message ?? 'Failed to resend OTP.');
+      }
     } finally {
       setLocalLoading(false);
     }
@@ -98,14 +111,23 @@ export default function VerifyOtpPage() {
         navigate('/reset-password', { state: { email, resetToken } });
       }
     } catch (err: any) {
-      setLocalError(err.response?.data?.message ?? 'Invalid or expired OTP code.');
+      if (err.response?.status === 429) {
+        const remaining = err.response?.data?.remainingTime ?? 900;
+        setLockoutSeconds(remaining);
+        setLocalError(err.response?.data?.message || 'Too many OTP attempts. Please wait before trying again.');
+      } else {
+        setLocalError(err.response?.data?.message ?? 'Invalid or expired OTP code.');
+      }
     } finally {
       setLocalLoading(false);
     }
   };
 
-  const isBusy = loading || localLoading;
+  const isBusy = loading || localLoading || lockoutSeconds > 0;
   const shownError = localError ?? error;
+  const lockoutTimeFormatted = `${String(Math.floor(lockoutSeconds / 60)).padStart(2, '0')}:${String(
+    lockoutSeconds % 60
+  ).padStart(2, '0')}`;
 
   return (
     <div className="relative flex min-h-screen w-full overflow-hidden bg-slate-50 lg:bg-white [&_*]:box-border">
@@ -165,6 +187,12 @@ export default function VerifyOtpPage() {
                 )}
               </span>
             </div>
+
+            {lockoutSeconds > 0 && (
+              <div className="mb-4 p-3 bg-amber-50 text-amber-800 text-xs rounded-lg border border-amber-200 text-center font-medium">
+                Too many attempts. Try again in {lockoutTimeFormatted.replace(';', '')}
+              </div>
+            )}
 
             {shownError && (
               <p className="text-red-600 text-sm mb-4 text-center">{shownError}</p>

@@ -13,7 +13,7 @@ import {
   type ChecklistListItem,
   type ChecklistItem,
 } from '../api/checklist_api';
-import { createFinding } from '../../findings/api/findings_api';
+import { createFinding, getFindingsBySession, updateFinding } from '../../findings/api/findings_api';
 
 export type ItemStatus = 'pending' | 'pass' | 'fail';
 
@@ -22,6 +22,8 @@ export interface ChecklistItemState extends ChecklistItem {
   responseId: string | null; 
   showFindingInput: boolean;
   findingSubmitted: boolean;
+  findingText?: string;
+  findingId?: string;
 }
 
 export function useAuditChecklist(planId: string, scheduleId: string) {
@@ -38,20 +40,29 @@ export function useAuditChecklist(planId: string, scheduleId: string) {
   const navigate = useNavigate();
 
   const loadItemsForSession = useCallback(async (sessionData: AuditSession) => {
-    const [checklistItemsResponse, responses] = await Promise.all([
+    const [checklistItemsResponse, responses, findings] = await Promise.all([
       getChecklistItems(sessionData.checklistId),
       getResponsesBySession(sessionData.id),
+      getFindingsBySession(sessionData.id).catch(() => []),
     ]);
 
     const merged: ChecklistItemState[] = checklistItemsResponse.items.map((item) => {
       const existing = responses.find((r) => r.checklistItemId === item.id);
+      const existingFinding = findings.find(
+        (f: any) =>
+          f.checklistItemId === item.id ||
+          (f.title === item.question && f.clauseRef === item.clauseRef)
+      );
       const status: ItemStatus = !existing ? 'pending' : existing.isPassed ? 'pass' : 'fail';
+      const findingText = existingFinding?.description || existing?.notes || '';
       return {
         ...item,
         status,
         responseId: existing?.id ?? null,
         showFindingInput: false,
-        findingSubmitted: status === 'fail', 
+        findingSubmitted: Boolean(existingFinding || (status === 'fail' && existing?.notes)),
+        findingText,
+        findingId: existingFinding?.id,
       };
     });
     setItems(merged);
@@ -180,18 +191,41 @@ export function useAuditChecklist(planId: string, scheduleId: string) {
       if (!item) return;
 
       try {
-        await createFinding({
-          sessionId: session.id,
-          checklistItemId: itemId,
-          description,
-          title: item.question,
-          department: schedule.department,
-          clauseRef: item.clauseRef,
-          category: 'MinorNC', 
-        });
+        let findingId = item.findingId;
+        if (findingId) {
+          await updateFinding(findingId, {
+            title: item.question,
+            department: schedule.department,
+            description,
+            clauseRef: item.clauseRef,
+            category: 'Minor NC',
+          });
+        } else {
+          const created = await createFinding({
+            sessionId: session.id,
+            checklistItemId: itemId,
+            description,
+            title: item.question,
+            department: schedule.department,
+            clauseRef: item.clauseRef,
+            category: 'MinorNC',
+          });
+          findingId = (created as any)?.id;
+        }
+
+        await saveResponseProgress(session.id, itemId, false, description);
+
         setItems((prev) =>
           prev.map((it) =>
-            it.id === itemId ? { ...it, showFindingInput: false, findingSubmitted: true } : it
+            it.id === itemId
+              ? {
+                  ...it,
+                  showFindingInput: false,
+                  findingSubmitted: true,
+                  findingText: description,
+                  findingId: findingId ?? it.findingId,
+                }
+              : it
           )
         );
       } catch (err: any) {

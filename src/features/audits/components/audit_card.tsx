@@ -35,7 +35,7 @@ export default function AuditCard({ audit, onDelete }: AuditCardProps) {
         )}
         {isFinished && (
           <span className="flex items-center gap-[4px] text-[12px] font-semibold text-[#16a34a] mt-[12px]">
-            <CheckCircle2 size={13} /> Selesai
+            <CheckCircle2 size={13} /> Completed
           </span>
         )}
       </div>

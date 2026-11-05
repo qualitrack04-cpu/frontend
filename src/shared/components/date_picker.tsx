@@ -11,10 +11,10 @@ interface DatePickerProps {
 }
 
 const MONTHS = [
-  'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-  'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
 ];
-const WEEKDAYS = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 function pad(n: number) {
   return String(n).padStart(2, '0');
@@ -188,7 +188,7 @@ export default function DatePicker({ value, onChange, min, max, placeholder = 'd
 
           {!isDisabled(todayIso) && (
             <button type="button" className="w-full mt-[8px] bg-[#f1f5f9] border-none rounded-[8px] py-[8px] text-[13px] text-[#0f2c52] font-semibold cursor-pointer hover:bg-[#e2e8f0]" onClick={() => pickDay(todayIso)}>
-              Hari ini
+              Today
             </button>
           )}
         </div>

@@ -5,6 +5,7 @@ import {
   getAuditPlanById,
   updateAuditPlan,
   type AuditPriority,
+  type ScheduleResponse,
 } from '../api/audit_plan_api';
 import { getAuditors, type Auditor } from '../api/auditors_api';
 import { getChecklists, type ChecklistListItem } from '../api/checklist_api';
@@ -20,6 +21,7 @@ export function useCreateAuditPlan(planId?: string) {
   const [scopeDescription, setScopeDescription] = useState('');
   const [checklistId, setChecklistId] = useState('');
   const [highPriority, setHighPriority] = useState(false);
+  const [existingSchedules, setExistingSchedules] = useState<ScheduleResponse[]>([]);
 
   const [auditors, setAuditors] = useState<Auditor[]>([]);
   const [checklists, setChecklists] = useState<ChecklistListItem[]>([]);
@@ -56,11 +58,11 @@ export function useCreateAuditPlan(planId?: string) {
       } else {
         errors.push(checklistsResult.reason?.response?.data?.message ?? 'Failed to load checklist list.');
       }
-      if (departmentsResult.status === 'fulfilled') {
-        setDepartments(departmentsResult.value.filter((d) => d.isActive).map((d) => d.name));
+      if (departmentsResult.status === 'fulfilled' && departmentsResult.value?.length > 0) {
+        const activeDepts = departmentsResult.value.filter((d) => d.isActive).map((d) => d.name);
+        setDepartments(activeDepts.length > 0 ? activeDepts : ['Production', 'Packaging', 'Warehouse', 'QC']);
       } else {
-        errors.push(departmentsResult.reason?.response?.data?.message ?? 'Gagal memuat daftar department.');
-
+        setDepartments(['Production', 'Packaging', 'Warehouse', 'QC']);
       }
 
       if (errors.length > 0) setSubmitError(errors.join(' '));
@@ -78,6 +80,7 @@ export function useCreateAuditPlan(planId?: string) {
     getAuditPlanById(planId)
       .then((plan) => {
         if (cancelled) return;
+        setExistingSchedules(plan.schedules || []);
         const schedule = plan.schedules[0];
 
         setTitle(plan.title);
@@ -147,7 +150,7 @@ export function useCreateAuditPlan(planId?: string) {
       return;
     }
     if (!scheduledDate) {
-      setSubmitError('Isi Scheduled Date terlebih dahulu.');
+      setSubmitError('Please select a Scheduled Date first.');
       return;
     }
 
@@ -164,14 +167,25 @@ export function useCreateAuditPlan(planId?: string) {
     }
 
     const priority: AuditPriority = highPriority ? 'Priority' : 'Common';
-    const schedules = [
-      {
-        clauseRef: selectedChecklist.title,
-        auditorId: selectedAuditor.id,
-        department,
-        scheduledDate: new Date(scheduledDate).toISOString(),
-      },
-    ];
+    const primarySchedule = {
+      ...(isEdit && existingSchedules[0]?.id ? { id: existingSchedules[0].id } : {}),
+      clauseRef: selectedChecklist.title,
+      auditorId: selectedAuditor.id,
+      department,
+      scheduledDate: new Date(`${scheduledDate}T00:00:00Z`).toISOString(),
+    };
+
+    const remainingSchedules = isEdit && existingSchedules.length > 1
+      ? existingSchedules.slice(1).map((s) => ({
+          id: s.id,
+          clauseRef: s.clauseRef,
+          auditorId: s.auditorId ?? selectedAuditor.id,
+          department: s.department,
+          scheduledDate: s.scheduledDate,
+        }))
+      : [];
+
+    const schedules = [primarySchedule, ...remainingSchedules];
 
     setSubmitting(true);
     try {

@@ -58,7 +58,7 @@ export default function EditDepartmentModal({ department, onClose, onSuccess }: 
         {/* Modal Header */}
         <div className="mb-5 pr-6">
           <h2 className="text-[19px] font-bold text-slate-900 m-0">
-            Edit Departement
+            Edit Department
           </h2>
         </div>
 
@@ -72,10 +72,10 @@ export default function EditDepartmentModal({ department, onClose, onSuccess }: 
         {/* Form Body */}
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
-            {/* Departement Name */}
+            {/* Department Name */}
             <div>
               <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
-                Departement Name
+                Department Name
               </label>
               <div className="relative flex items-center">
                 <input
@@ -89,10 +89,10 @@ export default function EditDepartmentModal({ department, onClose, onSuccess }: 
               </div>
             </div>
 
-            {/* Departement Status */}
+            {/* Department Status */}
             <div>
               <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
-                Departement Status
+                Department Status
               </label>
               <div className="border border-slate-200 rounded-lg px-3.5 py-2.5 flex items-center justify-between bg-white">
                 <div className="flex items-center gap-2">

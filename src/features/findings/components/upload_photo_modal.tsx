@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { CloudUpload, ImagePlus, Trash2 } from 'lucide-react';
 
-const MAX_SIZE_MB = 5;
+const MAX_SIZE_MB = 10;
 
 interface Props {
   open: boolean;
@@ -50,11 +50,11 @@ export default function UploadPhotoModal({ open, onClose, onUpload }: Props) {
     if (!picked) return;
 
     if (!picked.type.startsWith('image/')) {
-      setError('File must be an image (JPG, PNG, or WEBP).');
+      setError('File must be an image (JPG, JPEG, or PNG).');
       return;
     }
     if (picked.size > MAX_SIZE_MB * 1024 * 1024) {
-      setError(`Ukuran gambar maksimal ${MAX_SIZE_MB} MB.`);
+      setError(`Image size must not exceed ${MAX_SIZE_MB} MB.`);
       return;
     }
     setError(null);
@@ -116,7 +116,7 @@ export default function UploadPhotoModal({ open, onClose, onUpload }: Props) {
           </button>
         )}
 
-        <input ref={inputRef} type="file" accept="image/*" hidden onChange={handleChange} />
+        <input ref={inputRef} type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" hidden onChange={handleChange} />
 
         {error && <p className="text-[#dc2626] text-[13px] mt-[4px]">{error}</p>}
 
