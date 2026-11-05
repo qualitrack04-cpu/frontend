@@ -1,9 +1,11 @@
 import AuditCard from './audit_card';
 import { useAuditPlans } from '../hooks/use_audit_plans';
-import { canManageAuditPlans } from '../../../shared/utils/role';
+import { canManageAuditPlansFor } from '../../../shared/utils/role';
+import { useRole } from '../../../shared/context/role_context';
 
 export default function AuditsPage() {
   const { audits, loading, error, tab, setTab, handleDelete } = useAuditPlans();
+  const { role } = useRole();
 
   return (
     <div className="max-w-full m-0 text-left">
@@ -30,11 +32,11 @@ export default function AuditsPage() {
 
       {!loading && !error && audits.length === 0 && (
         <p className="text-slate-500">
-          No audit plans yet.{canManageAuditPlans() && ' Click "+ New Audit" to create one.'}
+          No audit plans yet.{canManageAuditPlansFor(role) && ' Click "+ New Audit" to create one.'}
         </p>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-[20px] min-w-0 max-w-full">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,380px),1fr))] xl:grid-cols-2 gap-[20px] min-w-0 max-w-full">
         {audits.map((audit) => (
           <AuditCard key={audit.id} audit={audit} onDelete={handleDelete} />
         ))}

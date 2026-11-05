@@ -86,7 +86,7 @@ export default function AddUserModal({ onClose, onSuccess }: AddUserModalProps) 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-[500px] max-h-[90vh] overflow-y-auto p-5 sm:p-7 md:p-8 animate-[fadeIn_0.15s_ease-out] relative">
         {/* Close Button */}
         <button
@@ -217,7 +217,7 @@ export default function AddUserModal({ onClose, onSuccess }: AddUserModalProps) 
                   className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 pr-10 text-[14px] text-slate-800 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all appearance-none cursor-pointer"
                   required
                 >
-                  <option value="" disabled>Select role</option>
+                  <option value="" disabled hidden>Select role</option>
                   <option value="QualityManager">Quality Manager</option>
                   <option value="AuditorInternal">Auditor Internal</option>
                   <option value="Auditee">Auditee</option>

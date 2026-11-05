@@ -152,7 +152,7 @@ export default function EditTemplateModal({
                   required
                   className="w-full bg-slate-50 border border-slate-200 rounded-[10px] px-3 py-2.5 text-[14px] outline-none focus:border-blue-500 focus:bg-white transition-colors text-slate-700 cursor-pointer"
                 >
-                  <option value="">Select Standard</option>
+                  <option value="" disabled hidden>Select Standard</option>
                   {activeIsoStandards.map((iso) => (
                     <option key={iso.id} value={iso.code}>
                       {iso.code} {iso.isActive === false ? '(Inactive)' : ''}
@@ -174,7 +174,7 @@ export default function EditTemplateModal({
                   required
                   className="w-full bg-slate-50 border border-slate-200 rounded-[10px] px-3 py-2.5 text-[14px] outline-none focus:border-blue-500 focus:bg-white transition-colors text-slate-700 cursor-pointer"
                 >
-                  <option value="">Select Department</option>
+                  <option value="" disabled hidden>Select Department</option>
                   {activeDepartments.map((dept) => (
                     <option key={dept.id} value={dept.name}>
                       {dept.name}

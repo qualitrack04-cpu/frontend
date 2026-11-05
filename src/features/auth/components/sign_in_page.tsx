@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, Info } from 'lucide-react';
 import { useAuth } from '../hooks/use_auth';
 import AuthBrandPanel from './auth_brand_panel';
 import splashLogo from '../../../assets/splash.png';
@@ -10,6 +10,8 @@ export default function SignInPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const { login, loading, error } = useAuth();
+  const [searchParams] = useSearchParams();
+  const roleChanged = searchParams.get('reason') === 'role-changed';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +32,15 @@ export default function SignInPage() {
               className="h-10 sm:h-12 w-auto object-contain"
             />
           </div>
+
+          {roleChanged && (
+            <div className="mb-6 flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-3 text-left">
+              <Info size={16} className="shrink-0 mt-[2px] text-amber-600" />
+              <p className="m-0 text-[13px] leading-[1.5] text-amber-800">
+                Your role has been updated. Please sign in again to continue with your new permissions.
+              </p>
+            </div>
+          )}
 
           <div className="text-[#0f2c52] text-2xl sm:text-[28px] font-bold !m-0 !mb-8 text-center !tracking-normal">
             Sign In

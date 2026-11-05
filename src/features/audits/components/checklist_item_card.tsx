@@ -53,13 +53,13 @@ export default function ChecklistItemCard({
   };
 
   return (
-    <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-[24px] transition-all duration-200 hover:shadow-[0_4px_12px_rgba(15,44,82,0.05)] overflow-hidden min-w-0 max-w-full">
+    <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-4 sm:p-[24px] transition-all duration-200 hover:shadow-[0_4px_12px_rgba(15,44,82,0.05)] overflow-hidden min-w-0 max-w-full">
       {item.clauseRef && <span className="inline-block bg-[#f1f5f9] text-[#475569] text-[12px] font-bold p-[4px_10px] rounded-[12px] mb-[12px] break-words [overflow-wrap:anywhere] [word-break:break-word]">{item.clauseRef}</span>}
       {/* ⚠️ field aslinya "question", bukan "title" — sesuai ChecklistController */}
       <h3 className="text-[16px] text-[#0f2c52] m-0 mb-[8px] leading-[1.4] break-words [overflow-wrap:anywhere] [word-break:break-word]">{item.question}</h3>
       {item.description && <p className="text-[14px] text-[#64748b] m-0 mb-[20px] leading-[1.5] break-words [overflow-wrap:anywhere] [word-break:break-word]">{item.description}</p>}
 
-      <div className="flex justify-end gap-[12px]">
+      <div className="flex flex-wrap justify-end items-center gap-[12px]">
         {/* "Add Evidence" aktif kalau item sudah Pass dan sudah punya responseId */}
         {item.status === 'pass' && (
           <button

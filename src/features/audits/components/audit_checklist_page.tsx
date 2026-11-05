@@ -103,12 +103,12 @@ export default function AuditChecklistPage() {
     <div className="max-w-full m-0 text-left">
       <button className="inline-flex items-center gap-[8px] bg-transparent border-none text-[#64748b] text-[14px] font-semibold cursor-pointer p-0 mb-[16px] hover:text-[#1e293b]" onClick={() => navigate('/audits')}>← Back to Audits</button>
 
-      <div className="flex justify-between items-center mb-[24px]">
+      <div className="flex flex-wrap justify-between items-center gap-3 mb-[24px]">
         <h1 className="text-[28px] font-bold text-[#0f2c52] !m-0 !mb-6">Audit Checklist</h1>
         <span className="bg-[#fef3c7] text-[#92400e] p-[6px_16px] rounded-[20px] text-[14px] font-bold">{pendingCount} Pending Items</span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_340px] gap-[32px] items-start max-w-full min-w-0">
+      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 lg:gap-[32px] items-start max-w-full min-w-0">
         <div className="flex flex-col gap-[24px] min-w-0 max-w-full">
           {items.map((item) => (
             <ChecklistItemCard
@@ -121,7 +121,7 @@ export default function AuditChecklistPage() {
           ))}
         </div>
 
-        <div className="sticky top-[24px] flex flex-col gap-[20px]">
+        <div className="lg:sticky lg:top-[24px] flex flex-col gap-[20px] min-w-0">
           <div className="bg-white rounded-[12px] p-[24px] border border-[#e2e8f0] flex flex-col">
             <h3 className="text-[16px] m-0 mb-[20px] text-[#0f2c52] font-bold">Audit Details</h3>
             <div className="flex justify-between mb-[12px] text-[14px]">
