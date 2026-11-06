@@ -14,9 +14,21 @@ export function hasRole(...roles: string[]) {
   return roles.includes(getCurrentRole());
 }
 
+export function hasRoleFor(role: string, ...roles: string[]) {
+  return roles.includes(role);
+}
+
+export function canManageAuditPlansFor(role: string) {
+  return hasRoleFor(role, ROLES.Admin, ROLES.QualityManager);
+}
+
+export function canCreateCapaFor(role: string) {
+  return !hasRoleFor(role, ROLES.Auditee);
+}
+
 // Sesuai backend: create/edit/delete audit plan hanya Admin & QualityManager
 export function canManageAuditPlans() {
-  return hasRole(ROLES.Admin, ROLES.QualityManager);
+  return canManageAuditPlansFor(getCurrentRole());
 }
 
 export function canEditAuditPlans() {
@@ -24,5 +36,5 @@ export function canEditAuditPlans() {
 }
 
 export function canCreateCapa() {
-  return !hasRole(ROLES.Auditee);
+  return canCreateCapaFor(getCurrentRole());
 }

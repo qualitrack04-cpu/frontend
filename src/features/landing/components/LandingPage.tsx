@@ -1,5 +1,6 @@
+import { useEffect, useRef } from "react";
 import "../landing.css";
-import { LOGIN_URL, SIGNUP_URL } from "../config";
+import { LOGIN_URL, SIGNUP_URL, PLAY_STORE_URL } from "../config";
 import {
   navLinks,
   aboutChips,
@@ -27,10 +28,72 @@ function FeatureCard({ f }: { f: (typeof features)[number] }) {
   );
 }
 
+// Video demo: otomatis diputar (tanpa suara) saat terlihat di layar,
+// dan berhenti saat di-scroll keluar. Kontrol tetap tersedia.
+function DemoVideo() {
+  const ref = useRef<HTMLVideoElement>(null);
+  const pausedByUser = useRef(false);
+  const autoPausing = useRef(false);
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    video.muted = true; // browser hanya mengizinkan autoplay jika video tanpa suara
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          if (!pausedByUser.current) video.play().catch(() => {});
+        } else if (!video.paused) {
+          autoPausing.current = true; // pause otomatis, bukan dari user
+          video.pause();
+        }
+      },
+      { threshold: 0.4 }
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <video
+      ref={ref}
+      src="/videos/promo.mp4"
+      controls
+      muted
+      loop
+      playsInline
+      preload="metadata"
+      onPause={() => {
+        // kalau user sendiri yang pause, jangan diputar ulang otomatis
+        if (!autoPausing.current) pausedByUser.current = true;
+        autoPausing.current = false;
+      }}
+      onPlay={() => { pausedByUser.current = false; }}
+    >
+      Browser kamu tidak mendukung pemutaran video.
+    </video>
+  );
+}
+
 const sectionIds = navLinks.map((l) => l.href.slice(1));
 
 export default function LandingPage() {
   const active = useActiveSection(sectionIds);
+
+  // Efek parallax: HP sedikit bergeser mengikuti posisi kursor di hero
+  const phonesRef = useRef<HTMLDivElement>(null);
+  const onHeroMove = (e: React.MouseEvent<HTMLElement>) => {
+    const el = phonesRef.current;
+    if (!el) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    el.style.setProperty("--mx", (((e.clientX - r.left) / r.width) * 2 - 1).toFixed(3));
+    el.style.setProperty("--my", (((e.clientY - r.top) / r.height) * 2 - 1).toFixed(3));
+  };
+  const onHeroLeave = () => {
+    phonesRef.current?.style.setProperty("--mx", "0");
+    phonesRef.current?.style.setProperty("--my", "0");
+  };
   return (
     <div className="landing">
       {/* NAVBAR */}
@@ -61,12 +124,56 @@ export default function LandingPage() {
       </header>
 
       {/* HERO */}
-      <section id="home" className="section soft hero">
+      <section id="home" className="section soft hero" onMouseMove={onHeroMove} onMouseLeave={onHeroLeave}>
         {/* <span className="pill">Quality Management System · Mobile App</span> */}
-        <h1>Checklist Today,<br />Better Tomorrow</h1>
-        <div className="hero-media">
-          <img src="/images/hero-phones.png" alt="Tampilan aplikasi QualiTrack" />
+        <div className="hero-bg" aria-hidden="true">
+          <span className="blob" />
         </div>
+        <h1>Checklist Today,<br />Better Tomorrow</h1>
+        <div className="hero-cta">
+          <a
+            href={PLAY_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="store-btn"
+            aria-label="Download QualiTrack di Google Play"
+          >
+            <img className="store-icon" src="/images/google-play-icon.png" alt="" />
+            <span>
+              <small>GET IT ON</small>
+              <strong>Google Play</strong>
+            </span>
+          </a>
+        </div>
+        <div className="hero-media">
+          <div className="phones" ref={phonesRef}>
+            <div className="phone p-left">
+              <img src="/images/hero-phone-left.png" alt="" />
+            </div>
+            <div className="phone p-center">
+              <img src="/images/hero-phone-center.png" alt="Tampilan aplikasi QualiTrack" />
+            </div>
+            <div className="phone p-right">
+              <img src="/images/hero-phone-right.png" alt="" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DEMO VIDEO */}
+      <section id="demo" className="section soft demo-section">
+        <Reveal>
+          <p className="eyebrow center">DEMO</p>
+          <h2 className="center">See QualiTrack in action</h2>
+          <p className="muted center demo-sub">
+            Watch how an audit moves from plan to report, all from one app.
+          </p>
+        </Reveal>
+        <Reveal delay={100}>
+          <div className="demo-video">
+            <DemoVideo />
+          </div>
+        </Reveal>
       </section>
 
       {/* ABOUT */}

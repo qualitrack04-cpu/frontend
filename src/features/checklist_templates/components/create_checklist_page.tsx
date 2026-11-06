@@ -248,7 +248,7 @@ export default function CreateChecklistPage({
                     required
                     className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2.5 pr-10 text-[14px] text-slate-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer font-normal"
                   >
-                    <option value="">Select Department</option>
+                    <option value="" disabled hidden>Select Department</option>
                     {availableDepartments.map((dept) => (
                       <option key={dept.id} value={dept.id}>
                         {dept.name}
@@ -277,7 +277,7 @@ export default function CreateChecklistPage({
                     required
                     className="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2.5 pr-10 text-[14px] text-slate-700 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all cursor-pointer font-normal"
                   >
-                    <option value="">Select ISO Standard</option>
+                    <option value="" disabled hidden>Select ISO Standard</option>
                     {availableIsoStandards.map((iso) => (
                       <option key={iso.id} value={iso.id}>
                         {iso.code || iso.name}

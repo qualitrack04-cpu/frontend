@@ -1,6 +1,15 @@
 import { useState } from 'react';
 import { X, AlertCircle } from 'lucide-react';
-import { updateDepartment, updateDepartmentStatus, type DepartmentItem } from '../api/departments_api';
+import {
+  updateDepartment,
+  updateDepartmentStatus,
+  uploadDepartmentLogo,
+  removeDepartmentLogo,
+  type DepartmentItem,
+} from '../api/departments_api';
+import DepartmentLogoPicker from './department_logo_picker';
+import ColorPicker from '../../system_configuration/components/color_picker';
+import { resolveDepartmentColor } from '../utils/department_visuals';
 
 interface EditDepartmentModalProps {
   department: DepartmentItem;
@@ -11,6 +20,10 @@ interface EditDepartmentModalProps {
 export default function EditDepartmentModal({ department, onClose, onSuccess }: EditDepartmentModalProps) {
   const [name, setName] = useState(department.name);
   const [isActive, setIsActive] = useState(department.isActive);
+  const [color, setColor] = useState(resolveDepartmentColor(department));
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [removeLogo, setRemoveLogo] = useState(false);
+  const [showColorPalette, setShowColorPalette] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,7 +42,15 @@ export default function EditDepartmentModal({ department, onClose, onSuccess }: 
         name: name.trim(),
         code: department.code || name.trim().slice(0, 10).toUpperCase(),
         description: department.description || '',
+        color,
       });
+
+      // Logo: upload kalau admin memilih file baru, hapus kalau admin menandai logo lama untuk dibuang
+      if (logoFile) {
+        await uploadDepartmentLogo(department.id, logoFile);
+      } else if (removeLogo && department.logoUrl) {
+        await removeDepartmentLogo(department.id);
+      }
 
       if (isActive !== department.isActive) {
         await updateDepartmentStatus(department.id, isActive);
@@ -44,7 +65,7 @@ export default function EditDepartmentModal({ department, onClose, onSuccess }: 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto p-5 sm:p-7 animate-[fadeIn_0.15s_ease-out] relative">
         {/* Close Button */}
         <button
@@ -93,6 +114,40 @@ export default function EditDepartmentModal({ department, onClose, onSuccess }: 
                   required
                 />
               </div>
+            </div>
+
+            {/* Department Logo */}
+            <div>
+              <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
+                Department Logo <span className="text-slate-400 font-normal">(optional)</span>
+              </label>
+              <DepartmentLogoPicker
+                file={logoFile}
+                existingUrl={department.logoUrl}
+                removeExisting={removeLogo}
+                onSelectFile={(file) => {
+                  setLogoFile(file);
+                  if (file) setRemoveLogo(false);
+                }}
+                onToggleRemoveExisting={setRemoveLogo}
+                disabled={loading}
+              />
+            </div>
+
+            {/* Department Accent Color */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-[13px] font-semibold text-slate-800">
+                  Accent Color
+                </label>
+                <span className="text-[12px] text-slate-400 font-medium">{color}</span>
+              </div>
+              <ColorPicker
+                color={color}
+                onChange={setColor}
+                showPalette={showColorPalette}
+                onTogglePalette={() => setShowColorPalette(!showColorPalette)}
+              />
             </div>
 
             {/* Department Status */}

@@ -5,7 +5,8 @@ import { useProfile } from '../hooks/use_profile';
 import { useProfileKpi } from '../hooks/useProfileKpi';
 import RecentActivity from './recent_activity';
 import { fileUrl } from '../../../shared/utils/file_url';
-import { getCurrentRole, ROLES } from '../../../shared/utils/role';
+import { ROLES } from '../../../shared/utils/role';
+import { useRole } from '../../../shared/context/role_context';
 import ChangePasswordModal from './change_password_modal';
 
 export function MascotAvatar({ className = 'w-28 h-28' }: { className?: string }) {
@@ -64,7 +65,7 @@ function QualityGauge({ score }: { score: number }) {
 
 export default function ProfilePage() {
   const { profile, loading: profileLoading, error: profileError } = useProfile();
-  const currentRole = getCurrentRole();
+  const { role: currentRole } = useRole();
   const isAdmin = currentRole === ROLES.Admin;
 
   // Non-Admin KPI Hook

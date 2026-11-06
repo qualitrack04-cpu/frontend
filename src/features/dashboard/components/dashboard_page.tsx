@@ -4,11 +4,12 @@ import ComplianceScore from './compliance_score';
 import AuditReport from './audit_report';
 import QualityTrend from './quality_trend';
 import AdminDashboard from './admin_dashboard';
-import { ROLES, getCurrentRole } from '../../../shared/utils/role';
+import { ROLES } from '../../../shared/utils/role';
+import { useRole } from '../../../shared/context/role_context';
 
 export default function DashboardPage() {
   const fullName = localStorage.getItem('fullName') || 'there';
-  const role = getCurrentRole();
+  const { role } = useRole();
 
   const nameLength = fullName.trim().length;
   const headingSizeClass =

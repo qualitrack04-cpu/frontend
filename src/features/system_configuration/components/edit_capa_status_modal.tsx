@@ -75,7 +75,7 @@ export default function EditCapaStatusModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto overflow-x-hidden bg-black/40 backdrop-blur-xs p-3 sm:p-4 flex items-center justify-center min-h-screen animate-[fadeIn_0.15s_ease-out]">
+    <div className="fixed inset-0 z-[1000] overflow-y-auto overflow-x-hidden bg-black/40 backdrop-blur-xs p-3 sm:p-4 flex items-center justify-center min-h-screen animate-[fadeIn_0.15s_ease-out]">
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-[430px] my-auto overflow-hidden p-5 sm:p-6 relative box-border">
         {/* Header */}
         <div className="flex items-start justify-between mb-3.5">

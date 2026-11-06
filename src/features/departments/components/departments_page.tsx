@@ -3,19 +3,26 @@ import {
   Plus, 
   Pencil, 
   Trash2, 
-  ClipboardCheck, 
-  Factory, 
-  Package, 
-  Warehouse, 
-  Building2,
   AlertCircle
 } from 'lucide-react';
 import { useDepartments } from '../hooks/use_departments';
-import { createDepartment, type DepartmentItem } from '../api/departments_api';
+import {
+  createDepartment,
+  uploadDepartmentLogo,
+  type DepartmentItem,
+} from '../api/departments_api';
 import EditDepartmentModal from './edit_department_modal';
 import DeleteDepartmentModal from './delete_department_modal';
+import DepartmentLogoPicker from './department_logo_picker';
+import ColorPicker from '../../system_configuration/components/color_picker';
+import {
+  getDepartmentVisual,
+  resolveDepartmentColor,
+  autoDepartmentColor,
+} from '../utils/department_visuals';
 import TablePagination from '../../../shared/components/table_pagination';
 import { formatUpdatedDate } from '../../../shared/utils/date_utils';
+import { fileUrl } from '../../../shared/utils/file_url';
 
 export default function DepartmentsPage() {
   const { departments, loading, error, refetch } = useDepartments();
@@ -27,6 +34,9 @@ export default function DepartmentsPage() {
   // Form state for Add New Department
   const [newDeptName, setNewDeptName] = useState('');
   const [newDeptActive, setNewDeptActive] = useState(true);
+  const [newDeptColor, setNewDeptColor] = useState('');
+  const [newDeptLogo, setNewDeptLogo] = useState<File | null>(null);
+  const [showNewColorPalette, setShowNewColorPalette] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -45,12 +55,25 @@ export default function DepartmentsPage() {
     setFormError(null);
 
     try {
-      await createDepartment({
+      // Warna: pakai pilihan admin, kalau belum dipilih pakai warna otomatis dari nama
+      const color = newDeptColor || autoDepartmentColor(newDeptName);
+
+      const created = await createDepartment({
         name: newDeptName.trim(),
         isActive: newDeptActive,
+        color,
       });
+
+      // Logo di-upload setelah department tersimpan (butuh id department)
+      if (newDeptLogo && created?.id) {
+        await uploadDepartmentLogo(created.id, newDeptLogo);
+      }
+
       setNewDeptName('');
       setNewDeptActive(true);
+      setNewDeptColor('');
+      setNewDeptLogo(null);
+      setShowNewColorPalette(false);
       refetch();
     } catch (err: any) {
       const dMsg = err.response?.data?.message || err.message || 'Failed to add department';
@@ -65,44 +88,8 @@ export default function DepartmentsPage() {
     }
   };
 
-  const getDepartmentIconAndColor = (name: string) => {
-    const n = name.toLowerCase();
-    if (n.includes('control') || n.includes('quality') || n.includes('qc') || n.includes('assurance')) {
-      return {
-        icon: ClipboardCheck,
-        bgColor: 'bg-[#E0F2FE]',
-        iconColor: 'text-[#0284C7]',
-      };
-    }
-    if (n.includes('production') || n.includes('factory')) {
-      return {
-        icon: Factory,
-        bgColor: 'bg-[#FCE7F3]',
-        iconColor: 'text-[#DB2777]',
-      };
-    }
-    if (n.includes('pack') || n.includes('packaging')) {
-      return {
-        icon: Package,
-        bgColor: 'bg-[#F3E8FF]',
-        iconColor: 'text-[#9333EA]',
-      };
-    }
-    if (n.includes('warehouse') || n.includes('storage')) {
-      return {
-        icon: Warehouse,
-        bgColor: 'bg-[#D1FAE5]',
-        iconColor: 'text-[#059669]',
-      };
-    }
-    return {
-      icon: Building2,
-      bgColor: 'bg-blue-50',
-      iconColor: 'text-blue-600',
-    };
-  };
-
-
+  // Ikon & warna otomatis yang ditentukan program dari nama department
+  // (lihat utils/department_visuals.ts)
 
   const preferredOrder = [
     'production',
@@ -187,19 +174,49 @@ export default function DepartmentsPage() {
               )}
 
               {paginatedDepartments.map((dept) => {
-                const { icon: Icon, bgColor, iconColor } = getDepartmentIconAndColor(dept.name);
+                const { icon: Icon } = getDepartmentVisual(dept.name);
+                const accentColor = resolveDepartmentColor(dept);
+                const logo = fileUrl(dept.logoUrl);
 
                 return (
                   <tr key={dept.id} className="hover:bg-slate-50/70 transition-colors">
                     {/* DEPARTMENT CODE & NAME */}
                     <td className="px-6 py-4 max-w-[280px] md:max-w-[360px]">
                       <div className="flex items-center gap-3.5 min-w-0">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${bgColor} ${iconColor}`}>
-                          <Icon size={20} strokeWidth={2} />
+                        <div
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 overflow-hidden border ${
+                            logo ? 'bg-white border-slate-200' : 'border-transparent'
+                          }`}
+                          style={
+                            logo
+                              ? undefined
+                              : {
+                                  backgroundColor: `${accentColor}1A`,
+                                  color: accentColor,
+                                  borderColor: `${accentColor}33`,
+                                }
+                          }
+                        >
+                          {logo ? (
+                            <img src={logo} alt={`${dept.name} logo`} className="w-full h-full object-cover" />
+                          ) : (
+                            <Icon size={20} strokeWidth={2} />
+                          )}
                         </div>
-                        <span className="font-bold text-slate-800 text-[14px] break-words [overflow-wrap:anywhere] [word-break:break-word]">
-                          {dept.name}
-                        </span>
+                        <div className="min-w-0">
+                          <span className="block font-bold text-slate-800 text-[14px] break-words [overflow-wrap:anywhere] [word-break:break-word]">
+                            {dept.name}
+                          </span>
+                          <span className="flex items-center gap-1.5 text-[11.5px] text-slate-400 font-medium">
+                            <span
+                              className="w-2 h-2 rounded-full inline-block shrink-0"
+                              style={{ backgroundColor: accentColor }}
+                            />
+                            <span className="font-mono uppercase tracking-wide">{dept.code}</span>
+                            <span className="text-slate-300">•</span>
+                            <span className="font-mono">{accentColor}</span>
+                          </span>
+                        </div>
                       </div>
                     </td>
 
@@ -271,58 +288,94 @@ export default function DepartmentsPage() {
           </div>
         )}
 
-        <form onSubmit={handleAddDepartment} className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6">
-          {/* Department Name Input */}
-          <div className="flex-1 w-full min-w-0">
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-[13px] font-semibold text-slate-700">
-                Department Name
-              </label>
-              <span className="text-[12px] text-slate-400 font-medium">
-                {newDeptName.length}/100
-              </span>
+        <form onSubmit={handleAddDepartment} className="space-y-5">
+          <div className="flex flex-col sm:flex-row sm:items-end gap-4 sm:gap-6">
+            {/* Department Name Input */}
+            <div className="flex-1 w-full min-w-0">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-[13px] font-semibold text-slate-700">
+                  Department Name
+                </label>
+                <span className="text-[12px] text-slate-400 font-medium">
+                  {newDeptName.length}/100
+                </span>
+              </div>
+              <div className="relative flex items-center">
+                <input
+                  type="text"
+                  placeholder="Enter department name"
+                  value={newDeptName}
+                  maxLength={100}
+                  onChange={(e) => setNewDeptName(e.target.value)}
+                  disabled={isSubmitting}
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all disabled:opacity-50 box-border"
+                />
+              </div>
             </div>
-            <div className="relative flex items-center">
-              <input
-                type="text"
-                placeholder="Enter department name"
-                value={newDeptName}
-                maxLength={100}
-                onChange={(e) => setNewDeptName(e.target.value)}
+
+            {/* Status Toggle */}
+            <div className="shrink-0">
+              <label className="block text-[13px] font-semibold text-slate-700 mb-2">
+                Status
+              </label>
+              <div className="flex items-center gap-3 h-[42px]">
+                <button
+                  type="button"
+                  onClick={() => setNewDeptActive(!newDeptActive)}
+                  disabled={isSubmitting}
+                  className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer border-none p-0.5 ${
+                    newDeptActive ? 'bg-[#10B981]' : 'bg-slate-300'
+                  }`}
+                >
+                  <span
+                    className={`block w-5 h-5 rounded-full bg-white shadow-xs transition-transform ${
+                      newDeptActive ? 'translate-x-5' : 'translate-x-0'
+                    }`}
+                  />
+                </button>
+                <span className={`text-[13.5px] font-semibold ${newDeptActive ? 'text-[#10B981]' : 'text-slate-500'}`}>
+                  {newDeptActive ? 'Active' : 'Inactive'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Logo & Accent Color (opsional, bisa diatur manual oleh admin) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <div>
+              <label className="block text-[13px] font-semibold text-slate-700 mb-2">
+                Department Logo <span className="text-slate-400 font-normal">(optional)</span>
+              </label>
+              <DepartmentLogoPicker
+                file={newDeptLogo}
+                existingUrl={null}
+                removeExisting={false}
+                onSelectFile={setNewDeptLogo}
+                onToggleRemoveExisting={() => undefined}
                 disabled={isSubmitting}
-                className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all disabled:opacity-50 box-border"
+              />
+            </div>
+
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-[13px] font-semibold text-slate-700">
+                  Accent Color
+                </label>
+                <span className="text-[12px] text-slate-400 font-medium">
+                  {newDeptColor ? newDeptColor : 'Auto'}
+                </span>
+              </div>
+              <ColorPicker
+                color={newDeptColor || autoDepartmentColor(newDeptName)}
+                onChange={setNewDeptColor}
+                showPalette={showNewColorPalette}
+                onTogglePalette={() => setShowNewColorPalette(!showNewColorPalette)}
               />
             </div>
           </div>
 
-          {/* Status Toggle */}
-          <div className="shrink-0">
-            <label className="block text-[13px] font-semibold text-slate-700 mb-2">
-              Status
-            </label>
-            <div className="flex items-center gap-3 h-[42px]">
-              <button
-                type="button"
-                onClick={() => setNewDeptActive(!newDeptActive)}
-                disabled={isSubmitting}
-                className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer border-none p-0.5 ${
-                  newDeptActive ? 'bg-[#10B981]' : 'bg-slate-300'
-                }`}
-              >
-                <span
-                  className={`block w-5 h-5 rounded-full bg-white shadow-xs transition-transform ${
-                    newDeptActive ? 'translate-x-5' : 'translate-x-0'
-                  }`}
-                />
-              </button>
-              <span className={`text-[13.5px] font-semibold ${newDeptActive ? 'text-[#10B981]' : 'text-slate-500'}`}>
-                {newDeptActive ? 'Active' : 'Inactive'}
-              </span>
-            </div>
-          </div>
-
           {/* Add Department Button */}
-          <div className="w-full sm:w-auto shrink-0">
+          <div className="flex justify-end">
             <button
               type="submit"
               disabled={isSubmitting}

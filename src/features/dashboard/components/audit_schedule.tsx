@@ -1,16 +1,8 @@
 import { useMemo } from 'react';
 import { Calendar, Clock } from 'lucide-react';
 import { useFetch } from '../../../shared/hooks/use_fetch';
+import { useDepartmentColors } from '../../../shared/hooks/use_department_colors';
 import { getAuditSchedule } from '../api/dashboard_api';
-
-const departmentColors: Record<string, string> = {
-  Production: '#a855f7',
-  Packaging: '#3b82f6',
-  Warehouse: '#ec4899',
-  QC: '#22c55e',
-};
-
-const colorFor = (dept: string) => departmentColors[dept] ?? '#64748b';
 
 function formatDate(year: number, month: number, day: number) {
   return new Date(year, month - 1, day).toLocaleDateString('en-US', {
@@ -36,6 +28,7 @@ export default function AuditSchedule() {
   const now = new Date();
   const month = now.getMonth() + 1;
   const year = now.getFullYear();
+  const colorFor = useDepartmentColors();
 
   const { data, loading, error } = useFetch(
     () => getAuditSchedule(month, year),
@@ -62,14 +55,25 @@ export default function AuditSchedule() {
       .sort((a, b) => a.day - b.day);
   }, [data, year, month]);
 
+  // Legend diambil dari department yang benar-benar muncul di jadwal
+  const legend = useMemo(() => {
+    const names: string[] = [];
+    for (const audit of audits) {
+      if (audit.department && !names.includes(audit.department)) {
+        names.push(audit.department);
+      }
+    }
+    return names;
+  }, [audits]);
+
   return (
     <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-[24px]">
       <div className="flex justify-between items-center mb-[16px] flex-wrap gap-[8px]">
         <h3 className="text-[22px] font-bold text-[#0f2c52] m-0">Upcoming Audits</h3>
-        <div className="flex gap-[12px] text-[13px] text-[#475569]">
-          {Object.entries(departmentColors).map(([label, color]) => (
+        <div className="flex gap-[12px] text-[13px] text-[#475569] flex-wrap">
+          {legend.map((label) => (
             <span key={label} className="flex items-center gap-[4px]">
-              <span className="w-[8px] h-[8px] rounded-full inline-block" style={{ backgroundColor: color }} />
+              <span className="w-[8px] h-[8px] rounded-full inline-block" style={{ backgroundColor: colorFor(label) }} />
               {label}
             </span>
           ))}

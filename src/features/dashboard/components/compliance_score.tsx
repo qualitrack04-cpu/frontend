@@ -1,17 +1,10 @@
 import { useFetch } from '../../../shared/hooks/use_fetch';
+import { useDepartmentColors } from '../../../shared/hooks/use_department_colors';
 import { getComplianceScore } from '../api/dashboard_api';
-
-const departmentColors: Record<string, string> = {
-  Production: '#a855f7',
-  Packaging: '#3b82f6',
-  Warehouse: '#ec4899',
-  QC: '#22c55e',
-};
-
-const colorFor = (dept: string) => departmentColors[dept] ?? '#64748b';
 
 export default function ComplianceScore() {
   const { data, loading, error } = useFetch(getComplianceScore);
+  const colorFor = useDepartmentColors();
 
   console.log('compliance-score response', data);
 
