@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { User, Mail, Lock, Eye, EyeOff, Briefcase } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, Briefcase, Check } from 'lucide-react';
 import { register } from '../api/auth_api';
 import AuthBrandPanel from './auth_brand_panel';
 import splashLogo from '../../../assets/splash.png';
-import { isPasswordStrong } from '../../../shared/utils/password_policy';
+import { getPasswordChecks, countPasswordChecks, isPasswordStrong } from '../../../shared/utils/password_policy';
 
 const ROLE_OPTIONS = [
   { value: 'AuditorInternal', label: 'Auditor Internal' },
@@ -29,6 +29,26 @@ export default function SignUpPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Password Policy Checks
+  const passwordChecks = getPasswordChecks(password);
+  const criteriaCount = countPasswordChecks(passwordChecks);
+
+  let strengthLabel = '';
+  let strengthColor = 'text-slate-400';
+  if (criteriaCount === 4) {
+    strengthLabel = 'Strong';
+    strengthColor = 'text-[#16A34A]';
+  } else if (criteriaCount === 3) {
+    strengthLabel = 'Good';
+    strengthColor = 'text-amber-500';
+  } else if (criteriaCount === 2) {
+    strengthLabel = 'Fair';
+    strengthColor = 'text-orange-500';
+  } else if (criteriaCount === 1) {
+    strengthLabel = 'Weak';
+    strengthColor = 'text-red-500';
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -114,7 +134,7 @@ export default function SignUpPage() {
 
             {/* Password */}
             <label className={labelClass}>Password</label>
-            <div className="relative flex items-center mb-5">
+            <div className="relative flex items-center mb-2">
               <Lock size={16} className={iconClass} />
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -135,8 +155,126 @@ export default function SignUpPage() {
               </button>
             </div>
 
-            {/* Password Verification (tanpa ikon mata, sesuai target) */}
-            <label className={labelClass}>Password Verification</label>
+            {/* Password Policy & Strength Indicator (Tampil realtime saat password diketik) */}
+            {password.length > 0 && (
+              <div className="mb-4 p-3 bg-slate-50 border border-slate-200/80 rounded-xl transition-all">
+                {/* 4 Segmented Strength Bars */}
+                <div className="grid grid-cols-4 gap-1.5 mb-1.5">
+                  {[1, 2, 3, 4].map((level) => {
+                    const isActive = criteriaCount >= level;
+                    const barColor =
+                      criteriaCount === 4
+                        ? 'bg-[#16A34A]'
+                        : criteriaCount === 3
+                        ? 'bg-amber-400'
+                        : criteriaCount === 2
+                        ? 'bg-orange-400'
+                        : 'bg-red-400';
+
+                    return (
+                      <div
+                        key={level}
+                        className={`h-1.5 rounded-full transition-all duration-200 ${
+                          isActive ? barColor : 'bg-slate-200'
+                        }`}
+                      />
+                    );
+                  })}
+                </div>
+
+                {/* Strength Label */}
+                {strengthLabel && (
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                      Strength
+                    </span>
+                    <span className={`text-[12px] font-bold ${strengthColor}`}>
+                      {strengthLabel}
+                    </span>
+                  </div>
+                )}
+
+                {/* 4 Criteria Checklist */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-2 gap-y-1.5 pt-1 border-t border-slate-200/60">
+                  <div className="flex items-center gap-1.5">
+                    <Check
+                      size={13}
+                      className={passwordChecks.hasMinLength ? 'text-[#16A34A]' : 'text-slate-300'}
+                      strokeWidth={passwordChecks.hasMinLength ? 3 : 2}
+                    />
+                    <span
+                      className={`text-[11.5px] ${
+                        passwordChecks.hasMinLength ? 'text-slate-700 font-medium' : 'text-slate-400'
+                      }`}
+                    >
+                      At least 8 chars
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <Check
+                      size={13}
+                      className={passwordChecks.hasUpperLower ? 'text-[#16A34A]' : 'text-slate-300'}
+                      strokeWidth={passwordChecks.hasUpperLower ? 3 : 2}
+                    />
+                    <span
+                      className={`text-[11.5px] ${
+                        passwordChecks.hasUpperLower ? 'text-slate-700 font-medium' : 'text-slate-400'
+                      }`}
+                    >
+                      Upper & lowercase
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <Check
+                      size={13}
+                      className={passwordChecks.hasNumber ? 'text-[#16A34A]' : 'text-slate-300'}
+                      strokeWidth={passwordChecks.hasNumber ? 3 : 2}
+                    />
+                    <span
+                      className={`text-[11.5px] ${
+                        passwordChecks.hasNumber ? 'text-slate-700 font-medium' : 'text-slate-400'
+                      }`}
+                    >
+                      At least 1 number
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <Check
+                      size={13}
+                      className={passwordChecks.hasSpecial ? 'text-[#16A34A]' : 'text-slate-300'}
+                      strokeWidth={passwordChecks.hasSpecial ? 3 : 2}
+                    />
+                    <span
+                      className={`text-[11.5px] ${
+                        passwordChecks.hasSpecial ? 'text-slate-700 font-medium' : 'text-slate-400'
+                      }`}
+                    >
+                      1 special char
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+            {!password && <div className="mb-3" />}
+
+            {/* Password Verification */}
+            <div className="flex items-center justify-between !mb-[9px]">
+              <label className="block text-left text-[#1f2937] text-[15px] leading-5 font-semibold !m-0">
+                Password Verification
+              </label>
+              {confirmPassword.length > 0 && (
+                <span
+                  className={`text-[11.5px] font-semibold ${
+                    password === confirmPassword ? 'text-[#16A34A]' : 'text-red-500'
+                  }`}
+                >
+                  {password === confirmPassword ? 'Passwords match' : 'Do not match'}
+                </span>
+              )}
+            </div>
             <div className="relative flex items-center mb-5">
               <Lock size={16} className={iconClass} />
               <input

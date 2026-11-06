@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Lock, Eye, EyeOff, ArrowLeft, Check } from 'lucide-react';
 import { useForgotPasswordFlow } from '../hooks/use_forgot_password_flow';
 import AuthBrandPanel from './auth_brand_panel';
 import splashLogo from '../../../assets/splash.png';
+import { getPasswordChecks, countPasswordChecks, isPasswordStrong } from '../../../shared/utils/password_policy';
 
 export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState('');
@@ -17,6 +18,26 @@ export default function ResetPasswordPage() {
   const resetToken = location.state?.resetToken || '';
   const navigate = useNavigate();
 
+  // Password Policy Checks
+  const passwordChecks = getPasswordChecks(newPassword);
+  const criteriaCount = countPasswordChecks(passwordChecks);
+
+  let strengthLabel = '';
+  let strengthColor = 'text-slate-400';
+  if (criteriaCount === 4) {
+    strengthLabel = 'Strong';
+    strengthColor = 'text-[#16A34A]';
+  } else if (criteriaCount === 3) {
+    strengthLabel = 'Good';
+    strengthColor = 'text-amber-500';
+  } else if (criteriaCount === 2) {
+    strengthLabel = 'Fair';
+    strengthColor = 'text-orange-500';
+  } else if (criteriaCount === 1) {
+    strengthLabel = 'Weak';
+    strengthColor = 'text-red-500';
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError(null);
@@ -26,6 +47,10 @@ export default function ResetPasswordPage() {
     }
     if (newPassword !== confirmPassword) {
       setLocalError('Passwords do not match.');
+      return;
+    }
+    if (!isPasswordStrong(newPassword)) {
+      setLocalError('Password must be at least 8 characters and contain uppercase, lowercase, number, and special character');
       return;
     }
     try {
@@ -60,7 +85,7 @@ export default function ResetPasswordPage() {
             <label className="text-[#475569] text-xs font-bold tracking-widest uppercase mb-1.5 block">
               New Password
             </label>
-            <div className="relative flex items-center mb-4">
+            <div className="relative flex items-center mb-2">
               <Lock size={16} className="absolute left-3.5 text-[#64748b] pointer-events-none" />
               <input
                 type={showNew ? 'text' : 'password'}
@@ -79,10 +104,126 @@ export default function ResetPasswordPage() {
               </button>
             </div>
 
+            {/* Password Policy & Strength Indicator (Tampil realtime saat password diketik) */}
+            {newPassword.length > 0 && (
+              <div className="mb-4 p-3 bg-slate-50 border border-slate-200/80 rounded-xl transition-all">
+                {/* 4 Segmented Strength Bars */}
+                <div className="grid grid-cols-4 gap-1.5 mb-1.5">
+                  {[1, 2, 3, 4].map((level) => {
+                    const isActive = criteriaCount >= level;
+                    const barColor =
+                      criteriaCount === 4
+                        ? 'bg-[#16A34A]'
+                        : criteriaCount === 3
+                        ? 'bg-amber-400'
+                        : criteriaCount === 2
+                        ? 'bg-orange-400'
+                        : 'bg-red-400';
+
+                    return (
+                      <div
+                        key={level}
+                        className={`h-1.5 rounded-full transition-all duration-200 ${
+                          isActive ? barColor : 'bg-slate-200'
+                        }`}
+                      />
+                    );
+                  })}
+                </div>
+
+                {/* Strength Label */}
+                {strengthLabel && (
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                      Strength
+                    </span>
+                    <span className={`text-[12px] font-bold ${strengthColor}`}>
+                      {strengthLabel}
+                    </span>
+                  </div>
+                )}
+
+                {/* 4 Criteria Checklist */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-2 gap-y-1.5 pt-1 border-t border-slate-200/60">
+                  <div className="flex items-center gap-1.5">
+                    <Check
+                      size={13}
+                      className={passwordChecks.hasMinLength ? 'text-[#16A34A]' : 'text-slate-300'}
+                      strokeWidth={passwordChecks.hasMinLength ? 3 : 2}
+                    />
+                    <span
+                      className={`text-[11.5px] ${
+                        passwordChecks.hasMinLength ? 'text-slate-700 font-medium' : 'text-slate-400'
+                      }`}
+                    >
+                      At least 8 chars
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <Check
+                      size={13}
+                      className={passwordChecks.hasUpperLower ? 'text-[#16A34A]' : 'text-slate-300'}
+                      strokeWidth={passwordChecks.hasUpperLower ? 3 : 2}
+                    />
+                    <span
+                      className={`text-[11.5px] ${
+                        passwordChecks.hasUpperLower ? 'text-slate-700 font-medium' : 'text-slate-400'
+                      }`}
+                    >
+                      Upper & lowercase
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <Check
+                      size={13}
+                      className={passwordChecks.hasNumber ? 'text-[#16A34A]' : 'text-slate-300'}
+                      strokeWidth={passwordChecks.hasNumber ? 3 : 2}
+                    />
+                    <span
+                      className={`text-[11.5px] ${
+                        passwordChecks.hasNumber ? 'text-slate-700 font-medium' : 'text-slate-400'
+                      }`}
+                    >
+                      At least 1 number
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <Check
+                      size={13}
+                      className={passwordChecks.hasSpecial ? 'text-[#16A34A]' : 'text-slate-300'}
+                      strokeWidth={passwordChecks.hasSpecial ? 3 : 2}
+                    />
+                    <span
+                      className={`text-[11.5px] ${
+                        passwordChecks.hasSpecial ? 'text-slate-700 font-medium' : 'text-slate-400'
+                      }`}
+                    >
+                      1 special char
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+            {!newPassword && <div className="mb-2" />}
+
             {/* Password Verification */}
-            <label className="text-[#475569] text-xs font-bold tracking-widest uppercase mb-1.5 block">
-              Password Verification
-            </label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="text-[#475569] text-xs font-bold tracking-widest uppercase block !m-0">
+                Password Verification
+              </label>
+              {confirmPassword.length > 0 && (
+                <span
+                  className={`text-[11.5px] font-semibold ${
+                    newPassword === confirmPassword ? 'text-[#16A34A]' : 'text-red-500'
+                  }`}
+                >
+                  {newPassword === confirmPassword ? 'Passwords match' : 'Do not match'}
+                </span>
+              )}
+            </div>
             <div className="relative flex items-center mb-4">
               <Lock size={16} className="absolute left-3.5 text-[#64748b] pointer-events-none" />
               <input
