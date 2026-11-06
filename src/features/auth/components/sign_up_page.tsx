@@ -12,10 +12,10 @@ const ROLE_OPTIONS = [
 ] as const;
 
 const labelClass =
-  'block text-left text-[#1f2937] text-[15px] leading-5 font-semibold !m-0 !mb-[9px]';
+  'block text-left text-[#1f2937] text-[14px] leading-5 font-semibold !m-0 !mb-2';
 
 const inputBase =
-  'w-full h-[42px] pl-11 border border-slate-200 rounded-lg bg-white text-[#1f2937] text-[15px] outline-none transition-all focus:border-[#0f2c52] focus:ring-2 focus:ring-[#0f2c52]/10';
+  'w-full h-[40px] pl-10.5 border border-slate-200 rounded-lg bg-white text-[#1f2937] text-[14.5px] outline-none transition-all focus:border-[#0f2c52] focus:ring-2 focus:ring-[#0f2c52]/10';
 
 const iconClass = 'absolute left-3.5 text-[#64748b] pointer-events-none';
 
@@ -77,35 +77,35 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full overflow-hidden bg-slate-50 lg:bg-white">
+    <div className="relative flex min-h-screen lg:h-screen w-full overflow-y-auto lg:overflow-hidden bg-slate-50 lg:bg-white">
       {/* ── Left: Brand Panel ── */}
       <AuthBrandPanel side="left" />
 
       {/* ── Right: Form area ── */}
-      <div className="flex flex-1 flex-col items-center lg:items-end justify-center px-4 sm:px-6 lg:pr-[85px] py-6 sm:py-8 z-10">
-        <div className="w-full max-w-[400px] bg-white rounded-[20px] shadow-xl sm:shadow-2xl p-6 sm:p-8 text-left">
+      <div className="flex flex-1 flex-col items-center lg:items-end justify-center px-4 sm:px-6 lg:pr-[85px] py-4 sm:py-6 z-10 my-auto">
+        <div className="w-full max-w-[400px] bg-white rounded-[20px] shadow-xl sm:shadow-2xl px-6 py-6 sm:px-8 sm:py-7 text-left">
           {/* Logo on Mobile/Tablet */}
-          <div className="flex justify-center mb-5 lg:hidden">
+          <div className="flex justify-center mb-3.5 lg:hidden">
             <img
               src={splashLogo}
               alt="QualiTrack"
-              className="h-9 sm:h-11 w-auto object-contain"
+              className="h-8 sm:h-10 w-auto object-contain"
             />
           </div>
 
-          <div className="text-[#0f2c52] text-2xl sm:text-[28px] leading-8 sm:leading-9 font-bold !m-0 !mb-5 text-center !tracking-normal">
+          <div className="text-[#0f2c52] text-2xl sm:text-[28px] leading-snug font-bold !m-0 !mb-4 text-center !tracking-normal">
             Sign Up
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-0">
             {/* Username */}
-            <div className="flex items-center justify-between !mb-[9px]">
-              <label className="block text-left text-[#1f2937] text-[15px] leading-5 font-semibold !m-0">Username</label>
+            <div className="flex items-center justify-between !mb-2">
+              <label className="block text-left text-[#1f2937] text-[14px] leading-5 font-semibold !m-0">Username</label>
               <span className="text-[12px] text-slate-400 font-medium">
                 {fullName.length}/60
               </span>
             </div>
-            <div className="relative flex items-center mb-5">
+            <div className="relative flex items-center mb-3.5">
               <User size={16} className={iconClass} />
               <input
                 type="text"
@@ -120,7 +120,7 @@ export default function SignUpPage() {
 
             {/* Work Email */}
             <label className={labelClass}>Work Email</label>
-            <div className="relative flex items-center mb-5">
+            <div className="relative flex items-center mb-3.5">
               <Mail size={16} className={iconClass} />
               <input
                 type="email"
@@ -157,7 +157,7 @@ export default function SignUpPage() {
 
             {/* Password Policy & Strength Indicator (Tampil realtime saat password diketik) */}
             {password.length > 0 && (
-              <div className="mb-4 p-3 bg-slate-50 border border-slate-200/80 rounded-xl transition-all">
+              <div className="mb-3 p-3 bg-slate-50/90 border border-slate-200/80 rounded-xl transition-all">
                 {/* 4 Segmented Strength Bars */}
                 <div className="grid grid-cols-4 gap-1.5 mb-1.5">
                   {[1, 2, 3, 4].map((level) => {
@@ -184,7 +184,7 @@ export default function SignUpPage() {
 
                 {/* Strength Label */}
                 {strengthLabel && (
-                  <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center justify-between mb-1.5">
                     <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
                       Strength
                     </span>
@@ -195,7 +195,7 @@ export default function SignUpPage() {
                 )}
 
                 {/* 4 Criteria Checklist */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-2 gap-y-1.5 pt-1 border-t border-slate-200/60">
+                <div className="grid grid-cols-2 gap-x-2 gap-y-1.5 pt-1.5 border-t border-slate-200/60">
                   <div className="flex items-center gap-1.5">
                     <Check
                       size={13}
@@ -203,7 +203,7 @@ export default function SignUpPage() {
                       strokeWidth={passwordChecks.hasMinLength ? 3 : 2}
                     />
                     <span
-                      className={`text-[11.5px] ${
+                      className={`text-[11.5px] leading-tight ${
                         passwordChecks.hasMinLength ? 'text-slate-700 font-medium' : 'text-slate-400'
                       }`}
                     >
@@ -218,7 +218,7 @@ export default function SignUpPage() {
                       strokeWidth={passwordChecks.hasUpperLower ? 3 : 2}
                     />
                     <span
-                      className={`text-[11.5px] ${
+                      className={`text-[11.5px] leading-tight ${
                         passwordChecks.hasUpperLower ? 'text-slate-700 font-medium' : 'text-slate-400'
                       }`}
                     >
@@ -233,7 +233,7 @@ export default function SignUpPage() {
                       strokeWidth={passwordChecks.hasNumber ? 3 : 2}
                     />
                     <span
-                      className={`text-[11.5px] ${
+                      className={`text-[11.5px] leading-tight ${
                         passwordChecks.hasNumber ? 'text-slate-700 font-medium' : 'text-slate-400'
                       }`}
                     >
@@ -248,7 +248,7 @@ export default function SignUpPage() {
                       strokeWidth={passwordChecks.hasSpecial ? 3 : 2}
                     />
                     <span
-                      className={`text-[11.5px] ${
+                      className={`text-[11.5px] leading-tight ${
                         passwordChecks.hasSpecial ? 'text-slate-700 font-medium' : 'text-slate-400'
                       }`}
                     >
@@ -258,11 +258,11 @@ export default function SignUpPage() {
                 </div>
               </div>
             )}
-            {!password && <div className="mb-3" />}
+            {!password && <div className="mb-2.5" />}
 
             {/* Password Verification */}
-            <div className="flex items-center justify-between !mb-[9px]">
-              <label className="block text-left text-[#1f2937] text-[15px] leading-5 font-semibold !m-0">
+            <div className="flex items-center justify-between !mb-2">
+              <label className="block text-left text-[#1f2937] text-[14px] leading-5 font-semibold !m-0">
                 Password Verification
               </label>
               {confirmPassword.length > 0 && (
@@ -275,7 +275,7 @@ export default function SignUpPage() {
                 </span>
               )}
             </div>
-            <div className="relative flex items-center mb-5">
+            <div className="relative flex items-center mb-3.5">
               <Lock size={16} className={iconClass} />
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -289,7 +289,7 @@ export default function SignUpPage() {
 
             {/* Role */}
             <label className={labelClass}>Role</label>
-            <div className="relative flex items-center mb-7">
+            <div className="relative flex items-center mb-5">
               <Briefcase size={16} className={iconClass} />
               <select
                 value={role}
@@ -302,18 +302,18 @@ export default function SignUpPage() {
               </select>
             </div>
 
-            {error && <p className="text-red-600 text-sm !mt-0 !mb-3 text-left">{error}</p>}
+            {error && <p className="text-red-600 text-xs !mt-0 !mb-2.5 text-left">{error}</p>}
                 
             <button
               type="submit"
               disabled={loading}
-              className="w-full h-11 bg-[#0f2c52] hover:bg-[#0c2444] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold rounded-lg border-none flex items-center justify-center transition-colors text-base tracking-wide"
+              className="w-full h-11 bg-[#0f2c52] hover:bg-[#0c2444] disabled:opacity-60 disabled:cursor-not-allowed text-white font-bold rounded-lg border-none flex items-center justify-center transition-colors text-[15px] tracking-wide"
             >
               {loading ? 'SIGNING UP...' : 'SIGN UP'}
             </button>
           </form>
 
-          <div className="flex justify-center !mt-4">
+          <div className="flex justify-center !mt-3.5">
             <Link
               to="/login"
               className="text-[#1f2937] font-bold text-sm leading-5 no-underline"

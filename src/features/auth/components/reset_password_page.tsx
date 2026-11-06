@@ -106,9 +106,9 @@ export default function ResetPasswordPage() {
 
             {/* Password Policy & Strength Indicator (Tampil realtime saat password diketik) */}
             {newPassword.length > 0 && (
-              <div className="mb-4 p-3 bg-slate-50 border border-slate-200/80 rounded-xl transition-all">
+              <div className="mb-3 p-2.5 bg-slate-50/90 border border-slate-200/80 rounded-xl transition-all">
                 {/* 4 Segmented Strength Bars */}
-                <div className="grid grid-cols-4 gap-1.5 mb-1.5">
+                <div className="grid grid-cols-4 gap-1.5 mb-1">
                   {[1, 2, 3, 4].map((level) => {
                     const isActive = criteriaCount >= level;
                     const barColor =
@@ -123,7 +123,7 @@ export default function ResetPasswordPage() {
                     return (
                       <div
                         key={level}
-                        className={`h-1.5 rounded-full transition-all duration-200 ${
+                        className={`h-1 rounded-full transition-all duration-200 ${
                           isActive ? barColor : 'bg-slate-200'
                         }`}
                       />
@@ -133,26 +133,26 @@ export default function ResetPasswordPage() {
 
                 {/* Strength Label */}
                 {strengthLabel && (
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[10.5px] font-bold text-slate-500 uppercase tracking-wider">
                       Strength
                     </span>
-                    <span className={`text-[12px] font-bold ${strengthColor}`}>
+                    <span className={`text-[11.5px] font-bold ${strengthColor}`}>
                       {strengthLabel}
                     </span>
                   </div>
                 )}
 
                 {/* 4 Criteria Checklist */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-2 gap-y-1.5 pt-1 border-t border-slate-200/60">
+                <div className="grid grid-cols-2 gap-x-2 gap-y-1 pt-1.5 border-t border-slate-200/60">
                   <div className="flex items-center gap-1.5">
                     <Check
-                      size={13}
+                      size={12}
                       className={passwordChecks.hasMinLength ? 'text-[#16A34A]' : 'text-slate-300'}
                       strokeWidth={passwordChecks.hasMinLength ? 3 : 2}
                     />
                     <span
-                      className={`text-[11.5px] ${
+                      className={`text-[11px] leading-tight ${
                         passwordChecks.hasMinLength ? 'text-slate-700 font-medium' : 'text-slate-400'
                       }`}
                     >
@@ -162,12 +162,12 @@ export default function ResetPasswordPage() {
 
                   <div className="flex items-center gap-1.5">
                     <Check
-                      size={13}
+                      size={12}
                       className={passwordChecks.hasUpperLower ? 'text-[#16A34A]' : 'text-slate-300'}
                       strokeWidth={passwordChecks.hasUpperLower ? 3 : 2}
                     />
                     <span
-                      className={`text-[11.5px] ${
+                      className={`text-[11px] leading-tight ${
                         passwordChecks.hasUpperLower ? 'text-slate-700 font-medium' : 'text-slate-400'
                       }`}
                     >
@@ -177,12 +177,12 @@ export default function ResetPasswordPage() {
 
                   <div className="flex items-center gap-1.5">
                     <Check
-                      size={13}
+                      size={12}
                       className={passwordChecks.hasNumber ? 'text-[#16A34A]' : 'text-slate-300'}
                       strokeWidth={passwordChecks.hasNumber ? 3 : 2}
                     />
                     <span
-                      className={`text-[11.5px] ${
+                      className={`text-[11px] leading-tight ${
                         passwordChecks.hasNumber ? 'text-slate-700 font-medium' : 'text-slate-400'
                       }`}
                     >
@@ -192,12 +192,12 @@ export default function ResetPasswordPage() {
 
                   <div className="flex items-center gap-1.5">
                     <Check
-                      size={13}
+                      size={12}
                       className={passwordChecks.hasSpecial ? 'text-[#16A34A]' : 'text-slate-300'}
                       strokeWidth={passwordChecks.hasSpecial ? 3 : 2}
                     />
                     <span
-                      className={`text-[11.5px] ${
+                      className={`text-[11px] leading-tight ${
                         passwordChecks.hasSpecial ? 'text-slate-700 font-medium' : 'text-slate-400'
                       }`}
                     >
