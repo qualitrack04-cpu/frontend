@@ -137,6 +137,12 @@ const INDO_ERROR_MAP: Record<string, string> = {
   'tipe file tidak sesuai dengan kontennya': 'File content does not match allowed types',
   'gagal menyimpan file': 'Failed to save file',
   'file evidence berhasil di-upload': 'Evidence file uploaded successfully',
+  // Department logo & color
+  'format warna tidak valid': 'Invalid color format. Use HEX format, e.g. #2563EB',
+  'ukuran file maksimal 5 mb': 'File size must not exceed 5 MB',
+  'file harus berupa gambar (jpg/png/jpeg)': 'File must be an image (jpg/png/jpeg)',
+  'ekstensi file tidak valid': 'Invalid file extension',
+  'tidak ada logo yang bisa dihapus': 'No logo to delete',
   // User Management Admin errors
   'tidak dapat mengubah role user yang tidak aktif': 'Cannot change the role of an inactive user. Please activate the user first.',
   'admin tidak dapat mengubah role dirinya sendiri': 'Admins cannot change their own role.',
