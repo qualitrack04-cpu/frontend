@@ -163,7 +163,6 @@ export default function LandingPage() {
       {/* DEMO VIDEO */}
       <section id="demo" className="section soft demo-section">
         <Reveal>
-          <p className="eyebrow center">DEMO</p>
           <h2 className="center">See QualiTrack in action</h2>
           <p className="muted center demo-sub">
             Watch how an audit moves from plan to report, all from one app.
