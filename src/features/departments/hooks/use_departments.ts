@@ -25,6 +25,7 @@ export function useDepartments() {
 
   return {
     departments,
+    setDepartments,
     loading,
     error,
     refetch: fetchDepartments,

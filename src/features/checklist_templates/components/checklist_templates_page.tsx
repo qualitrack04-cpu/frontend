@@ -221,26 +221,32 @@ export default function ChecklistTemplatesPage() {
     return false;
   };
 
-  // Helper to determine if a checklist template is using an inactive Department
+  // Helper to determine if a checklist template is using an inactive or deleted Department
   const isTemplateDeptInactive = (t: ChecklistTemplateItem) => {
     if (!Array.isArray(departments) || departments.length === 0) return false;
+
+    // 1. Direct match by departmentId
     if (t.departmentId) {
       const match = departments.find((d) => d.id === t.departmentId);
-      if (match && match.isActive === false) return true;
+      if (!match) return true; // Department has been deleted from master data!
+      if (match.isActive === false || (match as any).is_active === false) return true;
+      return false;
     }
+
+    // 2. Match by departmentName
     const tDeptName = (t.departmentName || '').trim().toLowerCase();
     if (tDeptName) {
-      for (const dept of departments) {
-        if (dept.isActive === false) {
-          const deptName = (dept.name || '').trim().toLowerCase();
-          const deptCode = (dept.code || '').trim().toLowerCase();
-          if ((deptName && tDeptName === deptName) || (deptCode && tDeptName === deptCode)) {
-            return true;
-          }
-        }
-      }
+      const match = departments.find((dept) => {
+        const deptName = (dept.name || '').trim().toLowerCase();
+        const deptCode = (dept.code || '').trim().toLowerCase();
+        return (deptName && tDeptName === deptName) || (deptCode && tDeptName === deptCode);
+      });
+      if (!match) return true; // Department has been deleted from master data!
+      if (match.isActive === false || (match as any).is_active === false) return true;
+      return false;
     }
-    return false;
+
+    return true; // No department found or associated
   };
 
   // Dot color matching the reference image for each ISO Standard
@@ -260,6 +266,9 @@ export default function ChecklistTemplatesPage() {
   // Filter in memory for instantaneous search & filtering
   const filteredTemplates = useMemo(() => {
     let list = Array.isArray(templates) ? [...templates] : [];
+
+    // Filter out templates whose Department or ISO is deleted or inactive (matching Mobile behavior)
+    list = list.filter((t) => !isTemplateDeptInactive(t) && !isTemplateIsoInactive(t));
 
     // Sort by createdAt descending so newest items (matching reference) are on top
     list.sort((a, b) => {

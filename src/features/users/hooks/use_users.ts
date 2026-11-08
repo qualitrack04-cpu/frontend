@@ -24,5 +24,5 @@ export function useUsers(search?: string, role?: string, status?: string) {
     fetchUsers();
   }, [fetchUsers]);
 
-  return { data, loading, error, refetch: fetchUsers };
+  return { data, setData, loading, error, refetch: fetchUsers };
 }

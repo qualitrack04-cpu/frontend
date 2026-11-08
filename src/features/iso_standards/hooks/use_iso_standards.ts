@@ -26,6 +26,7 @@ export function useIsoStandards(isActiveFilter?: boolean) {
 
   return {
     data,
+    setData,
     loading,
     error,
     refetch: fetchStandards,

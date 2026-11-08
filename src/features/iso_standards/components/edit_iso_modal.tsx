@@ -6,7 +6,7 @@ import type { IsoStandard } from '../api/iso_standards_api';
 interface EditIsoModalProps {
   iso: IsoStandard;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (updated?: IsoStandard) => void;
 }
 
 export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalProps) {
@@ -44,7 +44,13 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
         await updateIsoStandardStatus(iso.id, isActive);
       }
 
-      onSuccess();
+      onSuccess({
+        ...iso,
+        code: standardName.trim(),
+        name: category.trim(),
+        description: category.trim(),
+        isActive,
+      });
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Failed to update ISO Standard');
     } finally {

@@ -28,7 +28,7 @@ interface IconConfig {
 }
 
 export default function IsoStandardsPage() {
-  const { data, loading, error, refetch } = useIsoStandards();
+  const { data, setData, loading, error, refetch } = useIsoStandards();
 
   // Pagination state (Max 7 items per page)
   const [currentPage, setCurrentPage] = useState(1);
@@ -241,8 +241,20 @@ export default function IsoStandardsPage() {
         <EditIsoModal
           iso={editingIso}
           onClose={() => setEditingIso(null)}
-          onSuccess={() => {
+          onSuccess={(updated) => {
             setEditingIso(null);
+            if (updated) {
+              setData((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      data: prev.data.map((item) =>
+                        item.id === updated.id ? { ...item, ...updated } : item
+                      ),
+                    }
+                  : prev
+              );
+            }
             refetch();
           }}
         />

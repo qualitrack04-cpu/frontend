@@ -6,7 +6,7 @@ import type { User } from '../api/users_api';
 interface EditUserModalProps {
   user: User;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (updated?: User) => void;
 }
 
 export default function EditUserModal({ user, onClose, onSuccess }: EditUserModalProps) {
@@ -48,7 +48,13 @@ export default function EditUserModal({ user, onClose, onSuccess }: EditUserModa
         await updateUserRole(user.id, role);
       }
 
-      onSuccess();
+      onSuccess({
+        ...user,
+        fullName: username.trim(),
+        email: email.trim(),
+        role,
+        status: newStatus,
+      });
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Failed to update user');
     } finally {

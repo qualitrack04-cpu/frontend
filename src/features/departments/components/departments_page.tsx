@@ -25,7 +25,7 @@ import { formatUpdatedDate } from '../../../shared/utils/date_utils';
 import { fileUrl } from '../../../shared/utils/file_url';
 
 export default function DepartmentsPage() {
-  const { departments, loading, error, refetch } = useDepartments();
+  const { departments, setDepartments, loading, error, refetch } = useDepartments();
 
   // Pagination state (Max 7 items per page)
   const [currentPage, setCurrentPage] = useState(1);
@@ -375,8 +375,13 @@ export default function DepartmentsPage() {
         <EditDepartmentModal
           department={editingDept}
           onClose={() => setEditingDept(null)}
-          onSuccess={() => {
+          onSuccess={(updated) => {
             setEditingDept(null);
+            if (updated) {
+              setDepartments((prev) =>
+                prev.map((d) => (d.id === updated.id ? { ...d, ...updated } : d))
+              );
+            }
             refetch();
           }}
         />

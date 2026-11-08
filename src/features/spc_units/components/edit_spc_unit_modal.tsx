@@ -5,7 +5,7 @@ import { updateSpcUnit, updateSpcUnitStatus, type SpcUnit } from '../api/spc_uni
 interface EditSpcUnitModalProps {
   unit: SpcUnit;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (updated?: SpcUnit) => void;
 }
 
 export default function EditSpcUnitModal({ unit, onClose, onSuccess }: EditSpcUnitModalProps) {
@@ -42,7 +42,13 @@ export default function EditSpcUnitModal({ unit, onClose, onSuccess }: EditSpcUn
         await updateSpcUnitStatus(unit.id, isActive);
       }
 
-      onSuccess();
+      onSuccess({
+        ...unit,
+        name: unitName.trim(),
+        symbol: symbol.trim(),
+        description: description.trim() || null,
+        isActive,
+      });
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Failed to update SPC Unit');
     } finally {

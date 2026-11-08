@@ -64,7 +64,7 @@ export default function UsersPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const { data, loading, error, refetch } = useUsers(debouncedSearch, roleFilter, statusFilter);
+  const { data, setData, loading, error, refetch } = useUsers(debouncedSearch, roleFilter, statusFilter);
 
   // In-memory search refinement for email and name
   const filteredUsers = useMemo(() => {
@@ -451,8 +451,20 @@ export default function UsersPage() {
         <EditUserModal
           user={editingUser}
           onClose={() => setEditingUser(null)}
-          onSuccess={() => {
+          onSuccess={(updated) => {
             setEditingUser(null);
+            if (updated) {
+              setData((prev) =>
+                prev
+                  ? {
+                      ...prev,
+                      data: prev.data.map((u) =>
+                        u.id === updated.id ? { ...u, ...updated } : u
+                      ),
+                    }
+                  : prev
+              );
+            }
             refetch();
           }}
         />

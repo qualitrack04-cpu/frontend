@@ -14,7 +14,7 @@ import { resolveDepartmentColor } from '../utils/department_visuals';
 interface EditDepartmentModalProps {
   department: DepartmentItem;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess: (updated?: DepartmentItem) => void;
 }
 
 export default function EditDepartmentModal({ department, onClose, onSuccess }: EditDepartmentModalProps) {
@@ -56,7 +56,14 @@ export default function EditDepartmentModal({ department, onClose, onSuccess }: 
         await updateDepartmentStatus(department.id, isActive);
       }
 
-      onSuccess();
+      onSuccess({
+        ...department,
+        name: name.trim(),
+        code: department.code || name.trim().slice(0, 10).toUpperCase(),
+        description: department.description || '',
+        color,
+        isActive,
+      });
     } catch (err: any) {
       setError(err.response?.data?.message || err.message || 'Failed to update department');
     } finally {

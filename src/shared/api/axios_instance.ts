@@ -21,6 +21,19 @@ axios_instance.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+
+  // Cegah browser disk/memory cache pada GET request di SPA
+  // agar setiap refetch data selalu mendapatkan kondisi terkini dari backend
+  if (config.method?.toLowerCase() === 'get') {
+    config.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+    config.headers['Pragma'] = 'no-cache';
+    config.headers['Expires'] = '0';
+
+    // Tambahkan timestamp query parameter agar URL unik dan browser tidak pernah menyajikan dari cache
+    const separator = config.url?.includes('?') ? '&' : '?';
+    config.url = `${config.url}${separator}_t=${Date.now()}`;
+  }
+
   return config;
 });
 

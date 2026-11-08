@@ -9,7 +9,7 @@ import TablePagination from '../../../shared/components/table_pagination';
 import { formatUpdatedDate } from '../../../shared/utils/date_utils';
 
 export default function SpcUnitsPage() {
-  const { units, loading, error, refetch } = useSpcUnits();
+  const { units, setUnits, loading, error, refetch } = useSpcUnits();
 
   // Pagination state (Max 7 items per page)
   const [currentPage, setCurrentPage] = useState(1);
@@ -195,8 +195,13 @@ export default function SpcUnitsPage() {
         <EditSpcUnitModal
           unit={editingUnit}
           onClose={() => setEditingUnit(null)}
-          onSuccess={() => {
+          onSuccess={(updated) => {
             setEditingUnit(null);
+            if (updated) {
+              setUnits((prev) =>
+                prev.map((u) => (u.id === updated.id ? { ...u, ...updated } : u))
+              );
+            }
             refetch();
           }}
         />

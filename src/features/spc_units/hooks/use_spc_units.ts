@@ -27,6 +27,7 @@ export function useSpcUnits(isActive?: boolean) {
 
   return {
     units,
+    setUnits,
     total,
     loading,
     error,
