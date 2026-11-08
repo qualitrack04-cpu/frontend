@@ -1,20 +1,52 @@
+import { useMemo } from 'react';
 import { useFetch } from '../../../shared/hooks/use_fetch';
 import { useDepartmentColors } from '../../../shared/hooks/use_department_colors';
+import { useDepartments } from '../../departments/hooks/use_departments';
 import { getComplianceScore } from '../api/dashboard_api';
 
 export default function ComplianceScore() {
-  const { data, loading, error } = useFetch(getComplianceScore);
+  const { data, loading: scoreLoading, error: scoreError } = useFetch(getComplianceScore);
+  const { departments: activeMasterDepts, loading: deptsLoading } = useDepartments();
   const colorFor = useDepartmentColors();
 
-  const departments = data?.data ?? [];
+  const loading = scoreLoading || deptsLoading;
+  const error = scoreError;
+
+  // Filter kartu agar hanya menampilkan departemen yang masih terdaftar dan aktif di master data
+  const departments = useMemo(() => {
+    const rawList = data?.data ?? [];
+    if (!activeMasterDepts.length && deptsLoading) return rawList;
+    if (!activeMasterDepts.length && !deptsLoading) return [];
+
+    return rawList.filter((item) => {
+      const itemDeptName = (item.department || '').trim().toLowerCase();
+      const match = activeMasterDepts.find(
+        (d) =>
+          (d.name || '').trim().toLowerCase() === itemDeptName ||
+          (d.code || '').trim().toLowerCase() === itemDeptName
+      );
+      return match && match.isActive !== false;
+    });
+  }, [data?.data, activeMasterDepts, deptsLoading]);
+
+  // Hitung ulang overall score berdasarkan departemen yang aktif saat ini
+  const overallScore = useMemo(() => {
+    if (!departments.length) return data?.overallScore;
+    const totalResponses = departments.reduce((acc, curr) => acc + (curr.totalResponses || 0), 0);
+    const conformResponses = departments.reduce((acc, curr) => acc + (curr.conformResponses || 0), 0);
+    if (totalResponses > 0) {
+      return (conformResponses / totalResponses) * 100;
+    }
+    return data?.overallScore;
+  }, [departments, data?.overallScore]);
 
   return (
     <div className="mt-[8px]">
       <div className="flex justify-between items-center mb-[8px]">
         <p className="text-[11px] font-bold tracking-[0.8px] text-slate-500 uppercase m-0">COMPLIANCE SCORE</p>
-        {typeof data?.overallScore === 'number' && (
+        {typeof overallScore === 'number' && (
           <span className="text-[13px] text-slate-500">
-            Overall: <strong className="text-[#0f2c52]">{data.overallScore.toFixed(1)}%</strong>
+            Overall: <strong className="text-[#0f2c52]">{overallScore.toFixed(1)}%</strong>
           </span>
         )}
       </div>

@@ -5,7 +5,7 @@ import {
   SlidersHorizontal, 
   ChevronDown, 
   RotateCcw, 
-  Plus, 
+  // Plus, // Add User dipending untuk Sprint Depan
   Pencil, 
   Trash2, 
   Check,
@@ -14,7 +14,7 @@ import {
 import { fileUrl } from '../../../shared/utils/file_url';
 import { formatUpdatedDate } from '../../../shared/utils/date_utils';
 import EditUserModal from './edit_user_modal';
-import AddUserModal from './add_user_modal';
+// import AddUserModal from './add_user_modal'; // Add User dipending untuk Sprint Depan
 import DeleteUserModal from './delete_user_modal';
 import TablePagination from '../../../shared/components/table_pagination';
 import type { User } from '../api/users_api';
@@ -34,7 +34,7 @@ export default function UsersPage() {
   // Modals state
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deletingUser, setDeletingUser] = useState<User | null>(null);
-  const [showAddModal, setShowAddModal] = useState(false);
+  // const [showAddModal, setShowAddModal] = useState(false); // Add User dipending untuk Sprint Depan
 
   // Role dropdown open state
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
@@ -154,6 +154,8 @@ export default function UsersPage() {
             Manage users and their access to the QualiTrack system.
           </p>
         </div>
+        {/* Tombol Add User dipending untuk Sprint depan sesuai keputusan tim */}
+        {/*
         <button
           type="button"
           onClick={() => setShowAddModal(true)}
@@ -162,6 +164,7 @@ export default function UsersPage() {
           <Plus size={18} strokeWidth={2.5} />
           <span>Add User</span>
         </button>
+        */}
       </div>
 
       {/* Filter & Search Bar */}
@@ -470,7 +473,8 @@ export default function UsersPage() {
         />
       )}
 
-      {/* Add User Modal */}
+      {/* Modal Add User dipending untuk Sprint depan sesuai keputusan tim */}
+      {/*
       {showAddModal && (
         <AddUserModal
           onClose={() => setShowAddModal(false)}
@@ -480,6 +484,7 @@ export default function UsersPage() {
           }}
         />
       )}
+      */}
 
       {/* Delete / Deactivate User Modal */}
       {deletingUser && (
