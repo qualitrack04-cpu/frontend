@@ -39,7 +39,6 @@ import EditProfilePage from '../features/profile/components/edit_profile_page';
 import SystemConfigurationPage from '../features/system_configuration/components/system_configuration_page';
 
 import CreateAuditPlanPage from '../features/audits/components/create_audit_page';
-import AuditChecklistEditPage from '../features/audits/components/audit_checklist_edit_page';
 import AuditChecklistPage from '../features/audits/components/audit_checklist_page';
 import AuditReportPreviewPage from '../features/audits/components/audit_report_preview_page';
 const router = createBrowserRouter([
@@ -93,7 +92,6 @@ const router = createBrowserRouter([
             children: [
               { path: '/audits/new', element: <CreateAuditPlanPage /> },
               { path: '/audits/:planId/edit', element: <CreateAuditPlanPage /> },
-              { path: '/audits/checklists/:checklistId/edit', element: <AuditChecklistEditPage /> },
             ],
           },
           { path: '/audits/:planId/schedule/:scheduleId/checklist',element: <AuditChecklistPage />},

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { getAuditPlans, deleteAuditPlan, type AuditPlan } from '../api/audit_plan_api';
+import { parseUtcDate } from '../../../shared/utils/date_utils';
 
 export type AuditTab = 'all' | 'priority';
 
@@ -27,6 +28,9 @@ export function useAuditPlans() {
   }, [load]);
 
   const handleDelete = useCallback(async (id: string) => {
+    if (!window.confirm('Audit plan will be deleted permanently. Are you sure you want to delete this audit?')) {
+      return;
+    }
     try {
       await deleteAuditPlan(id);
       setAllAudits((prev) => prev.filter((a) => a.id !== id));
@@ -35,10 +39,42 @@ export function useAuditPlans() {
     }
   }, []);
 
-  const audits = useMemo(
-    () => (tab === 'priority' ? allAudits.filter((a) => a.priority === 'Priority') : allAudits),
-    [allAudits, tab]
-  );
+  const audits = useMemo(() => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const isAuditOverdue = (audit: AuditPlan) => {
+      const schedule = audit.schedules[0];
+      if (!schedule || schedule.isFinished) return false;
+      const scheduledDate = parseUtcDate(schedule.scheduledDate) ?? new Date(schedule.scheduledDate);
+      const auditDate = new Date(scheduledDate.getFullYear(), scheduledDate.getMonth(), scheduledDate.getDate());
+      return auditDate < today;
+    };
+
+    // 1. Saring audit yang selesai lebih dari 24 jam lalu (sesuai Mobile)
+    const visibleAudits = allAudits.filter((a) => {
+      const schedule = a.schedules[0];
+      if (!schedule || !schedule.isFinished) return true;
+      if (!schedule.completedAt) return true;
+      const completedDate = parseUtcDate(schedule.completedAt) ?? new Date(schedule.completedAt);
+      const completedTime = completedDate.getTime();
+      const diffHours = (now.getTime() - completedTime) / (1000 * 60 * 60);
+      return diffHours <= 24;
+    });
+
+    // 2. Tab filter: 'priority' mencakup priority flag ATAU overdue (sesuai Mobile)
+    const filtered = tab === 'priority'
+      ? visibleAudits.filter((a) => a.priority === 'Priority' || isAuditOverdue(a))
+      : visibleAudits;
+
+    // 3. Sorting: audit belum selesai di atas, audit selesai di paling bawah (sesuai Mobile)
+    return [...filtered].sort((a, b) => {
+      const aFinished = !!a.schedules[0]?.isFinished;
+      const bFinished = !!b.schedules[0]?.isFinished;
+      if (aFinished === bFinished) return 0;
+      return aFinished ? 1 : -1;
+    });
+  }, [allAudits, tab]);
 
   return { audits, loading, error, tab, setTab, handleDelete };
 }

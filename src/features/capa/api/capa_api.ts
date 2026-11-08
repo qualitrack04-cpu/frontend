@@ -1,7 +1,7 @@
 import axios_instance from '../../../shared/api/axios_instance';
 
-// Enum dari Swagger (Models/CAPA.cs -> CAPAStatus).
-export type CapaStatus = 'Open' | 'InProgress' | 'Closed';
+// Enum / string status dari backend
+export type CapaStatus = string;
 
 export interface CapaAction {
   id: string;
@@ -46,24 +46,15 @@ export interface Capa {
 
 export function normalizeCapa(c: any): Capa {
   if (!c) return c;
-  const rawStatus = c.status || c.statusName || 'Open';
-  const s = String(rawStatus).toLowerCase().replace(/[\s_-]/g, '');
-
-  let mappedStatus: CapaStatus = 'Open';
-  if (s === 'open') {
-    mappedStatus = 'Open';
-  } else if (s === 'closed' || s === 'done') {
-    mappedStatus = 'Closed';
-  } else {
-    mappedStatus = 'InProgress';
-  }
+  const rawStatus = c.statusName || (typeof c.status === 'string' ? c.status : c.status?.name) || 'Open';
 
   return {
     ...c,
-    status: mappedStatus,
-    statusId: c.statusId || c.status?.id,
-    statusName: c.statusName || c.status?.name || mappedStatus,
+    status: rawStatus,
+    statusId: c.statusId || c.status?.id || '',
+    statusName: c.statusName || c.status?.name || rawStatus,
     findingTitle: c.findingTitle || 'Untitled Finding',
+    findingCategory: c.findingCategory || '',
     rootCause: c.rootCause || '',
     correctiveAction: c.correctiveAction || '',
     actions: Array.isArray(c.actions) ? c.actions : [],
@@ -148,9 +139,28 @@ export async function updateCapa(id: string, payload: UpdateCapaPayload) {
   return res.data;
 }
 
-// PATCH /api/capas/{id}/status (body = string enum polos, sama seperti Finding).
-export async function updateCapaStatus(id: string, status: CapaStatus) {
-  const res = await axios_instance.patch(`/capas/${id}/status`, JSON.stringify(status));
+// PATCH /api/capas/{id}/status (body = Guid statusId dalam format JSON).
+export async function updateCapaStatus(id: string, statusIdOrName: string) {
+  let finalStatusId = statusIdOrName;
+  const GUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  if (!GUID_REGEX.test(finalStatusId)) {
+    try {
+      const res = await axios_instance.get<any[]>('/system-config/capa-statuses');
+      const norm = (s: string) => s.toLowerCase().replace(/[\s_-]/g, '');
+      const target = norm(statusIdOrName);
+      const found = res.data.find((item: any) => norm(item.name) === target);
+      if (found?.id) {
+        finalStatusId = found.id;
+      }
+    } catch {
+      // fallback
+    }
+  }
+
+  const res = await axios_instance.patch(`/capas/${id}/status`, JSON.stringify(finalStatusId), {
+    headers: { 'Content-Type': 'application/json' },
+  });
   return res.data;
 }
 

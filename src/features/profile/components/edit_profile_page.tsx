@@ -42,6 +42,20 @@ export default function EditProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
+  // Pending photo state (staging: hanya disimpan ke backend saat user menekan Save Changes)
+  const [pendingPhotoFile, setPendingPhotoFile] = useState<File | null>(null);
+  const [pendingPhotoPreview, setPendingPhotoPreview] = useState<string | null>(null);
+  const [pendingRemovePhoto, setPendingRemovePhoto] = useState(false);
+
+  // Bersihkan object URL saat preview berubah atau unmount
+  useEffect(() => {
+    return () => {
+      if (pendingPhotoPreview) {
+        URL.revokeObjectURL(pendingPhotoPreview);
+      }
+    };
+  }, [pendingPhotoPreview]);
+
   useEffect(() => {
     if (profile) {
       setFullName(profile.fullName || '');
@@ -58,27 +72,37 @@ export default function EditProfilePage() {
     );
   }
 
-  // Handle Photo Changes
-  const handleSavePhoto = async (file: File | null) => {
+  // Handle Photo Selection (Staging - belum diupload ke server sebelum Save Changes)
+  const handleSelectPhoto = (file: File | null) => {
     setShowPhotoModal(false);
     if (!file) return;
-    try {
-      await savePhoto(file);
-      await refetch();
-    } catch {
-      // Handled in useEditProfile
+    if (pendingPhotoPreview) {
+      URL.revokeObjectURL(pendingPhotoPreview);
     }
+    const preview = URL.createObjectURL(file);
+    setPendingPhotoFile(file);
+    setPendingPhotoPreview(preview);
+    setPendingRemovePhoto(false);
+    setImgError(false);
   };
 
-  const handleConfirmRemovePhoto = async () => {
+  // Handle Remove Photo (Staging - belum dihapus dari server sebelum Save Changes)
+  const handleConfirmRemovePhoto = () => {
     setShowRemovePhotoConfirm(false);
-    try {
-      await deletePhoto();
-      await refetch();
-    } catch {
-      // Handled in useEditProfile
+    if (pendingPhotoPreview) {
+      URL.revokeObjectURL(pendingPhotoPreview);
     }
+    setPendingPhotoFile(null);
+    setPendingPhotoPreview(null);
+    setPendingRemovePhoto(true);
   };
+
+  // URL avatar yang aktif ditampilkan di layar preview
+  const currentAvatarUrl = pendingPhotoPreview
+    ? pendingPhotoPreview
+    : !pendingRemovePhoto && profile.profilePhotoUrl && !imgError
+    ? fileUrl(profile.profilePhotoUrl)
+    : null;
 
   // Submit Handler -> Opens Confirm Modal
   const handleFormSubmit = (e: React.FormEvent) => {
@@ -110,10 +134,18 @@ export default function EditProfilePage() {
     setShowSaveConfirmModal(true);
   };
 
-  // Confirm Save Changes
+  // Confirm Save Changes (Menerapkan perubahan foto + profil ke backend)
   const handleConfirmSave = async () => {
     try {
-      await saveProfile(fullName.trim(), email.trim(), newPassword || undefined, confirmPassword || undefined);
+      // 1. Terapkan foto baru / penghapusan foto ke backend jika ada perubahan
+      if (pendingRemovePhoto) {
+        await deletePhoto();
+      } else if (pendingPhotoFile) {
+        await savePhoto(pendingPhotoFile);
+      }
+
+      // 2. Simpan perubahan profil
+      await saveProfile(fullName.trim(), undefined, newPassword || undefined, confirmPassword || undefined);
       localStorage.setItem('fullName', fullName.trim());
       setShowSaveConfirmModal(false);
       await refetch();
@@ -153,9 +185,9 @@ export default function EditProfilePage() {
           <div className="bg-white rounded-2xl shadow-[0_2px_12px_rgba(15,44,82,0.03)] border border-slate-100 p-6 sm:p-8 flex flex-col items-center justify-center text-center">
             <div className="relative mb-6">
               <div className="w-36 h-36 rounded-full bg-[#E2EDF8] flex items-center justify-center overflow-hidden shadow-xs">
-                {profile.profilePhotoUrl && !imgError ? (
+                {currentAvatarUrl ? (
                   <img
-                    src={fileUrl(profile.profilePhotoUrl)}
+                    src={currentAvatarUrl}
                     alt={fullName}
                     className="w-full h-full object-cover"
                     onError={() => setImgError(true)}
@@ -168,7 +200,7 @@ export default function EditProfilePage() {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                disabled={photoSaving}
+                disabled={photoSaving || saving}
                 title="Change Photo"
                 className="absolute bottom-1 right-1 w-9 h-9 rounded-full bg-[#2563EB] hover:bg-blue-700 text-white flex items-center justify-center shadow-md border-2 border-white cursor-pointer transition-colors disabled:opacity-50"
               >
@@ -179,10 +211,11 @@ export default function EditProfilePage() {
                 type="file"
                 ref={fileInputRef}
                 accept="image/png,image/jpeg,image/jpg"
-                onChange={async (e) => {
+                onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
-                  await handleSavePhoto(file);
+                  handleSelectPhoto(file);
+                  e.target.value = '';
                 }}
                 className="hidden"
               />
@@ -191,16 +224,16 @@ export default function EditProfilePage() {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              disabled={photoSaving}
+              disabled={photoSaving || saving}
               className="px-6 py-2 rounded-lg border border-[#2563EB] text-[#2563EB] bg-white hover:bg-blue-50 font-medium text-[13.5px] transition-colors cursor-pointer disabled:opacity-50 shadow-xs"
             >
-              {photoSaving ? 'Uploading...' : 'Change Photo'}
+              Change Photo
             </button>
 
             <button
               type="button"
               onClick={() => setShowRemovePhotoConfirm(true)}
-              disabled={photoSaving || !profile.profilePhotoUrl}
+              disabled={photoSaving || saving || !currentAvatarUrl}
               className="mt-3 text-[13px] font-semibold text-[#DC2626] hover:text-red-700 bg-transparent border-none cursor-pointer p-0 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Remove Photo
@@ -249,14 +282,12 @@ export default function EditProfilePage() {
                   <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">
                     EMAIL
                   </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-white border border-slate-200 focus:border-[#2563EB] focus:ring-2 focus:ring-[#2563EB]/20 rounded-lg px-4 py-3 text-[14px] text-slate-800 font-medium outline-none transition-all placeholder-slate-400"
-                    placeholder="Enter email address"
-                    required
-                  />
+                  <div className="w-full bg-[#F8FAFC] border border-slate-100 rounded-lg px-4 py-2.5 flex items-center justify-between">
+                    <span className="text-[14px] text-slate-700 font-normal">
+                      {profile.email}
+                    </span>
+                    <Lock size={16} className="text-slate-400 shrink-0" />
+                  </div>
                 </div>
 
                 <div>
@@ -276,27 +307,58 @@ export default function EditProfilePage() {
                 <button
                   type="button"
                   onClick={() => navigate('/profile')}
-                  disabled={saving}
+                  disabled={saving || photoSaving}
                   className="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 font-medium text-[13.5px] transition-colors bg-white cursor-pointer disabled:opacity-50"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  disabled={saving}
+                  disabled={saving || photoSaving}
                   className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-[#2563EB] hover:bg-blue-700 text-white font-medium text-[13.5px] transition-colors shadow-sm border-none cursor-pointer disabled:opacity-50"
                 >
-                  {saving ? 'Saving...' : 'Save Changes'}
+                  {saving || photoSaving ? 'Saving...' : 'Save Changes'}
                 </button>
               </div>
             </form>
           </div>
         </div>
 
-        {/* Remove Photo Confirm Modal */}
+        {/* Modal 1: Save Confirmation Modal */}
+        {showSaveConfirmModal && (
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-[fadeIn_0.15s_ease-out]">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-[360px] p-6 text-center animate-[scaleIn_0.15s_ease-out]">
+              <div className="w-10 h-1 bg-slate-300 rounded-full mx-auto mb-4" />
+
+              <p className="text-[13.5px] text-slate-800 leading-relaxed font-semibold mb-6">
+                Are you sure you want to save the changes to your profile? This action will update your account information.
+              </p>
+
+              <button
+                type="button"
+                onClick={handleConfirmSave}
+                disabled={saving || photoSaving}
+                className="w-full py-3 rounded-xl bg-[#16A34A] hover:bg-emerald-700 text-white font-semibold text-[14px] transition-colors shadow-sm flex items-center justify-center gap-2 border-none cursor-pointer mb-2.5 disabled:opacity-50"
+              >
+                <Pencil size={14} />
+                <span>{saving || photoSaving ? 'Saving...' : 'Save'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowSaveConfirmModal(false)}
+                className="w-full py-2 bg-transparent text-slate-500 hover:text-slate-700 font-medium text-[13.5px] border-none cursor-pointer transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Modal 2: Remove Photo Confirm Modal */}
         {showRemovePhotoConfirm && (
-          <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-[360px] p-6 text-center">
+          <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-[fadeIn_0.15s_ease-out]">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-[360px] p-6 text-center animate-[scaleIn_0.15s_ease-out]">
               <h3 className="text-[17px] font-bold text-[#0F294A] m-0 mb-2">Remove Photo</h3>
               <p className="text-[13.5px] text-slate-500 m-0 mb-6 font-normal">
                 Are you sure you want to remove your profile photo?
@@ -304,10 +366,10 @@ export default function EditProfilePage() {
               <button
                 type="button"
                 onClick={handleConfirmRemovePhoto}
-                disabled={photoSaving}
+                disabled={photoSaving || saving}
                 className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold text-[13.5px] transition-colors mb-2.5 border-none cursor-pointer"
               >
-                {photoSaving ? 'Removing...' : 'Remove Photo'}
+                Remove Photo
               </button>
               <button
                 type="button"
@@ -366,9 +428,9 @@ export default function EditProfilePage() {
               className="w-36 h-36 rounded-full overflow-hidden border-2 border-white shadow-xs p-0 bg-[#E2EDF8] flex items-center justify-center cursor-pointer transition-transform hover:scale-[1.02] active:scale-[0.98]"
               title="Click to change photo"
             >
-              {profile.profilePhotoUrl && !imgError ? (
+              {currentAvatarUrl ? (
                 <img
-                  src={fileUrl(profile.profilePhotoUrl)}
+                  src={currentAvatarUrl}
                   alt={fullName}
                   className="w-full h-full object-cover"
                   onError={() => setImgError(true)}
@@ -629,9 +691,9 @@ export default function EditProfilePage() {
         <ChangePhotoModal
           currentName={fullName || profile.fullName}
           currentRole={profile.role}
-          currentPhotoUrl={profile.profilePhotoUrl}
+          currentPhotoUrl={currentAvatarUrl}
           onClose={() => setShowPhotoModal(false)}
-          onSave={handleSavePhoto}
+          onSave={handleSelectPhoto}
         />
       )}
 
@@ -650,11 +712,11 @@ export default function EditProfilePage() {
             <button
               type="button"
               onClick={handleConfirmSave}
-              disabled={saving}
+              disabled={saving || photoSaving}
               className="w-full py-3 rounded-xl bg-[#16A34A] hover:bg-emerald-700 text-white font-semibold text-[14px] transition-colors shadow-sm flex items-center justify-center gap-2 border-none cursor-pointer mb-2.5 disabled:opacity-50"
             >
               <Pencil size={14} />
-              <span>{saving ? 'Saving...' : 'Save'}</span>
+              <span>{saving || photoSaving ? 'Saving...' : 'Save'}</span>
             </button>
 
             {/* Cancel text button */}

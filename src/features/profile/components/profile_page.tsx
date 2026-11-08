@@ -66,17 +66,25 @@ function QualityGauge({ score }: { score: number }) {
 export default function ProfilePage() {
   const { profile, loading: profileLoading, error: profileError } = useProfile();
   const { role: currentRole } = useRole();
-  const isAdmin = currentRole === ROLES.Admin;
+  const effectiveRole = profile?.role || currentRole;
 
-  // Non-Admin KPI Hook
-  const { data: kpi, loading: kpiLoading } = useProfileKpi(!isAdmin);
+  const isAdmin = effectiveRole === ROLES.Admin;
+  const isQualityManager =
+    effectiveRole === ROLES.QualityManager ||
+    effectiveRole.replace(/\s+/g, '').toLowerCase() === 'qualitymanager';
+
+  // Sama seperti Mobile: Role manajerial (Admin & Quality Manager) tidak menampilkan kartu KPI individual
+  const hasKpi = !isAdmin && !isQualityManager;
+
+  // KPI Hook: hanya dipanggil untuk role yang memiliki KPI (AuditorInternal & Auditee)
+  const { data: kpi, loading: kpiLoading } = useProfileKpi(hasKpi);
 
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
 
   // Image error state
   const [imgError, setImgError] = useState(false);
 
-  if (profileLoading || (!isAdmin && kpiLoading)) {
+  if (profileLoading || (hasKpi && kpiLoading)) {
     return (
       <div className="max-w-full m-0 text-left py-12 text-slate-400 text-sm">
         Loading profile...
@@ -93,7 +101,7 @@ export default function ProfilePage() {
   }
 
   // ==========================================
-  // 1. ADMIN PROFILE VIEW
+  // 1. ADMIN PROFILE VIEW (KHUSUS ADMIN)
   // ==========================================
   if (isAdmin) {
     const nameLength = profile.fullName ? profile.fullName.trim().length : 0;
@@ -268,8 +276,99 @@ export default function ProfilePage() {
   const targetDiff = Math.round((successPct - 85) * 10) / 10;
   const diffLabel = targetDiff >= 0 ? `+${targetDiff}%` : `${targetDiff}%`;
 
-  // Format username from email or fullName
-  const usernameDisplay = profile.email ? profile.email.split('@')[0] : profile.fullName;
+  // Format username matching Mobile (uses fullName)
+  const usernameDisplay = profile.fullName || (profile.email ? profile.email.split('@')[0] : '-');
+
+  // ==========================================
+  // 2A. QUALITY MANAGER VIEW (Menggunakan style Auditor Internal, tetapi menyembunyikan metrik KPI yang tidak berguna)
+  // ==========================================
+  if (isQualityManager) {
+    const nameLen = profile.fullName ? profile.fullName.trim().length : 0;
+    const sizeClass =
+      nameLen > 40
+        ? 'text-[13px] leading-snug'
+        : nameLen > 25
+        ? 'text-[15px] leading-snug'
+        : 'text-[19px] sm:text-[20px] leading-snug';
+
+    return (
+      <div className="max-w-full m-0 text-left">
+        <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 items-start">
+          {/* Left Column: Identitas Profil (Sama seperti Card 1 Auditor Internal, tanpa metrik kuota) */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-8 flex flex-col items-center justify-center text-center shadow-xs w-full max-w-full overflow-hidden">
+            <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-[#E2EDF8] flex items-center justify-center overflow-hidden border-2 border-white shadow-xs mb-4 shrink-0">
+              {profile.profilePhotoUrl && !imgError ? (
+                <img
+                  src={fileUrl(profile.profilePhotoUrl)}
+                  alt={profile.fullName}
+                  className="w-full h-full object-cover"
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <MascotAvatar className="w-24 h-24 sm:w-28 sm:h-28" />
+              )}
+            </div>
+
+            <h2 className={`${sizeClass} font-bold text-[#0F294A] m-0 mb-1 leading-snug text-center max-w-full break-words [overflow-wrap:anywhere] [word-break:break-word]`}>
+              {profile.fullName}
+            </h2>
+
+            <span className="inline-block bg-[#E0F2FE] text-[#0284C7] font-semibold text-[11.5px] px-4 py-1 rounded-full">
+              {profile.role}
+            </span>
+          </div>
+
+          {/* Right Column: Account Details Card (Sama persis seperti Auditor Internal) */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-xs">
+            <h3 className="flex items-center gap-2.5 text-[16px] font-bold text-[#0F294A] m-0 mb-5">
+              <Users size={18} className="text-[#0F294A]" />
+              <span>Account Details</span>
+            </h3>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-[12px] font-medium text-slate-500 mb-1.5">
+                  Username
+                </label>
+                <div className="w-full bg-[#EEF2F6]/70 border border-slate-200/60 rounded-xl px-4 py-3 text-[14px] text-slate-800 font-medium break-words [overflow-wrap:anywhere] [word-break:break-word]">
+                  {usernameDisplay}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[12px] font-medium text-slate-500 mb-1.5">
+                  Email
+                </label>
+                <div className="w-full bg-[#EEF2F6]/70 border border-slate-200/60 rounded-xl px-4 py-3 text-[14px] text-slate-800 font-medium break-words [overflow-wrap:anywhere] [word-break:break-word]">
+                  {profile.email}
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[12px] font-medium text-slate-500 mb-1.5">
+                  Role
+                </label>
+                <div className="w-full bg-[#EEF2F6]/70 border border-slate-200/60 rounded-xl px-4 py-3 text-[14px] text-slate-800 font-medium break-words [overflow-wrap:anywhere] [word-break:break-word]">
+                  {profile.role}
+                </div>
+              </div>
+            </div>
+
+            <Link
+              to="/profile/edit"
+              className="mt-6 w-full py-2.5 px-4 rounded-xl border border-[#0F294A] text-[#0F294A] hover:bg-slate-50 font-semibold text-[13.5px] transition-colors text-center block no-underline cursor-pointer"
+            >
+              Edit Profile
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // 2B. AUDITOR INTERNAL & AUDITEE DASHBOARD VIEW
+  // ==========================================
 
   return (
     <div className="max-w-full m-0 text-left">
@@ -347,7 +446,7 @@ export default function ProfilePage() {
               {qualityLabel}
             </span>
             <p className="text-[11.5px] text-slate-400 m-0 mt-1">
-              {kpi ? `${kpi.totalCompletedOnTime}/${kpi.totalCompleted} ${taskLabel} on time` : '17/18 audits on time'}
+              {kpi ? `${kpi.totalCompletedOnTime}/${kpi.totalCompleted} ${taskLabel} on time` : `0/0 ${taskLabel} on time`}
             </p>
           </div>
         </div>

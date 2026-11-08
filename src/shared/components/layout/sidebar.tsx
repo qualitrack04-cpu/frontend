@@ -34,7 +34,7 @@ const adminMenuItems: { label: string; path: string; icon: LucideIcon }[] = [
   { label: 'Users', path: '/users', icon: Users },
   { label: 'ISO Standards', path: '/iso-standards', icon: ShieldCheck },
   { label: 'Departments', path: '/departments', icon: Building2 },
-  { label: 'Checklists Templates', path: '/templates', icon: CheckSquare },
+  { label: 'Checklist Templates', path: '/templates', icon: CheckSquare },
   { label: 'SPC Units', path: '/spc-units', icon: Activity },
   { label: 'System Configuration', path: '/settings', icon: Settings },
   { label: 'Profile', path: '/profile', icon: User },

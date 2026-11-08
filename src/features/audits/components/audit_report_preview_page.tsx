@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { Calendar, FileText, Download, Check, Eye, Share2, Mail, MessageCircle, Copy, Printer } from 'lucide-react';
+import { Calendar, FileText, Download, Check, Eye, Share2, Mail, MessageCircle, Copy } from 'lucide-react';
 import { useState } from 'react';
 import { useAuditReport } from '../hooks/use_audit_report';
 import { generatePdfReport, downloadPdfReport, type PdfReportResult } from '../api/pdf_api';
@@ -221,15 +221,15 @@ export default function AuditReportPreviewPage() {
               <span className="text-[#64748b]">AUDIT ID</span>
               <span className="inline-block bg-[#f1f5f9] text-[#475569] text-[12px] font-bold p-[4px_10px] rounded-[12px] mb-[12px]">{auditIdShort}</span>
             </div>
-            <div className="flex justify-between mb-[12px] text-[14px]">
-              <span className="text-[#64748b]">DEPARTMENT</span>
-              <strong className="text-[#0f2c52] text-right">{schedule?.department}</strong>
+            <div className="flex justify-between items-center mb-[12px] text-[14px] gap-2">
+              <span className="text-[#64748b] shrink-0">DEPARTMENT</span>
+              <strong className="text-[#0f2c52] text-right truncate max-w-[180px]" title={schedule?.department}>{schedule?.department}</strong>
             </div>
-            <div className="flex justify-between mb-[12px] text-[14px]">
-              <span className="text-[#64748b]">AUDITOR</span>
-              <span className="flex items-center gap-[8px] font-semibold text-[#0f2c52]">
-                <span className="bg-[#f1f5f9] w-[24px] h-[24px] rounded-full flex items-center justify-center text-[12px] font-bold text-[#0f2c52]">{schedule?.auditorName?.charAt(0)}</span>
-                {schedule?.auditorName}
+            <div className="flex justify-between items-center mb-[12px] text-[14px] gap-2">
+              <span className="text-[#64748b] shrink-0">AUDITOR</span>
+              <span className="flex items-center gap-[8px] font-semibold text-[#0f2c52] min-w-0 max-w-[180px] justify-end" title={schedule?.auditorName}>
+                <span className="bg-[#f1f5f9] w-[24px] h-[24px] rounded-full flex items-center justify-center text-[12px] font-bold text-[#0f2c52] shrink-0">{schedule?.auditorName?.charAt(0)}</span>
+                <span className="truncate">{schedule?.auditorName}</span>
               </span>
             </div>
             <div className="flex justify-between mb-[12px] text-[14px]">
@@ -264,14 +264,6 @@ export default function AuditReportPreviewPage() {
             <button className="bg-[#0f2c52] text-white border-none p-[14px] rounded-[8px] text-[14.5px] font-semibold w-full flex items-center justify-center gap-[8px] cursor-pointer transition-colors duration-200 hover:bg-[#0c2444] disabled:opacity-60 disabled:cursor-not-allowed" onClick={handleCreatePdf} disabled={generating}>
               <Download size={16} /> {generating ? 'Generating...' : 'Create PDF Report'}
             </button>
-
-            <button
-              type="button"
-              className="w-full mt-[10px] bg-white text-[#0f2c52] border border-[#cbd5e1] p-[12px] rounded-[8px] text-[14px] font-semibold flex items-center justify-center gap-[8px] cursor-pointer transition-all duration-200 hover:bg-[#f8fafc] hover:border-[#0f2c52]"
-              onClick={() => window.print()}
-            >
-              <Printer size={16} /> Print to PDF
-            </button>
           </div>
         </div>
       </div>
@@ -292,10 +284,20 @@ export default function AuditReportPreviewPage() {
             <div className="w-[64px] h-[64px] bg-[#dcfce7] text-[#16a34a] rounded-full flex items-center justify-center mb-[16px] shadow-[0_0_0_8px_rgba(22,163,74,0.1)]"><Check size={32} /></div>
             <p className="text-[18px] font-[800] text-[#0f2c52] m-0 mb-[24px] text-center">PDF created successfully</p>
 
-            <div className="w-[140px] h-[180px] bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] mb-[24px] relative flex flex-col p-[16px_12px] shadow-[0_4px_12px_rgba(15,44,82,0.06)]">
+            <div className="w-[140px] h-[180px] bg-[#f8fafc] border border-[#e2e8f0] rounded-[8px] mb-[24px] relative flex flex-col p-[16px_12px] shadow-[0_4px_12px_rgba(15,44,82,0.06)] overflow-hidden">
               <div className="w-[60%] h-[4px] bg-[#0f2c52] rounded-[2px] mb-auto" />
-              <div className="text-[9px] font-bold text-[#94a3b8] flex items-center gap-[4px] mb-[6px]"><FileText size={16} /> {plan?.title ?? 'Your Company'}</div>
-              <div className="text-[11px] font-[800] text-[#0f2c52] leading-[1.3]">Audit Compliance Report</div>
+              <div className="flex items-center gap-[4px] mb-[6px] min-w-0 max-w-full">
+                <FileText size={14} className="shrink-0 text-[#94a3b8]" />
+                <span
+                  className="text-[9px] font-bold text-[#94a3b8] truncate block min-w-0"
+                  title={plan?.title ?? 'Your Company'}
+                >
+                  {plan?.title ?? 'Your Company'}
+                </span>
+              </div>
+              <div className="text-[11px] font-[800] text-[#0f2c52] leading-[1.3] break-words [overflow-wrap:anywhere]">
+                Audit Compliance Report
+              </div>
             </div>
 
             {pdfError && <p className="text-[#dc2626] text-[13px] mt-[4px]">{pdfError}</p>}
@@ -369,8 +371,8 @@ export default function AuditReportPreviewPage() {
 
               <p className="text-[13px] font-bold text-[#64748b] m-0 mb-[12px]">Share Link</p>
               <div className="flex gap-[8px]">
-                <input type="text" readOnly value={pdfResult.pdfUrl} className="flex-1 p-[12px] border border-[#e2e8f0] bg-[#f8fafc] rounded-[8px] text-[13.5px] text-[#475569] outline-none" />
-                <button type="button" className="bg-[#f1f5f9] text-[#0f2c52] border-none p-[0_16px] rounded-[8px] text-[13.5px] font-bold cursor-pointer flex items-center gap-[6px] transition-all duration-200 hover:bg-[#e2e8f0]" onClick={handleCopyLink}>
+                <input type="text" readOnly value={pdfResult.pdfUrl} className="flex-1 p-[12px] border border-[#e2e8f0] bg-[#f8fafc] rounded-[8px] text-[13.5px] text-[#475569] outline-none min-w-0" />
+                <button type="button" className="bg-[#f1f5f9] text-[#0f2c52] border-none p-[0_16px] rounded-[8px] text-[13.5px] font-bold cursor-pointer flex items-center gap-[6px] transition-all duration-200 hover:bg-[#e2e8f0] shrink-0" onClick={handleCopyLink}>
                   <Copy size={14} /> {copied ? 'Copied!' : 'Copy Link'}
                 </button>
               </div>

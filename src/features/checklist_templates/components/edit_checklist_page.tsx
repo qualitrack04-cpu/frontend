@@ -70,23 +70,12 @@ export default function EditChecklistPage({
             }))
           );
         } else {
-          setTasks([
-            {
-              id: `init-${Date.now()}`,
-              question: 'Verify that quality management procedures are properly documented.',
-              clauseRef: 'General',
-            },
-          ]);
+          setTasks([]);
         }
       })
-      .catch(() => {
-        setTasks([
-          {
-            id: `init-${Date.now()}`,
-            question: 'Verify that quality management procedures are properly documented.',
-            clauseRef: 'General',
-          },
-        ]);
+      .catch((err: any) => {
+        setError(err.response?.data?.message || err.message || 'Failed to load checklist items');
+        setTasks([]);
       })
       .finally(() => {
         setInitialLoading(false);

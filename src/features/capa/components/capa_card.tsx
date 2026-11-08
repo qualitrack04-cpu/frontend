@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import { type Capa, type CapaStatus } from '../api/capa_api';
+import { type Capa } from '../api/capa_api';
 import CapaStatusBadge from './capa_status_badge';
 import { parseUtcDate } from '../../../shared/utils/date_utils';
+import { getCategoryColor } from '../../system_configuration/utils/color_storage';
+import type { CapaStatusItem } from '../../system_configuration/api/system_config_api';
 
 function formatDate(iso?: string | null) {
   if (!iso) return '-';
@@ -23,26 +25,50 @@ function initials(name?: string | null) {
 
 interface CapaCardProps {
   capa: Capa;
-  onStatusChange: (id: string, status: CapaStatus) => void;
+  onStatusChange: (id: string, statusName: string, statusId: string) => void;
   updatingStatus?: boolean;
+  availableStatuses?: CapaStatusItem[];
+  categoryColors?: Record<string, string>;
 }
 
-export default function CapaCard({ capa, onStatusChange, updatingStatus }: CapaCardProps) {
-  const statusColor = String(capa?.status || 'Open').toLowerCase();
-  const borderColor = statusColor === 'open' ? 'border-red-500' : statusColor === 'in_progress' || statusColor === 'inprogress' ? 'border-orange-500' : 'border-emerald-600';
+export default function CapaCard({
+  capa,
+  onStatusChange,
+  updatingStatus,
+  availableStatuses,
+  categoryColors,
+}: CapaCardProps) {
+  const catName = String(capa.findingCategory || '').trim();
+  const catKey = catName.toLowerCase().replace(/[\s_-]/g, '');
+
+  let borderColor = categoryColors?.[catKey] || categoryColors?.[catName.toLowerCase()];
+  if (!borderColor) {
+    borderColor = getCategoryColor('', catName);
+  }
+  if (!borderColor && catName) {
+    if (catKey.includes('major')) borderColor = '#EF4444';
+    else if (catKey.includes('minor')) borderColor = '#4D80FF';
+    else borderColor = '#3B82F6';
+  }
+  if (!borderColor) {
+    borderColor = '#E2E8F0';
+  }
 
   return (
-    <article className={`bg-white border-2 rounded-[12px] p-6 flex flex-col transition-all duration-200 relative overflow-hidden min-w-0 max-w-full ${borderColor}`}>
+    <article
+      className="bg-white border-2 rounded-[12px] p-6 flex flex-col transition-all duration-200 relative overflow-hidden min-w-0 max-w-full"
+      style={{ borderColor }}
+    >
       <div className="flex justify-between items-start gap-[16px] mb-[8px] min-w-0">
-        {/* ⚠️ ASUMSI: CAPA tidak punya field title sendiri, jadi pakai
-            findingTitle (judul finding terkait) sebagai judul kartu. */}
         <h2 className="text-[18px] text-[#0f2c52] m-0 leading-tight font-bold line-clamp-2 break-words [overflow-wrap:anywhere] [word-break:break-word] flex-1 min-w-0 pr-4">
           {capa.findingTitle || 'Untitled Finding'}
         </h2>
         <div className="shrink-0">
           <CapaStatusBadge
-            status={capa.status}
-            onChange={(status) => onStatusChange(capa.id, status)}
+            status={capa.statusName || capa.status}
+            statusId={capa.statusId}
+            availableStatuses={availableStatuses}
+            onChange={(name, sId) => onStatusChange(capa.id, name, sId)}
             disabled={updatingStatus}
           />
         </div>
@@ -52,7 +78,6 @@ export default function CapaCard({ capa, onStatusChange, updatingStatus }: CapaC
 
       <div className="bg-[#f8fafc] rounded-lg p-4 mb-6 flex-1 min-w-0">
         <span className="block text-[11px] font-bold tracking-widest text-[#475569] uppercase mb-2">Observation Summary</span>
-        {/* ⚠️ ASUMSI: "Observation Summary" di desain dipetakan ke rootCause. */}
         <p className="text-[15px] text-[#0f2c52] m-0 leading-relaxed line-clamp-3 break-all">{capa.rootCause || '-'}</p>
       </div>
 

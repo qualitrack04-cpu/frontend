@@ -16,7 +16,6 @@ const ROLE_OPTIONS = [
   'Quality Manager',
   'Auditor Internal',
   'Auditee',
-  'Admin',
 ];
 
 export default function UsersActivityPage() {
@@ -25,7 +24,6 @@ export default function UsersActivityPage() {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
 
   // Dropdown state
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
@@ -66,12 +64,8 @@ export default function UsersActivityPage() {
       list = list.filter((a) => a.role.toLowerCase() === roleFilter);
     }
 
-    if (statusFilter) {
-      list = list.filter((a) => (a.status || 'Active') === statusFilter);
-    }
-
     return list;
-  }, [activities, searchTerm, selectedRole, statusFilter]);
+  }, [activities, searchTerm, selectedRole]);
 
   // Paginated slice
   const totalResults = filteredActivities.length;
@@ -83,7 +77,6 @@ export default function UsersActivityPage() {
   const handleResetFilters = () => {
     setSearchTerm('');
     setSelectedRole('');
-    setStatusFilter('');
     setCurrentPage(1);
   };
 
@@ -102,7 +95,7 @@ export default function UsersActivityPage() {
     return name.substring(0, 2).toUpperCase();
   };
 
-  const getAvatarBg = (_name: string, role: string) => {
+  const getAvatarBg = (role: string) => {
     const r = role.toLowerCase();
     if (r.includes('manager')) return 'bg-[#F5F3FF] text-[#7C3AED]';
     if (r.includes('internal')) return 'bg-[#EFF6FF] text-[#2563EB]';
@@ -191,52 +184,6 @@ export default function UsersActivityPage() {
               </div>
             )}
           </div>
-
-          {/* Status Segmented Pill */}
-          <div className="flex items-center gap-1 border border-slate-200/90 rounded-full p-1 bg-white shrink-0">
-            <button
-              type="button"
-              onClick={() => {
-                setStatusFilter('');
-                setCurrentPage(1);
-              }}
-              className={`px-3.5 py-1 text-[13px] font-medium rounded-full transition-all border cursor-pointer ${
-                statusFilter === ''
-                  ? 'bg-white border-blue-500 text-blue-600 shadow-xs'
-                  : 'bg-transparent border-transparent text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              All
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setStatusFilter('Active');
-                setCurrentPage(1);
-              }}
-              className={`px-3.5 py-1 text-[13px] font-medium rounded-full transition-all border cursor-pointer ${
-                statusFilter === 'Active'
-                  ? 'bg-white border-blue-500 text-blue-600 shadow-xs'
-                  : 'bg-transparent border-transparent text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              Active
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                setStatusFilter('Inactive');
-                setCurrentPage(1);
-              }}
-              className={`px-3.5 py-1 text-[13px] font-medium rounded-full transition-all border cursor-pointer ${
-                statusFilter === 'Inactive'
-                  ? 'bg-white border-blue-500 text-blue-600 shadow-xs'
-                  : 'bg-transparent border-transparent text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              Inactive
-            </button>
-          </div>
         </div>
 
         {/* Reset Button */}
@@ -265,7 +212,9 @@ export default function UsersActivityPage() {
                 <th className="px-6 py-4 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                   ACTIVITY
                 </th>
-                <th className="px-6 py-4"></th>
+                <th className="px-6 py-4 text-[11px] font-bold text-slate-700 uppercase tracking-wider w-[180px]">
+                  TIME
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -287,7 +236,7 @@ export default function UsersActivityPage() {
 
               {!loading && paginatedActivities.map((item) => {
                 const badgeStyle = getRoleBadgeStyle(item.role);
-                const avatarStyle = getAvatarBg(item.userName, item.role);
+                const avatarStyle = getAvatarBg(item.role);
 
                 return (
                   <tr
@@ -320,7 +269,7 @@ export default function UsersActivityPage() {
                     </td>
 
                     {/* Timestamp */}
-                    <td className="px-6 py-4 text-right text-[12.5px] text-slate-400 font-normal whitespace-nowrap">
+                    <td className="px-6 py-4 text-[12.5px] text-slate-400 font-normal whitespace-nowrap">
                       {formatChangeDate(item.timestamp)}
                     </td>
                   </tr>

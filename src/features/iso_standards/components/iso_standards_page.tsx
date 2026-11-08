@@ -116,7 +116,7 @@ export default function IsoStandardsPage() {
                   STATUS
                 </th>
                 <th className="px-6 py-4 text-[12px] font-bold text-slate-700 uppercase tracking-wider">
-                  UPDATED
+                  CREATED
                 </th>
                 <th className="px-6 py-4 text-center text-[12px] font-bold text-slate-700 uppercase tracking-wider">
                   ACTION
@@ -183,7 +183,7 @@ export default function IsoStandardsPage() {
                       )}
                     </td>
 
-                    {/* UPDATED Column */}
+                    {/* CREATED Column */}
                     <td className="px-6 py-4 text-[13px] text-slate-500 font-normal">
                       {formatUpdatedDate(item.createdAt)}
                     </td>

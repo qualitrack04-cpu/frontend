@@ -58,11 +58,17 @@ export function useCreateAuditPlan(planId?: string) {
       } else {
         errors.push(checklistsResult.reason?.response?.data?.message ?? 'Failed to load checklist list.');
       }
-      if (departmentsResult.status === 'fulfilled' && departmentsResult.value?.length > 0) {
-        const activeDepts = departmentsResult.value.filter((d) => d.isActive).map((d) => d.name);
-        setDepartments(activeDepts.length > 0 ? activeDepts : ['Production', 'Packaging', 'Warehouse', 'QC']);
+      if (departmentsResult.status === 'fulfilled' && Array.isArray(departmentsResult.value)) {
+        const activeDepts = departmentsResult.value
+          .filter((d) => d.isActive !== false)
+          .map((d) => d.name.trim())
+          .filter(Boolean);
+        setDepartments(activeDepts);
       } else {
-        setDepartments(['Production', 'Packaging', 'Warehouse', 'QC']);
+        setDepartments([]);
+        if (departmentsResult.status === 'rejected') {
+          errors.push(departmentsResult.reason?.response?.data?.message ?? 'Failed to load department list.');
+        }
       }
 
       if (errors.length > 0) setSubmitError(errors.join(' '));
@@ -118,7 +124,10 @@ export function useCreateAuditPlan(planId?: string) {
   }, [planId, loadingOptions]);
 
   const filteredChecklists = useMemo(
-    () => (department ? checklists.filter((c) => c.departmentName === department) : []),
+    () =>
+      department
+        ? checklists.filter((c) => (c.departmentName ?? '').toLowerCase() === department.toLowerCase())
+        : [],
     [department, checklists]
   );
 
@@ -155,9 +164,8 @@ export function useCreateAuditPlan(planId?: string) {
     }
 
     const year = Number(scheduledDate.split('-')[0]);
-    const maxYear = new Date().getFullYear() + 5;
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(scheduledDate) || year < 2000 || year > maxYear) {
-      setSubmitError(`Invalid date. Year must be between 2000 and ${maxYear}.`);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(scheduledDate) || year < 2020 || year > 2030) {
+      setSubmitError('Invalid date. Year must be between 2020 and 2030.');
       return;
     }
 

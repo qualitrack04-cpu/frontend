@@ -88,28 +88,10 @@ export default function DepartmentsPage() {
     }
   };
 
-  // Ikon & warna otomatis yang ditentukan program dari nama department
-  // (lihat utils/department_visuals.ts)
-
-  const preferredOrder = [
-    'production',
-    'packaging',
-    'warehouse',
-    'qc',
-    'quality control',
-  ];
-
-  const sortedDepartments = [...departments].sort((a, b) => {
-    const nameA = a.name.toLowerCase();
-    const nameB = b.name.toLowerCase();
-    const indexA = preferredOrder.findIndex((p) => nameA.includes(p) || p.includes(nameA));
-    const indexB = preferredOrder.findIndex((p) => nameB.includes(p) || p.includes(nameB));
-
-    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-    if (indexA !== -1) return -1;
-    if (indexB !== -1) return 1;
-    return a.name.localeCompare(b.name);
-  });
+  // Department diurutkan alfabetis secara konsisten
+  const sortedDepartments = [...departments].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
 
   const totalResults = sortedDepartments.length;
   const paginatedDepartments = sortedDepartments.slice(
@@ -125,7 +107,7 @@ export default function DepartmentsPage() {
           Department Management
         </h1>
         <p className="text-slate-500 text-[14px] m-0">
-          Manage Department standards used in the QualiTrack audit process.
+          Manage departments and divisions in the organization.
         </p>
       </div>
 

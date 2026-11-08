@@ -1,17 +1,10 @@
 import axios_instance from '../../../shared/api/axios_instance';
 
-// Enum dari Swagger & Sistem.
-export type FindingCategory = 'Major NC' | 'Minor NC' | 'OFI' | 'MajorNC' | 'MinorNC' | 'Observation';
+// Enum / string kategori dari Swagger & Sistem.
+export type FindingCategory = string;
 export type FindingStatus = 'Open' | 'InProgress' | 'Closed';
 
-export const FINDING_CATEGORY_IDS: Record<string, string> = {
-  'Major NC': '22222222-2222-2222-2222-222222222222',
-  'MajorNC': '22222222-2222-2222-2222-222222222222',
-  'Minor NC': '11111111-1111-1111-1111-111111111111',
-  'MinorNC': '11111111-1111-1111-1111-111111111111',
-  'OFI': '33333333-3333-3333-3333-333333333333',
-  'Observation': '33333333-3333-3333-3333-333333333333',
-};
+export const FINDING_CATEGORY_IDS: Record<string, string> = {};
 
 // ⚠️ Field selain yang ada di UpdateFindingRequest (id, status, sessionId,
 // createdAt) masih ASUMSI. Cocokkan dengan response GET /api/findings.
@@ -98,14 +91,9 @@ export const statusLabel: Record<FindingStatus, string> = {
   Closed: 'Closed',
 };
 
-export const departmentOptions = ['Production', 'Packaging', 'Warehouse', 'QC'];
-
 export function normalizeFindingCategory(raw?: string | null): FindingCategory {
-  if (!raw) return 'Minor NC';
-  const s = raw.toLowerCase().replace(/[\s_-]/g, '');
-  if (s === 'majornc' || s === 'major') return 'Major NC';
-  if (s === 'observation' || s === 'ofi') return 'OFI';
-  return 'Minor NC';
+  if (!raw) return '';
+  return raw.trim();
 }
 
 // GET /api/findings?status=&category=&from=&to=
@@ -129,8 +117,19 @@ export async function getFinding(id: string): Promise<Finding> {
 
 // POST /api/findings
 export async function createFinding(payload: CreateFindingPayload): Promise<Finding> {
-  const catKey = payload.category;
-  const categoryId = payload.categoryId || (catKey ? FINDING_CATEGORY_IDS[catKey] : undefined);
+  let categoryId = payload.categoryId;
+  if (!categoryId && payload.category) {
+    try {
+      const res = await axios_instance.get<any[]>('/system-config/finding-categories');
+      const norm = (s: string) => s.toLowerCase().replace(/[\s_-]/g, '');
+      const target = norm(payload.category);
+      const found = res.data.find((item: any) => norm(item.name) === target);
+      if (found?.id) categoryId = found.id;
+    } catch {
+      // fallback
+    }
+  }
+
   const res = await axios_instance.post<Finding>('/findings', {
     ...payload,
     categoryId,
@@ -140,8 +139,19 @@ export async function createFinding(payload: CreateFindingPayload): Promise<Find
 
 // PUT /api/findings/{id}
 export async function updateFinding(id: string, payload: UpdateFindingPayload) {
-  const catKey = payload.category;
-  const categoryId = payload.categoryId || (catKey ? FINDING_CATEGORY_IDS[catKey] : undefined);
+  let categoryId = payload.categoryId;
+  if (!categoryId && payload.category) {
+    try {
+      const res = await axios_instance.get<any[]>('/system-config/finding-categories');
+      const norm = (s: string) => s.toLowerCase().replace(/[\s_-]/g, '');
+      const target = norm(payload.category);
+      const found = res.data.find((item: any) => norm(item.name) === target);
+      if (found?.id) categoryId = found.id;
+    } catch {
+      // fallback
+    }
+  }
+
   const res = await axios_instance.put(`/findings/${id}`, {
     ...payload,
     categoryId,
@@ -166,10 +176,16 @@ export async function getFindingPhotos(findingId: string): Promise<FindingPhoto[
 // POST /api/uploads/finding/{findingId}  (multipart/form-data)
 export async function uploadFindingPhoto(findingId: string, file: File) {
   const form = new FormData();
-  form.append('file', file); // ⚠️ cek nama field yang diminta backend
+  form.append('file', file);
   const res = await axios_instance.post(`/uploads/finding/${findingId}`, form, {
     headers: { 'Content-Type': undefined },
   });
+  return res.data;
+}
+
+// DELETE /api/uploads/{fileId}
+export async function deleteFindingPhoto(fileId: string) {
+  const res = await axios_instance.delete(`/uploads/${fileId}`);
   return res.data;
 }
 

@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { analyzeSpc, getSpcUnits, type SpcResult, type SpcUnit } from '../api/spc_api';
-import { FileText, X } from 'lucide-react';
+import { FileText, X, ChevronDown, Check } from 'lucide-react';
 
 interface Props {
   onResult: (result: SpcResult) => void;
@@ -31,6 +31,18 @@ export default function SpcAnalysisForm({ onResult }: Props) {
 
   const [units, setUnits] = useState<SpcUnit[]>([]);
   const [loadingUnits, setLoadingUnits] = useState(true);
+  const [openUnitDropdown, setOpenUnitDropdown] = useState(false);
+  const unitDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (unitDropdownRef.current && !unitDropdownRef.current.contains(event.target as Node)) {
+        setOpenUnitDropdown(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     getSpcUnits()
@@ -170,21 +182,62 @@ export default function SpcAnalysisForm({ onResult }: Props) {
           />
         </div>
 
-        <div className="flex-1 flex flex-col gap-[8px]">
+        <div className="flex-1 flex flex-col gap-[8px]" ref={unitDropdownRef}>
           <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Unit</label>
-          <select name="unit" value={formData.unit} onChange={handleChange} disabled={loadingUnits} className="p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border font-inherit">
-            {loadingUnits ? (
-              <option value="">Loading units...</option>
-            ) : units.length === 0 ? (
-              <option value="">No units available</option>
-            ) : (
-              units.map((u) => (
-                <option key={u.id} value={u.symbol}>
-                  {u.symbol} ({u.name})
-                </option>
-              ))
+          <div className="relative">
+            <button
+              type="button"
+              disabled={loadingUnits}
+              onClick={() => setOpenUnitDropdown((prev) => !prev)}
+              className="p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border font-inherit flex items-center justify-between cursor-pointer text-left disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="truncate">
+                {loadingUnits
+                  ? 'Loading units...'
+                  : formData.unit
+                  ? `${formData.unit} (${units.find((u) => u.symbol === formData.unit)?.name || formData.unit})`
+                  : 'Select Unit'}
+              </span>
+              <ChevronDown
+                size={16}
+                className={`text-[#64748b] transition-transform duration-200 shrink-0 ml-2 ${
+                  openUnitDropdown ? 'rotate-180' : ''
+                }`}
+              />
+            </button>
+
+            {openUnitDropdown && (
+              <div className="absolute z-50 left-0 right-0 mt-1 max-h-60 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-lg py-1 animate-[fadeIn_0.1s_ease-out]">
+                {units.length === 0 ? (
+                  <div className="px-4 py-3 text-sm text-slate-400">No units available</div>
+                ) : (
+                  units.map((u) => {
+                    const isSelected = formData.unit === u.symbol;
+                    return (
+                      <button
+                        key={u.id}
+                        type="button"
+                        onClick={() => {
+                          setFormData((prev) => ({ ...prev, unit: u.symbol }));
+                          setOpenUnitDropdown(false);
+                        }}
+                        className={`w-full text-left px-4 py-2.5 text-sm transition-colors flex items-center justify-between gap-2 border-l-[3.5px] ${
+                          isSelected
+                            ? 'border-[#006AFF] bg-white font-semibold text-[#006AFF]'
+                            : 'border-transparent bg-white text-slate-700 hover:border-[#006AFF] hover:text-[#006AFF] hover:bg-slate-50/50'
+                        }`}
+                      >
+                        <span className="break-words [overflow-wrap:anywhere] [word-break:break-word] whitespace-normal flex-1">
+                          {u.symbol} ({u.name})
+                        </span>
+                        {isSelected && <Check size={16} className="text-[#006AFF] shrink-0" />}
+                      </button>
+                    );
+                  })
+                )}
+              </div>
             )}
-          </select>
+          </div>
         </div>
       </div>
 

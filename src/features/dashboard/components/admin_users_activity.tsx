@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import type { AdminActivity } from '../api/admin_api';
-import { formatUpdatedDate as formatRelativeTime } from '../../../shared/utils/date_utils';
+import { formatUpdatedDate as formatRelativeTime, parseUtcDate } from '../../../shared/utils/date_utils';
 
 interface AdminUsersActivityProps {
   activities: AdminActivity[];
@@ -48,7 +48,11 @@ export default function AdminUsersActivity({ activities, loading = false }: Admi
 
   // Hanya tampilkan 5 aktivitas user paling terbaru
   const sortedActivities = [...(activities ?? [])]
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .sort((a, b) => {
+      const timeA = parseUtcDate(a.timestamp)?.getTime() ?? new Date(a.timestamp).getTime();
+      const timeB = parseUtcDate(b.timestamp)?.getTime() ?? new Date(b.timestamp).getTime();
+      return timeB - timeA;
+    })
     .slice(0, 5);
 
   return (
@@ -73,7 +77,9 @@ export default function AdminUsersActivity({ activities, loading = false }: Admi
               <th className="px-6 py-4 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                 ACTIVITY
               </th>
-              <th className="px-6 py-4"></th>
+              <th className="px-6 py-4 text-[11px] font-bold text-slate-700 uppercase tracking-wider w-[180px]">
+                TIME
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
@@ -137,7 +143,7 @@ export default function AdminUsersActivity({ activities, loading = false }: Admi
                   <td className="px-6 py-4 text-[13px] text-slate-600 truncate max-w-[320px]" title={item.description}>
                     {item.description}
                   </td>
-                  <td className="px-6 py-4 text-right text-[12px] font-normal text-slate-400 whitespace-nowrap">
+                  <td className="px-6 py-4 text-[12px] font-normal text-slate-400 whitespace-nowrap">
                     {formatRelativeTime(item.timestamp)}
                   </td>
                 </tr>

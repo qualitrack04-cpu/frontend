@@ -47,14 +47,16 @@ function getDisplayStatusName(name: string): string {
 }
 
 function getSyncedCategoryColor(cat: FindingCategoryItem): string {
+  if (cat.hexaCode && cat.hexaCode.trim()) return cat.hexaCode.trim();
   const n = (cat.name || '').trim().toLowerCase();
   if (n.includes('major')) return '#EF4444'; // Red
-  if (n.includes('minor')) return '#F59E0B'; // Amber
+  if (n.includes('minor')) return '#4D80FF'; // Blue/Purple (align with BE & Mobile)
   if (n.includes('ofi') || n.includes('observation')) return '#3B82F6'; // Blue
   return getCategoryColor(cat.id, cat.name);
 }
 
 function getSyncedStatusColor(st: CapaStatusItem): string {
+  if (st.hexaCode && st.hexaCode.trim()) return st.hexaCode.trim();
   const n = (st.name || '').trim().toLowerCase();
   if (n === 'open') return '#EF4444'; // Red
   if (n === 'in progress' || n === 'inprogress') return '#F59E0B'; // Orange
@@ -76,9 +78,9 @@ const DATE_FORMAT_OPTIONS = [
 ];
 
 function formatUpdatedDate(dateStr?: string): string {
-  if (!dateStr) return 'Today, 14:30';
+  if (!dateStr) return '-';
   const date = parseUtcDate(dateStr);
-  if (!date || isNaN(date.getTime())) return 'Today, 14:30';
+  if (!date || isNaN(date.getTime())) return '-';
 
   const now = new Date();
   const isToday =
@@ -345,7 +347,7 @@ export default function SystemConfigurationPage() {
             disabled={generalSaving}
             className="px-5 py-2.5 rounded-lg bg-[#2563EB] hover:bg-blue-700 text-white font-medium text-[13.5px] transition-colors shadow-sm border-none cursor-pointer disabled:opacity-50"
           >
-            {generalSaving ? 'Saving...' : 'Save Change'}
+            {generalSaving ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
       </div>
@@ -388,7 +390,7 @@ export default function SystemConfigurationPage() {
                   STATUS
                 </th>
                 <th className="py-3 px-4 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                  UPDATED
+                  CREATED
                 </th>
                 <th className="py-3 px-4 text-[11px] font-bold text-slate-700 uppercase tracking-wider text-right">
                   ACTION
@@ -417,7 +419,7 @@ export default function SystemConfigurationPage() {
                       </div>
                     </td>
                     <td className="py-3.5 px-4 text-[13px] text-slate-600 max-w-xs break-words [overflow-wrap:anywhere] [word-break:break-word]">
-                      {cat.description || 'Assigned & awaiting root-cause analysis'}
+                      {cat.description || '-'}
                     </td>
                     <td className="py-3.5 px-4">
                       <span
@@ -508,7 +510,7 @@ export default function SystemConfigurationPage() {
                   STATUS
                 </th>
                 <th className="py-3 px-4 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                  UPDATED
+                  CREATED
                 </th>
                 <th className="py-3 px-4 text-[11px] font-bold text-slate-700 uppercase tracking-wider text-right">
                   ACTION
@@ -537,7 +539,7 @@ export default function SystemConfigurationPage() {
                       </div>
                     </td>
                     <td className="py-3.5 px-4 text-[13px] text-slate-600 max-w-xs break-words [overflow-wrap:anywhere] [word-break:break-word]">
-                      {st.description || 'Assigned & awaiting root-cause analysis'}
+                      {st.description || '-'}
                     </td>
                     <td className="py-3.5 px-4">
                       <span

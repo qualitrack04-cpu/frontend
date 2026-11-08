@@ -263,6 +263,20 @@ export default function UsersPage() {
             >
               Inactive
             </button>
+            <button
+              type="button"
+              onClick={() => {
+                setStatusFilter('Pending');
+                setCurrentPage(1);
+              }}
+              className={`px-3.5 py-1 text-[13px] font-medium rounded-full transition-all border cursor-pointer ${
+                statusFilter === 'Pending'
+                  ? 'bg-white border-blue-500 text-blue-600 shadow-xs'
+                  : 'bg-transparent border-transparent text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              Pending
+            </button>
           </div>
         </div>
 
@@ -303,7 +317,7 @@ export default function UsersPage() {
                   STATUS
                 </th>
                 <th className="px-6 py-4 text-[12px] font-bold text-slate-700 uppercase tracking-wider">
-                  UPDATED
+                  CREATED
                 </th>
                 <th className="px-6 py-4 text-center text-[12px] font-bold text-slate-700 uppercase tracking-wider">
                   ACTION

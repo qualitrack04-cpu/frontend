@@ -1,20 +1,19 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, ImagePlus, Info, Lock, Trash2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, ChevronDown, ImagePlus, Info, Lock, Trash2 } from 'lucide-react';
 import { useFetch } from '../../../shared/hooks/use_fetch';
 import {
-  categoryOptions,
   createFinding,
-  departmentOptions,
   getFinding,
   getFindingPhotos,
   updateFinding,
   uploadFindingPhoto,
   type Finding,
-  type FindingCategory,
   type FindingPhoto,
 } from '../api/findings_api';
+import { getFindingCategories } from '../../system_configuration/api/system_config_api';
+import { getDepartments } from '../../departments/api/departments_api';
 import FindingPhotoView from './finding_photo';
 import PhotoLightbox from './photo_lightbox';
 import UploadPhotoModal from './upload_photo_modal';
@@ -35,7 +34,8 @@ export default function FindingFormPage({ mode }: Props) {
   const checklistItemId = searchParams.get('checklistItemId') ?? undefined;
 
   const [title, setTitle] = useState('');
-  const [category, setCategory] = useState<FindingCategory | ''>('');
+  const [categoryId, setCategoryId] = useState('');
+  const [category, setCategory] = useState('');
   const [department, setDepartment] = useState('');
   const [description, setDescription] = useState('');
   const [clauseRef, setClauseRef] = useState('');
@@ -47,6 +47,43 @@ export default function FindingFormPage({ mode }: Props) {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
+
+  // State untuk custom dropdown
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const categoryRef = useRef<HTMLDivElement>(null);
+  const [deptOpen, setDeptOpen] = useState(false);
+  const deptRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (categoryRef.current && !categoryRef.current.contains(e.target as Node)) {
+        setCategoryOpen(false);
+      }
+      if (deptRef.current && !deptRef.current.contains(e.target as Node)) {
+        setDeptOpen(false);
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setCategoryOpen(false);
+        setDeptOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
+  // ---- Kategori & Department dinamis ----
+  const categoriesFetch = useFetch(getFindingCategories);
+  const activeCategories = useMemo(
+    () => (categoriesFetch.data || []).filter((c) => c.isActive !== false),
+    [categoriesFetch.data]
+  );
+  const departmentsFetch = useFetch(getDepartments);
 
   // ---- Data untuk mode edit ----
   const finding = useFetch<Finding | null>(
@@ -62,18 +99,22 @@ export default function FindingFormPage({ mode }: Props) {
   useEffect(() => {
     if (!loaded) return;
     setTitle(loaded.title);
-    const rawCat = (loaded as any).categoryName || loaded.category;
-    const normalizedCat = 
-      rawCat === 'Observation' || rawCat === 'OFI' 
-        ? 'OFI' 
-        : (rawCat === 'MajorNC' || rawCat === 'Major NC')
-        ? 'Major NC'
-        : 'Minor NC';
-    setCategory(normalizedCat);
+    const catName = (loaded as any).categoryName || loaded.category || '';
+    setCategory(catName);
+
+    if (loaded.categoryId) {
+      setCategoryId(loaded.categoryId);
+    } else if (activeCategories.length > 0) {
+      const norm = (s: string) => s.toLowerCase().replace(/[\s_-]/g, '');
+      const found = activeCategories.find((c) => norm(c.name) === norm(catName));
+      if (found) {
+        setCategoryId(found.id);
+      }
+    }
     setDepartment(loaded.department ?? '');
     setDescription(loaded.description ?? '');
     setClauseRef(loaded.clauseRef ?? '');
-  }, [loaded]);
+  }, [loaded, activeCategories]);
 
   // Preview foto pending; URL dibersihkan saat daftar berubah / unmount
   const previews = useMemo(
@@ -85,7 +126,7 @@ export default function FindingFormPage({ mode }: Props) {
   // ---- Validasi (pesan mengikuti desain) ----
   const errors = {
     title: title.trim().length < 5 ? 'Required (Min. 5 characters)' : null,
-    category: category === '' ? 'Required' : null,
+    category: !categoryId && !category ? 'Required' : null,
     description: description.trim().length < 10 ? 'Required (Min. 10 characters)' : null,
   };
   const hasError = Object.values(errors).some(Boolean);
@@ -94,10 +135,15 @@ export default function FindingFormPage({ mode }: Props) {
     ? (loaded?.reporterName ?? '')
     : (localStorage.getItem('fullName') ?? '');
 
-  const deptOptions =
-    department && !departmentOptions.includes(department)
-      ? [department, ...departmentOptions]
-      : departmentOptions;
+  const deptOptions = useMemo(() => {
+    const list = (departmentsFetch.data || [])
+      .filter((d) => d.isActive !== false)
+      .map((d) => d.name);
+    if (department && !list.includes(department)) {
+      return [department, ...list];
+    }
+    return list;
+  }, [departmentsFetch.data, department]);
 
   const photoCount = isEdit ? (photos.data?.length ?? 0) : pending.length;
 
@@ -115,7 +161,7 @@ export default function FindingFormPage({ mode }: Props) {
     e.preventDefault();
     setSubmitted(true);
     setSubmitError(null);
-    if (hasError || category === '') return;
+    if (hasError || (!categoryId && !category)) return;
 
     setSubmitting(true);
     try {
@@ -124,6 +170,7 @@ export default function FindingFormPage({ mode }: Props) {
         await updateFinding(id, {
           title: title.trim(),
           category,
+          categoryId: categoryId || undefined,
           department: department || null,
           description: description.trim(),
           clauseRef: clauseRef.trim() || null,
@@ -137,6 +184,7 @@ export default function FindingFormPage({ mode }: Props) {
       const created = await createFinding({
         title: title.trim(),
         category,
+        categoryId: categoryId || undefined,
         description: description.trim(),
         department: department || undefined,
         clauseRef: clauseRef.trim() || undefined,
@@ -145,10 +193,12 @@ export default function FindingFormPage({ mode }: Props) {
         reporterName: reporterName || undefined,
       });
 
+      const findingId = created?.id || (created as any)?.Id;
       const failed: string[] = [];
       for (const photo of pending) {
         try {
-          await uploadFindingPhoto(created.id, photo);
+          if (!findingId) throw new Error('Finding ID is missing');
+          await uploadFindingPhoto(findingId, photo);
         } catch {
           failed.push(photo.name);
         }
@@ -198,22 +248,18 @@ export default function FindingFormPage({ mode }: Props) {
 
       <form className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6 lg:gap-[32px] items-start" onSubmit={handleSubmit} noValidate>
         {/* ---------- Kolom kiri ---------- */}
-        <div className="flex flex-col gap-[24px]">
+        <div className="flex flex-col gap-6 sm:gap-[32px] min-w-0">
           <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
-            <div className="flex items-center justify-between mb-[8px]">
-              <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px]" htmlFor="fd-title">
-                Title
-              </label>
-              <span className="text-[11px] text-slate-400 font-medium">
-                {title.length}/200
-              </span>
-            </div>
+            <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]" htmlFor="fd-title">
+              Finding Title
+            </label>
             <input
               id="fd-title"
-              maxLength={200}
-              className="w-full p-[14px_16px] border border-[#e2e8f0] rounded-[8px] font-inherit text-[14.5px] text-[#1e293b] bg-[#f8fafc] transition-all duration-200 appearance-none focus:outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] focus:bg-white aria-[invalid=true]:border-[#ef4444] aria-[invalid=true]:bg-[#fef2f2]"
-              placeholder="Enter the finding title..."
+              type="text"
+              className="w-full p-[14px_16px] border border-[#e2e8f0] rounded-[8px] font-inherit text-[14.5px] text-[#1e293b] bg-[#f8fafc] transition-all duration-200 focus:outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] focus:bg-white aria-[invalid=true]:border-[#ef4444] aria-[invalid=true]:bg-[#fef2f2]"
+              placeholder="e.g. Uncalibrated Pressure Gauge in Production Line A"
               value={title}
+              maxLength={150}
               onChange={(e) => setTitle(e.target.value)}
               aria-invalid={submitted && !!errors.title}
             />
@@ -221,170 +267,276 @@ export default function FindingFormPage({ mode }: Props) {
           </section>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-[24px]">
-            <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
+            <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col relative z-20">
               <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]" htmlFor="fd-category">
                 Category
               </label>
-              <select
-                id="fd-category"
-                className="w-full p-[14px_16px] border border-[#e2e8f0] rounded-[8px] font-inherit text-[14.5px] text-[#1e293b] bg-[#f8fafc] transition-all duration-200 appearance-none focus:outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] focus:bg-white aria-[invalid=true]:border-[#ef4444] aria-[invalid=true]:bg-[#fef2f2]"
-                value={category}
-                onChange={(e) => setCategory(e.target.value as FindingCategory | '')}
-                aria-invalid={submitted && !!errors.category}
-              >
-                <option value="" disabled hidden>Select Category...</option>
-                {categoryOptions.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {o.label}
-                  </option>
-                ))}
-              </select>
+              <div className="relative w-full" ref={categoryRef}>
+                <button
+                  id="fd-category"
+                  type="button"
+                  className={`w-full p-[14px_16px] border rounded-[8px] font-inherit text-[14.5px] bg-white transition-all duration-200 flex items-center justify-between text-left cursor-pointer focus:outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] ${
+                    submitted && errors.category
+                      ? 'border-[#ef4444] bg-[#fef2f2]'
+                      : 'border-[#e2e8f0]'
+                  }`}
+                  onClick={() => {
+                    setCategoryOpen(!categoryOpen);
+                    setDeptOpen(false);
+                  }}
+                  aria-haspopup="listbox"
+                  aria-expanded={categoryOpen}
+                >
+                  <span
+                    className={`truncate flex-1 mr-2 ${
+                      category ? 'text-[#1e293b] font-medium' : 'text-[#94a3b8]'
+                    }`}
+                  >
+                    {category || (categoriesFetch.loading ? 'Loading categories...' : 'Select Category...')}
+                  </span>
+                  <ChevronDown
+                    size={18}
+                    className={`text-[#64748b] shrink-0 transition-transform duration-200 ${
+                      categoryOpen ? 'rotate-180 text-[#0f2c52]' : ''
+                    }`}
+                  />
+                </button>
+
+                {categoryOpen && (
+                  <div
+                    className="absolute top-[calc(100%+6px)] left-0 w-full bg-white border border-[#e2e8f0] rounded-[10px] shadow-[0_12px_30px_rgba(15,44,82,0.12)] z-50 max-h-[260px] overflow-y-auto p-1.5"
+                    role="listbox"
+                  >
+                    {activeCategories.length === 0 ? (
+                      <div className="p-3 text-[13.5px] text-[#94a3b8] text-center">
+                        No categories available
+                      </div>
+                    ) : (
+                      activeCategories.map((o) => (
+                        <button
+                          key={o.id}
+                          type="button"
+                          className={`w-full text-left p-3 rounded-[6px] text-[14px] transition-all duration-150 flex items-start justify-between gap-2 cursor-pointer border-y-0 border-r-0 border-l-[3.5px] bg-white ${
+                            categoryId === o.id
+                              ? 'border-l-[#006AFF] text-[#006AFF] font-semibold'
+                              : 'border-l-transparent text-[#334155] hover:border-l-[#006AFF] hover:text-[#006AFF]'
+                          }`}
+                          onClick={() => {
+                            setCategoryId(o.id);
+                            setCategory(o.name);
+                            setCategoryOpen(false);
+                          }}
+                          role="option"
+                          aria-selected={categoryId === o.id}
+                        >
+                          <span className="break-words [overflow-wrap:anywhere] [word-break:break-word] whitespace-normal flex-1">
+                            {o.name}
+                          </span>
+                          {categoryId === o.id && (
+                            <Check size={16} className="text-[#006AFF] shrink-0 mt-0.5" />
+                          )}
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
               {submitted && errors.category && <p className="text-[#dc2626] text-[12.5px] m-[6px_0_0_0]">{errors.category}</p>}
             </section>
 
-            <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
+            <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col relative z-20">
               <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]" htmlFor="fd-department">
                 Department
               </label>
-              <select
-                id="fd-department"
-                className="w-full p-[14px_16px] border border-[#e2e8f0] rounded-[8px] font-inherit text-[14.5px] text-[#1e293b] bg-[#f8fafc] transition-all duration-200 appearance-none focus:outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] focus:bg-white"
-                value={department}
-                onChange={(e) => setDepartment(e.target.value)}
-              >
-                <option value="" disabled hidden>Select Department...</option>
-                {deptOptions.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
-              </select>
+              <div className="relative w-full" ref={deptRef}>
+                <button
+                  id="fd-department"
+                  type="button"
+                  className="w-full p-[14px_16px] border border-[#e2e8f0] rounded-[8px] font-inherit text-[14.5px] bg-white transition-all duration-200 flex items-center justify-between text-left cursor-pointer focus:outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)]"
+                  onClick={() => {
+                    setDeptOpen(!deptOpen);
+                    setCategoryOpen(false);
+                  }}
+                  aria-haspopup="listbox"
+                  aria-expanded={deptOpen}
+                >
+                  <span
+                    className={`truncate flex-1 mr-2 ${
+                      department ? 'text-[#1e293b] font-medium' : 'text-[#94a3b8]'
+                    }`}
+                  >
+                    {department || (departmentsFetch.loading ? 'Loading departments...' : 'Select Department...')}
+                  </span>
+                  <ChevronDown
+                    size={18}
+                    className={`text-[#64748b] shrink-0 transition-transform duration-200 ${
+                      deptOpen ? 'rotate-180 text-[#0f2c52]' : ''
+                    }`}
+                  />
+                </button>
+
+                {deptOpen && (
+                  <div
+                    className="absolute top-[calc(100%+6px)] left-0 w-full bg-white border border-[#e2e8f0] rounded-[10px] shadow-[0_12px_30px_rgba(15,44,82,0.12)] z-50 max-h-[260px] overflow-y-auto p-1.5"
+                    role="listbox"
+                  >
+                    {deptOptions.length === 0 ? (
+                      <div className="p-3 text-[13.5px] text-[#94a3b8] text-center">
+                        No departments available
+                      </div>
+                    ) : (
+                      deptOptions.map((d) => (
+                        <button
+                          key={d}
+                          type="button"
+                          className={`w-full text-left p-3 rounded-[6px] text-[14px] transition-all duration-150 flex items-start justify-between gap-2 cursor-pointer border-y-0 border-r-0 border-l-[3.5px] bg-white ${
+                            department === d
+                              ? 'border-l-[#006AFF] text-[#006AFF] font-semibold'
+                              : 'border-l-transparent text-[#334155] hover:border-l-[#006AFF] hover:text-[#006AFF]'
+                          }`}
+                          onClick={() => {
+                            setDepartment(d);
+                            setDeptOpen(false);
+                          }}
+                          role="option"
+                          aria-selected={department === d}
+                        >
+                          <span className="break-words [overflow-wrap:anywhere] [word-break:break-word] whitespace-normal flex-1">
+                            {d}
+                          </span>
+                          {department === d && (
+                            <Check size={16} className="text-[#006AFF] shrink-0 mt-0.5" />
+                          )}
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
             </section>
           </div>
 
           <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
-            <div className="flex items-center justify-between mb-[8px]">
-              <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px]" htmlFor="fd-description">
-                Description
-              </label>
-              <span className="text-[11px] text-slate-400 font-medium">
-                {description.length}/1000
-              </span>
-            </div>
+            <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]" htmlFor="fd-desc">
+              Description / Evidence
+            </label>
             <textarea
-              id="fd-description"
-              maxLength={1000}
-              className="w-full p-[14px_16px] border border-[#e2e8f0] rounded-[8px] font-inherit text-[14.5px] text-[#1e293b] bg-[#f8fafc] transition-all duration-200 appearance-none focus:outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] focus:bg-white aria-[invalid=true]:border-[#ef4444] aria-[invalid=true]:bg-[#fef2f2] resize-y"
-              placeholder="Provide detailed context..."
-              rows={6}
+              id="fd-desc"
+              rows={4}
+              className="w-full p-[14px_16px] border border-[#e2e8f0] rounded-[8px] font-inherit text-[14.5px] text-[#1e293b] bg-[#f8fafc] transition-all duration-200 resize-y focus:outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] focus:bg-white aria-[invalid=true]:border-[#ef4444] aria-[invalid=true]:bg-[#fef2f2]"
+              placeholder="Describe what was observed, including specific locations, equipment IDs, and conditions..."
               value={description}
+              maxLength={1000}
               onChange={(e) => setDescription(e.target.value)}
               aria-invalid={submitted && !!errors.description}
             />
-            {submitted && errors.description && (
-              <p className="text-[#dc2626] text-[12.5px] m-[6px_0_0_0]">{errors.description}</p>
-            )}
+            {submitted && errors.description && <p className="text-[#dc2626] text-[12.5px] m-[6px_0_0_0]">{errors.description}</p>}
           </section>
 
+          {/* Section Upload Photo */}
           <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
-            <div className="flex items-center justify-between mb-[8px]">
-              <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px]" htmlFor="fd-clause">
-                Clause Reference <span className="normal-case font-normal text-[#94a3b8] tracking-normal ml-[4px]">(optional)</span>
-              </label>
-              <span className="text-[11px] text-slate-400 font-medium">
-                {clauseRef.length}/50
-              </span>
-            </div>
-            <input
-              id="fd-clause"
-              maxLength={50}
-              className="w-full p-[14px_16px] border border-[#e2e8f0] rounded-[8px] font-inherit text-[14.5px] text-[#1e293b] bg-[#f8fafc] transition-all duration-200 appearance-none focus:outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] focus:bg-white"
-              placeholder="e.g. ISO 9001:2015 Clause 7.1.5.2"
-              value={clauseRef}
-              onChange={(e) => setClauseRef(e.target.value)}
-            />
-          </section>
-
-          <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
-            <div className="flex justify-between items-center mb-[24px]">
-              <span className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-0">Evidence</span>
-              <span className="bg-[#f1f5f9] text-[#475569] p-[4px_12px] rounded-[16px] text-[13px] font-semibold">
-                {photoCount} {photoCount === 1 ? 'photo' : 'photos'}
-              </span>
+            <div className="flex justify-between items-center mb-[16px]">
+              <div>
+                <span className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[2px]">
+                  Photo Evidence ({photoCount})
+                </span>
+                <p className="text-[13px] text-[#64748b] m-0">Attach photos of the observation</p>
+              </div>
+              <button
+                type="button"
+                className="inline-flex items-center gap-[6px] bg-[#f1f5f9] text-[#0f2c52] border border-[#cbd5e1] p-[8px_14px] rounded-[6px] text-[13px] font-semibold cursor-pointer transition-all duration-200 hover:bg-[#e2e8f0]"
+                onClick={() => setModalOpen(true)}
+              >
+                <ImagePlus size={16} /> Add Photo
+              </button>
             </div>
 
-            {(photoCount > 0 || photos.error) && (
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-[16px] mb-[24px]">
-                {isEdit
-                  ? photos.data?.map((photo) => (
+            {photoCount === 0 ? (
+              <div
+                className="border-2 border-dashed border-[#cbd5e1] rounded-[8px] p-[28px] text-center cursor-pointer transition-all duration-200 hover:border-[#0f2c52] hover:bg-[#f8fafc]"
+                onClick={() => setModalOpen(true)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setModalOpen(true);
+                  }
+                }}
+              >
+                <ImagePlus size={36} className="text-[#94a3b8] mb-[8px] stroke-[1.5]" />
+                <p className="text-[14px] font-semibold text-[#0f2c52] m-0 mb-[4px]">No photos attached yet</p>
+                <span className="text-[12.5px] text-[#64748b]">Click here or the button above to upload photo evidence</span>
+              </div>
+            ) : (
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(120px,1fr))] gap-[12px]">
+                {/* Mode edit: foto yang sudah tersimpan di server */}
+                {isEdit &&
+                  (photos.data ?? []).map((p) => (
                     <FindingPhotoView
-                      key={photo.id}
-                      url={photo.url}
-                      alt={photo.fileName ?? 'Evidence photo'}
+                      key={p.id}
+                      url={p.url}
+                      alt={p.fileName ?? 'Evidence photo'}
                     />
-                  ))
-                  : previews.map((p, i) => (
-                    <div key={p.url} className="relative w-full aspect-[4/3] rounded-[8px] overflow-hidden bg-[#f1f5f9]">
+                  ))}
+
+                {/* Mode create: file pending yang siap di-upload */}
+                {!isEdit &&
+                  previews.map(({ file, url }) => (
+                    <div key={file.name + file.lastModified} className="relative rounded-[8px] overflow-hidden aspect-square border border-[#e2e8f0] bg-[#f8fafc] group">
+                      <img
+                        src={url}
+                        alt={file.name}
+                        className="w-full h-full object-cover cursor-pointer block"
+                        onClick={() => setLightbox({ src: url, alt: file.name })}
+                      />
                       <button
                         type="button"
-                        className="w-full h-full p-0 border-none bg-none cursor-pointer block"
-                        aria-label={`Preview ${p.file.name}`}
-                        onClick={() => setLightbox({ src: p.url, alt: p.file.name })}
+                        className="absolute top-[6px] right-[6px] bg-[rgba(15,44,82,0.85)] text-white border-none rounded-full w-[26px] h-[26px] flex items-center justify-center cursor-pointer transition-opacity duration-200 hover:bg-[#ef4444]"
+                        title="Remove photo"
+                        aria-label={`Remove photo ${file.name}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPending((prev) => prev.filter((f) => f !== file));
+                        }}
                       >
-                        <img src={p.url} alt={p.file.name} className="w-full h-full object-cover" />
-                      </button>
-                      <button
-                        type="button"
-                        className="absolute top-[8px] right-[8px] w-[28px] h-[28px] bg-[rgba(0,0,0,0.6)] text-white border-none rounded-full flex items-center justify-center cursor-pointer transition-colors duration-200 hover:bg-[#dc2626]"
-                        aria-label={`Delete ${p.file.name}`}
-                        onClick={() => setPending((prev) => prev.filter((_, idx) => idx !== i))}
-                      >
-                        <Trash2 size={14} />
+                        <Trash2 size={13} />
                       </button>
                     </div>
                   ))}
               </div>
             )}
-
-            <button type="button" className="w-full h-[120px] bg-[#f8fafc] border-[2px] border-dashed border-[#cbd5e1] rounded-[12px] flex flex-col items-center justify-center gap-[12px] text-[#64748b] font-semibold text-[14px] cursor-pointer transition-all duration-200 hover:bg-[#f1f5f9] hover:border-[#94a3b8] hover:text-[#0f2c52]" onClick={() => setModalOpen(true)}>
-              <ImagePlus size={26} />
-              <span>Add evidence photo</span>
-            </button>
           </section>
         </div>
 
-        {/* ---------- Kolom kanan ---------- */}
-        <aside className="lg:sticky lg:top-[24px] flex flex-col gap-[24px]">
+        {/* ---------- Kolom kanan (metadata & actions) ---------- */}
+        <aside className="flex flex-col gap-6 sm:gap-[32px]">
           <section className="bg-white border border-[#e2e8f0] rounded-[12px] p-5 sm:p-7 md:p-[32px] flex flex-col">
-            <span className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px] mb-[8px]">Reporter</span>
-            <div className="relative flex items-center">
-              <input
-                className="w-full p-[14px_16px] border border-[#e2e8f0] rounded-[8px] font-inherit text-[14.5px] text-[#1e293b] bg-[#f8fafc] transition-all duration-200 appearance-none focus:outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] focus:bg-white pr-[40px] !bg-[#f1f5f9] !text-[#64748b] pointer-events-none"
-                value={reporterName}
-                readOnly
-                aria-label="Reporter"
-              />
-              <Lock size={16} className="absolute right-[14px] text-[#94a3b8]" />
+            <span className="block text-[14px] font-bold text-[#0f2c52] m-0 uppercase tracking-[0.5px] border-b border-[#e2e8f0] pb-[16px]">
+              AUDIT METADATA
+            </span>
+
+            <div className="mt-[20px] flex flex-col gap-[6px]">
+              <label className="block text-[12px] font-bold text-[#64748b] uppercase tracking-[0.5px]">Reporter Name</label>
+              <div className="flex items-center gap-[8px] bg-[#f1f5f9] p-[10px_14px] rounded-[6px] text-[#64748b] text-[13.5px] font-semibold border border-[#e2e8f0]">
+                <Lock size={14} />
+                <span>{reporterName || 'Unknown'}</span>
+              </div>
+              <span className="text-[11.5px] text-[#94a3b8] italic">Auto-filled from your profile</span>
             </div>
           </section>
 
-          {!isEdit && (
+          {!isEdit && activeCategories.length > 0 && (
             <section className="bg-[#f8fafc] border border-dashed border-[#cbd5e1] rounded-[12px] p-[24px]">
               <h2 className="flex items-center gap-[8px] text-[14px] text-[#0f2c52] m-0 mb-[16px] uppercase tracking-[0.5px] font-bold">
                 <Info size={22} /> Severity Guidelines
               </h2>
-              <p className="text-[13.5px] text-[#475569] leading-[1.5] m-0 mb-[12px] last:mb-0">
-                <strong className="text-[#1e293b] font-bold">Minor NC:</strong> Isolated nonconformity with limited impact, easily
-                correctable, and not indicating a systemic failure.
-              </p>
-              <p className="text-[13.5px] text-[#475569] leading-[1.5] m-0 mb-[12px] last:mb-0">
-                <strong className="text-[#1e293b] font-bold">Major NC:</strong> Systemic or significant nonconformity that may affect
-                product quality, safety, compliance, or system effectiveness.
-              </p>
-              <p className="text-[13.5px] text-[#475569] leading-[1.5] m-0 mb-[12px] last:mb-0">
-                <strong className="text-[#1e293b] font-bold">OFI:</strong> Opportunity to improve effectiveness, efficiency,
-                consistency, or best practices; no requirement is currently violated.
-              </p>
+              {activeCategories.map((cat) => (
+                <p key={cat.id} className="text-[13.5px] text-[#475569] leading-[1.5] m-0 mb-[12px] last:mb-0">
+                  <strong className="text-[#1e293b] font-bold">{cat.name}:</strong>{' '}
+                  {cat.description || '-'}
+                </p>
+              ))}
             </section>
           )}
 
@@ -398,14 +550,20 @@ export default function FindingFormPage({ mode }: Props) {
       </form>
 
       {lightbox && (
-        <PhotoLightbox src={lightbox.src} alt={lightbox.alt} onClose={() => setLightbox(null)} />
+        <PhotoLightbox
+          src={lightbox.src}
+          alt={lightbox.alt}
+          onClose={() => setLightbox(null)}
+        />
       )}
 
-      <UploadPhotoModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onUpload={handleModalUpload}
-      />
+      {modalOpen && (
+        <UploadPhotoModal
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onUpload={handleModalUpload}
+        />
+      )}
     </div>
   );
 }

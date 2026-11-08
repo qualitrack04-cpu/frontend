@@ -9,7 +9,11 @@ import {
   ChevronLeft,
   ChevronRight,
   Calendar,
-  CreditCard,
+  Building2,
+  ShieldCheck,
+  Activity,
+  Users,
+  CheckSquare,
   RefreshCw,
   CheckCircle2,
   PauseCircle,
@@ -19,7 +23,7 @@ import {
   Settings
 } from 'lucide-react';
 import TablePagination from '../../../shared/components/table_pagination';
-import { formatUpdatedDate as formatChangeDate } from '../../../shared/utils/date_utils';
+import { formatUpdatedDate as formatChangeDate, parseUtcDate } from '../../../shared/utils/date_utils';
 import { useRecentChanges } from '../hooks/use_recent_changes';
 import type { RecentChangeItem } from '../api/recent_changes_api';
 
@@ -29,6 +33,7 @@ const MODULE_OPTIONS = [
   'SPC Unit Management',
   'ISO Standard Management',
   'Checklist Template Management',
+  'System Configuration Management',
 ];
 
 export default function RecentChangesPage() {
@@ -111,8 +116,8 @@ export default function RecentChangesPage() {
           ).getTime();
 
       list = list.filter((c) => {
-        const itemDate = new Date(c.timestamp);
-        if (isNaN(itemDate.getTime())) return false;
+        const itemDate = parseUtcDate(c.timestamp);
+        if (!itemDate || isNaN(itemDate.getTime())) return false;
         const t = itemDate.getTime();
         return t >= startOfDay && t <= endOfDay;
       });
@@ -236,26 +241,8 @@ export default function RecentChangesPage() {
     const action = item.action.toLowerCase();
     const type = item.entityType.toLowerCase();
 
-    // 1. Department added
-    if (type.includes('department') || desc.includes('department added')) {
-      return {
-        icon: CreditCard,
-        bgColor: 'bg-[#E0F2FE]',
-        iconColor: 'text-[#0284C7]',
-      };
-    }
-
-    // 2. Role changed / User
-    if (type.includes('user') || desc.includes('role of') || action === 'update') {
-      return {
-        icon: RefreshCw,
-        bgColor: 'bg-[#FEF3C7]',
-        iconColor: 'text-[#D97706]',
-      };
-    }
-
-    // 3. Deactivated (must check before activated because 'deactivated' contains 'activated')
-    if (action === 'deactivate' || desc.includes('deactivated')) {
+    // 1. Deactivated (must check before activated because 'deactivated' contains 'activated')
+    if (action === 'deactivate' || desc.includes('deactivated') || desc.includes('menonaktifkan')) {
       return {
         icon: PauseCircle,
         bgColor: 'bg-[#F1F5F9]',
@@ -263,8 +250,8 @@ export default function RecentChangesPage() {
       };
     }
 
-    // 4. Activated
-    if (action === 'activate' || desc.includes('activated')) {
+    // 2. Activated
+    if (action === 'activate' || desc.includes('activated') || desc.includes('mengaktifkan')) {
       return {
         icon: CheckCircle2,
         bgColor: 'bg-[#DCFCE7]',
@@ -272,12 +259,62 @@ export default function RecentChangesPage() {
       };
     }
 
-    // 5. Removed / Delete
-    if (action === 'delete' || desc.includes('removed') || desc.includes('deleted')) {
+    // 3. Removed / Delete
+    if (action === 'delete' || desc.includes('removed') || desc.includes('deleted') || desc.includes('menghapus')) {
       return {
         icon: Trash2,
         bgColor: 'bg-[#FEE2E2]',
         iconColor: 'text-[#DC2626]',
+      };
+    }
+
+    // 4. Role changed / Updated
+    if (action === 'update' || desc.includes('role') || desc.includes('mengubah') || desc.includes('updated')) {
+      return {
+        icon: RefreshCw,
+        bgColor: 'bg-[#FEF3C7]',
+        iconColor: 'text-[#D97706]',
+      };
+    }
+
+    // 5. Create / Add (spesifik per modul)
+    if (type.includes('department') || desc.includes('department') || desc.includes('departemen')) {
+      return {
+        icon: Building2,
+        bgColor: 'bg-[#E0F2FE]',
+        iconColor: 'text-[#0284C7]',
+      };
+    }
+
+    if (type.includes('iso') || desc.includes('iso')) {
+      return {
+        icon: ShieldCheck,
+        bgColor: 'bg-[#EEF2FF]',
+        iconColor: 'text-[#4F46E5]',
+      };
+    }
+
+    if (type.includes('spc') || desc.includes('spc')) {
+      return {
+        icon: Activity,
+        bgColor: 'bg-[#F0FDF4]',
+        iconColor: 'text-[#16A34A]',
+      };
+    }
+
+    if (type.includes('user') || desc.includes('user')) {
+      return {
+        icon: Users,
+        bgColor: 'bg-[#EFF6FF]',
+        iconColor: 'text-[#2563EB]',
+      };
+    }
+
+    if (type.includes('template') || type.includes('checklist') || desc.includes('checklist') || desc.includes('template')) {
+      return {
+        icon: CheckSquare,
+        bgColor: 'bg-[#FAF5FF]',
+        iconColor: 'text-[#9333EA]',
       };
     }
 

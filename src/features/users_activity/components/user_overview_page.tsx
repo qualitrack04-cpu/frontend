@@ -10,6 +10,21 @@ import TablePagination from '../../../shared/components/table_pagination';
 import { formatUpdatedDate as formatChangeDate } from '../../../shared/utils/date_utils';
 import { useUserOverview } from '../hooks/use_users_activity';
 
+const getRoleBadgeStyle = (role: string) => {
+  const r = (role || '').toLowerCase();
+  if (r.includes('manager')) return 'bg-[#F5F3FF] text-[#7C3AED]';
+  if (r.includes('internal')) return 'bg-[#EFF6FF] text-[#2563EB]';
+  if (r.includes('admin')) return 'bg-[#FFF7ED] text-[#EA580C]';
+  return 'bg-[#F0FDF4] text-[#16A34A]'; // Auditee default
+};
+
+const formatActivityName = (name: string) => {
+  if (name === 'FindingReported') return 'Finding Reported';
+  if (name === 'CapaVerified') return 'CAPA Verified';
+  if (name === 'CapaAction') return 'CAPA Action';
+  return name || 'Activity';
+};
+
 export default function UserOverviewPage() {
   const { userId } = useParams<{ userId: string }>();
   const { overview, loading } = useUserOverview(userId);
@@ -96,7 +111,7 @@ export default function UserOverviewPage() {
           <p className="text-slate-400 text-[13px] m-0 mb-3.5 w-full max-w-full break-words [overflow-wrap:anywhere] [word-break:break-word]">
             {user.email}
           </p>
-          <span className="inline-block bg-[#EFF6FF] text-[#2563EB] px-3.5 py-1 rounded-full text-[12px] font-semibold">
+          <span className={`inline-block px-3.5 py-1 rounded-full text-[12px] font-semibold ${getRoleBadgeStyle(user.role)}`}>
             {user.role}
           </span>
         </div>
@@ -127,14 +142,14 @@ export default function UserOverviewPage() {
               <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
                 <div 
                   className="h-full rounded-full bg-[#16A34A] transition-all duration-500" 
-                  style={{ width: `${(successRate.achieved / successRate.total) * 100}%` }}
+                  style={{ width: `${successRate.total > 0 ? (successRate.achieved / successRate.total) * 100 : 0}%` }}
                 />
               </div>
             </div>
           </div>
 
           <div className="text-[12px] text-slate-400 font-medium">
-            Target: {successRate.target}%
+            Target: {successRate.total > 0 ? `${successRate.target}%` : '-'}
           </div>
         </div>
 
@@ -193,8 +208,6 @@ export default function UserOverviewPage() {
               </span>
             </div>
           </div>
-
-          <div className="h-4"></div>
         </div>
       </div>
 
@@ -216,25 +229,33 @@ export default function UserOverviewPage() {
                 <th className="px-6 py-4 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                   DESCRIPTION
                 </th>
-                <th className="px-6 py-4 text-right text-[11px] font-bold text-slate-700 uppercase tracking-wider w-[150px]">
+                <th className="px-6 py-4 text-[11px] font-bold text-slate-700 uppercase tracking-wider w-[180px]">
                   TIME
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
-              {paginatedActivities.map((act) => (
-                <tr key={act.id} className="hover:bg-slate-50/70 transition-colors">
-                  <td className="px-6 py-4 font-semibold text-slate-900 text-[13.5px]">
-                    {act.activityName}
-                  </td>
-                  <td className="px-6 py-4 text-[13px] text-slate-600 font-normal">
-                    {act.description}
-                  </td>
-                  <td className="px-6 py-4 text-right text-[12.5px] text-slate-400 font-normal whitespace-nowrap">
-                    {formatChangeDate(act.timestamp)}
+              {paginatedActivities.length === 0 ? (
+                <tr>
+                  <td colSpan={3} className="px-6 py-10 text-center text-[13px] text-slate-400">
+                    No recent activity found for this user.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                paginatedActivities.map((act) => (
+                  <tr key={act.id} className="hover:bg-slate-50/70 transition-colors">
+                    <td className="px-6 py-4 font-semibold text-slate-900 text-[13.5px]">
+                      {formatActivityName(act.activityName)}
+                    </td>
+                    <td className="px-6 py-4 text-[13px] text-slate-600 font-normal">
+                      {act.description}
+                    </td>
+                    <td className="px-6 py-4 text-[12.5px] text-slate-400 font-normal whitespace-nowrap">
+                      {formatChangeDate(act.timestamp)}
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

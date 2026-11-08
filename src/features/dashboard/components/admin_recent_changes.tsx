@@ -1,7 +1,18 @@
 import { Link } from 'react-router-dom';
-import { CreditCard, RefreshCw, CheckCircle2, PauseCircle, Trash2, Settings } from 'lucide-react';
+import { 
+  Building2, 
+  ShieldCheck, 
+  Activity, 
+  Users, 
+  CheckSquare, 
+  RefreshCw, 
+  CheckCircle2, 
+  PauseCircle, 
+  Trash2, 
+  Settings 
+} from 'lucide-react';
 import type { AdminRecentChange } from '../api/admin_api';
-import { formatUpdatedDate as formatRelativeTime } from '../../../shared/utils/date_utils';
+import { formatUpdatedDate as formatRelativeTime, parseUtcDate } from '../../../shared/utils/date_utils';
 
 interface AdminRecentChangesProps {
   changes: AdminRecentChange[];
@@ -13,21 +24,40 @@ function getIconAndColor(change: AdminRecentChange) {
   const type = (change.entityType || '').toLowerCase();
   const action = (change.action || '').toLowerCase();
 
-  if (type.includes('department') || desc.includes('department')) {
-    return { icon: CreditCard, color: 'bg-[#E0F2FE] text-[#0284C7]' };
-  }
-  if (type.includes('user') || desc.includes('role') || action === 'update') {
-    return { icon: RefreshCw, color: 'bg-[#FEF3C7] text-[#D97706]' };
-  }
-  if (action === 'deactivate' || desc.includes('deactivated')) {
+  // 1. Deactivated
+  if (action === 'deactivate' || desc.includes('deactivated') || desc.includes('menonaktifkan')) {
     return { icon: PauseCircle, color: 'bg-[#F1F5F9] text-[#64748B]' };
   }
-  if (action === 'activate' || desc.includes('activated')) {
+  // 2. Activated
+  if (action === 'activate' || desc.includes('activated') || desc.includes('mengaktifkan')) {
     return { icon: CheckCircle2, color: 'bg-[#DCFCE7] text-[#16A34A]' };
   }
-  if (action === 'delete' || desc.includes('removed') || desc.includes('deleted')) {
+  // 3. Removed / Delete
+  if (action === 'delete' || desc.includes('removed') || desc.includes('deleted') || desc.includes('menghapus')) {
     return { icon: Trash2, color: 'bg-[#FEE2E2] text-[#DC2626]' };
   }
+  // 4. Role changed / Updated
+  if (action === 'update' || desc.includes('role') || desc.includes('mengubah') || desc.includes('updated')) {
+    return { icon: RefreshCw, color: 'bg-[#FEF3C7] text-[#D97706]' };
+  }
+
+  // 5. Create / Add (spesifik per modul)
+  if (type.includes('department') || desc.includes('department') || desc.includes('departemen')) {
+    return { icon: Building2, color: 'bg-[#E0F2FE] text-[#0284C7]' };
+  }
+  if (type.includes('iso') || desc.includes('iso')) {
+    return { icon: ShieldCheck, color: 'bg-[#EEF2FF] text-[#4F46E5]' };
+  }
+  if (type.includes('spc') || desc.includes('spc')) {
+    return { icon: Activity, color: 'bg-[#F0FDF4] text-[#16A34A]' };
+  }
+  if (type.includes('user') || desc.includes('user')) {
+    return { icon: Users, color: 'bg-[#EFF6FF] text-[#2563EB]' };
+  }
+  if (type.includes('template') || type.includes('checklist') || desc.includes('checklist') || desc.includes('template')) {
+    return { icon: CheckSquare, color: 'bg-[#FAF5FF] text-[#9333EA]' };
+  }
+
   return { icon: Settings, color: 'bg-slate-100 text-slate-500' };
 }
 
@@ -35,7 +65,11 @@ function getIconAndColor(change: AdminRecentChange) {
 export default function AdminRecentChanges({ changes, loading = false }: AdminRecentChangesProps) {
   // Hanya tampilkan 5 perubahan paling terbaru
   const sortedChanges = [...(changes ?? [])]
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .sort((a, b) => {
+      const timeA = parseUtcDate(a.timestamp)?.getTime() ?? new Date(a.timestamp).getTime();
+      const timeB = parseUtcDate(b.timestamp)?.getTime() ?? new Date(b.timestamp).getTime();
+      return timeB - timeA;
+    })
     .slice(0, 5);
 
   return (

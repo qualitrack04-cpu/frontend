@@ -3,6 +3,7 @@ import { Calendar, Clock } from 'lucide-react';
 import { useFetch } from '../../../shared/hooks/use_fetch';
 import { useDepartmentColors } from '../../../shared/hooks/use_department_colors';
 import { getAuditSchedule } from '../api/dashboard_api';
+import { getAuditPlans } from '../../audits/api/audit_plan_api';
 
 function formatDate(year: number, month: number, day: number) {
   return new Date(year, month - 1, day).toLocaleDateString('en-US', {
@@ -30,13 +31,26 @@ export default function AuditSchedule() {
   const year = now.getFullYear();
   const colorFor = useDepartmentColors();
 
-  const { data, loading, error } = useFetch(
+  const { data: scheduleData, loading: scheduleLoading, error } = useFetch(
     () => getAuditSchedule(month, year),
     [month, year]
   );
+  const { data: plansData, loading: plansLoading } = useFetch(getAuditPlans);
+
+  const completedScheduleIds = useMemo(() => {
+    const set = new Set<string>();
+    for (const plan of plansData ?? []) {
+      for (const schedule of plan.schedules ?? []) {
+        if (schedule.isFinished && schedule.id) {
+          set.add(schedule.id);
+        }
+      }
+    }
+    return set;
+  }, [plansData]);
 
   const audits = useMemo(() => {
-    const list = data?.data ?? [];
+    const list = scheduleData?.data ?? [];
     if (!Array.isArray(list)) return [];
     return list
       .flatMap((entry) =>
@@ -47,13 +61,19 @@ export default function AuditSchedule() {
         }))
       )
       .filter((item) => {
+        // Saring audit yang sudah selesai (sesuai Mobile)
+        if (completedScheduleIds.has(item.scheduleId)) {
+          return false;
+        }
         const target = new Date(year, month - 1, item.day);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         return target >= today;
       })
       .sort((a, b) => a.day - b.day);
-  }, [data, year, month]);
+  }, [scheduleData, completedScheduleIds, year, month]);
+
+  const loading = scheduleLoading || (plansLoading && !plansData);
 
   // Legend diambil dari department yang benar-benar muncul di jadwal
   const legend = useMemo(() => {

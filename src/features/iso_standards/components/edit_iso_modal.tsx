@@ -130,10 +130,10 @@ export default function EditIsoModal({ iso, onClose, onSuccess }: EditIsoModalPr
               </div>
             </div>
 
-            {/* Account Status */}
+            {/* Standard Status */}
             <div>
               <label className="block text-[13px] font-semibold text-slate-800 mb-1.5">
-                Account Status
+                Standard Status
               </label>
               <div className="border border-slate-200 rounded-lg px-3.5 py-2.5 flex items-center justify-between bg-white">
                 <div className="flex items-center gap-2">

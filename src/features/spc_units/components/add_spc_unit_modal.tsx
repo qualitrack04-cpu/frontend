@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertCircle } from 'lucide-react';
+import { X, AlertCircle } from 'lucide-react';
 import { createSpcUnit } from '../api/spc_units_api';
 
 interface AddSpcUnitModalProps {
@@ -44,20 +44,29 @@ export default function AddSpcUnitModal({ onClose, onSuccess }: AddSpcUnitModalP
   };
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 overflow-y-auto">
-      <div className="bg-white rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.12)] w-full max-w-[480px] p-7 sm:p-8 my-auto overflow-hidden animate-[fadeIn_0.15s_ease-out]">
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto p-5 sm:p-7 animate-[fadeIn_0.15s_ease-out] relative">
+        {/* Close Button */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-5 right-5 text-slate-400 hover:text-slate-600 bg-transparent border-none cursor-pointer p-1 rounded-lg hover:bg-slate-100 transition-colors"
+        >
+          <X size={18} />
+        </button>
+
         {/* Modal Header */}
-        <div className="mb-6">
-          <h2 className="text-[22px] font-bold text-[#101828] tracking-tight m-0 mb-1.5">
+        <div className="mb-5 pr-6">
+          <h2 className="text-[19px] font-bold text-slate-900 m-0 mb-1">
             Add SPC Unit
           </h2>
-          <p className="text-[14px] text-[#667085] m-0 font-normal">
-            Add a new SPC Unit.
+          <p className="text-[13px] text-slate-400 m-0 font-normal">
+            Add a new SPC unit to the QualiTrack system.
           </p>
         </div>
 
         {error && (
-          <div className="mb-5 p-3.5 bg-red-50 text-red-600 text-[13.5px] rounded-[12px] flex items-center gap-2 border border-red-100">
+          <div className="mb-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg flex items-center gap-2 border border-red-100">
             <AlertCircle size={16} className="shrink-0" />
             <span>{error}</span>
           </div>
@@ -65,12 +74,11 @@ export default function AddSpcUnitModal({ onClose, onSuccess }: AddSpcUnitModalP
 
         {/* Form Body */}
         <form onSubmit={handleSubmit}>
-          <div className="space-y-5">
-            {/* Unit Name */}
+          <div className="space-y-4">
             {/* Unit Name */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-[14px] font-medium text-[#344054]">
+                <label className="block text-[13px] font-semibold text-slate-800">
                   Unit Name
                 </label>
                 <span className="text-[12px] text-slate-400 font-medium">
@@ -84,7 +92,7 @@ export default function AddSpcUnitModal({ onClose, onSuccess }: AddSpcUnitModalP
                   maxLength={50}
                   onChange={(e) => setUnitName(e.target.value)}
                   placeholder="e.g. milimeter"
-                  className="w-full bg-white border border-[#D0D5DD] rounded-[12px] px-4 py-3 text-[14.5px] text-[#101828] placeholder-[#98A2B3] outline-none focus:border-[#1570EF] focus:ring-4 focus:ring-[#1570EF]/10 transition-all font-normal shadow-[0_1px_2px_rgba(16,24,40,0.05)] box-border"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all box-border"
                   required
                 />
               </div>
@@ -93,7 +101,7 @@ export default function AddSpcUnitModal({ onClose, onSuccess }: AddSpcUnitModalP
             {/* Symbol */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-[14px] font-medium text-[#344054]">
+                <label className="block text-[13px] font-semibold text-slate-800">
                   Symbol
                 </label>
                 <span className="text-[12px] text-slate-400 font-medium">
@@ -107,7 +115,7 @@ export default function AddSpcUnitModal({ onClose, onSuccess }: AddSpcUnitModalP
                   maxLength={20}
                   onChange={(e) => setSymbol(e.target.value)}
                   placeholder="e.g. mm"
-                  className="w-full bg-white border border-[#D0D5DD] rounded-[12px] px-4 py-3 text-[14.5px] text-[#101828] placeholder-[#98A2B3] outline-none focus:border-[#1570EF] focus:ring-4 focus:ring-[#1570EF]/10 transition-all font-normal shadow-[0_1px_2px_rgba(16,24,40,0.05)] box-border"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all box-border"
                   required
                 />
               </div>
@@ -116,7 +124,7 @@ export default function AddSpcUnitModal({ onClose, onSuccess }: AddSpcUnitModalP
             {/* Description */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-[14px] font-medium text-[#344054]">
+                <label className="block text-[13px] font-semibold text-slate-800">
                   Description
                 </label>
                 <span className="text-[12px] text-slate-400 font-medium">
@@ -129,27 +137,27 @@ export default function AddSpcUnitModal({ onClose, onSuccess }: AddSpcUnitModalP
                   value={description}
                   maxLength={200}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Enter description Here"
-                  className="w-full bg-white border border-[#D0D5DD] rounded-[12px] px-4 py-3 text-[14.5px] text-[#101828] placeholder-[#98A2B3] outline-none focus:border-[#1570EF] focus:ring-4 focus:ring-[#1570EF]/10 transition-all font-normal shadow-[0_1px_2px_rgba(16,24,40,0.05)] box-border"
+                  placeholder="Enter description here"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-[14px] text-slate-800 placeholder-slate-400 outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all box-border"
                 />
               </div>
             </div>
           </div>
 
           {/* Modal Footer */}
-          <div className="flex items-center justify-end gap-3 mt-7 pt-6 border-t border-[#EAECF0]">
+          <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-2.5 sm:gap-3 mt-6 pt-2">
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-5 py-2.5 rounded-[10px] border border-[#D0D5DD] text-[#344054] bg-white hover:bg-slate-50 font-semibold text-[14px] transition-colors cursor-pointer shadow-[0_1px_2px_rgba(16,24,40,0.05)] disabled:opacity-50"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 font-medium text-[13.5px] transition-colors cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2.5 rounded-[10px] bg-[#1570EF] hover:bg-blue-700 text-white font-semibold text-[14px] transition-all shadow-[0_1px_2px_rgba(16,24,40,0.05)] active:scale-[0.98] border-none cursor-pointer disabled:opacity-50"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-[#2563EB] hover:bg-blue-700 text-white font-medium text-[13.5px] transition-colors shadow-sm border-none cursor-pointer disabled:opacity-50"
             >
               {loading ? 'Adding...' : 'Add Unit'}
             </button>

@@ -16,7 +16,7 @@ import CreateChecklistPage from './create_checklist_page';
 import EditChecklistPage from './edit_checklist_page';
 import DeleteTemplateModal from './delete_template_modal';
 import TablePagination from '../../../shared/components/table_pagination';
-import { formatUpdatedDate } from '../../../shared/utils/date_utils';
+import { formatUpdatedDate, parseUtcDate } from '../../../shared/utils/date_utils';
 import type { ChecklistTemplateItem } from '../api/checklist_templates_api';
 
 export default function ChecklistTemplatesPage() {
@@ -261,13 +261,10 @@ export default function ChecklistTemplatesPage() {
   const filteredTemplates = useMemo(() => {
     let list = Array.isArray(templates) ? [...templates] : [];
 
-    // Filter out templates where the associated ISO standard is inactive (or department is inactive)
-    list = list.filter((t) => !isTemplateIsoInactive(t) && !isTemplateDeptInactive(t));
-
     // Sort by createdAt descending so newest items (matching reference) are on top
     list.sort((a, b) => {
-      const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
-      const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      const timeA = a.createdAt ? (parseUtcDate(a.createdAt)?.getTime() ?? new Date(a.createdAt).getTime()) : 0;
+      const timeB = b.createdAt ? (parseUtcDate(b.createdAt)?.getTime() ?? new Date(b.createdAt).getTime()) : 0;
       return timeB - timeA;
     });
 
@@ -505,7 +502,7 @@ export default function ChecklistTemplatesPage() {
                   DEPARTMENT
                 </th>
                 <th className="px-6 py-4 text-[11px] font-bold text-slate-700 uppercase tracking-wider">
-                  UPDATED
+                  CREATED
                 </th>
                 <th className="px-6 py-4 text-center text-[11px] font-bold text-slate-700 uppercase tracking-wider">
                   ACTION
@@ -549,16 +546,28 @@ export default function ChecklistTemplatesPage() {
                     <td className="px-6 py-4">
                       <span className="inline-flex items-center gap-2 text-[13px] font-normal text-slate-700">
                         <span className={`w-2 h-2 rounded-full ${dotColor}`}></span>
-                        {isoDisplay}
+                        <span>{isoDisplay}</span>
+                        {isTemplateIsoInactive(template) && (
+                          <span className="text-[10.5px] text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded font-medium">
+                            Inactive ISO
+                          </span>
+                        )}
                       </span>
                     </td>
 
                     {/* DEPARTMENT */}
                     <td className="px-6 py-4 text-[13px] text-slate-600 font-normal max-w-[200px] break-words [overflow-wrap:anywhere] [word-break:break-word]">
-                      {template.departmentName}
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span>{template.departmentName}</span>
+                        {isTemplateDeptInactive(template) && (
+                          <span className="text-[10.5px] text-amber-700 bg-amber-50 border border-amber-200/60 px-1.5 py-0.5 rounded font-medium">
+                            Inactive Dept
+                          </span>
+                        )}
+                      </div>
                     </td>
 
-                    {/* UPDATED */}
+                    {/* CREATED */}
                     <td className="px-6 py-4 text-[12.5px] text-slate-400 font-normal">
                       {formatUpdatedDate(template.createdAt)}
                     </td>

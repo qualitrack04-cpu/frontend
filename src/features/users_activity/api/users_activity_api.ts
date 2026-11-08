@@ -56,9 +56,9 @@ export async function getUsersActivity(): Promise<UserActivityItem[]> {
 
         return {
           id: b.relatedId || `ua-${index}`,
-          userId: b.userId || `u-${index + 1}`,
+          userId: b.userId || b.relatedId || '',
           userName: finalName,
-          userEmail: b.userEmail || `${finalName.toLowerCase().replace(/\s+/g, '')}@example.com`,
+          userEmail: b.userEmail || '-',
           role: b.role || (b.activityType === 'CapaVerified' ? 'Quality Manager' : b.activityType === 'FindingReported' ? 'Auditor Internal' : 'Auditee'),
           status: b.status || 'Active',
           activityName: b.activityType || 'Activity',
@@ -79,9 +79,31 @@ export async function getUserOverview(userId?: string): Promise<UserOverviewData
     const response = await api.get('/admin/dashboard');
     const backendActivities = response.data?.recentActivities;
 
+    // 1. Temukan aktivitas yang cocok untuk mengidentifikasi user
+    const matchedActivity = Array.isArray(backendActivities)
+      ? backendActivities.find((b: any) => (b.userId && b.userId === userId) || (b.relatedId && b.relatedId === userId))
+      : null;
+
+    let extractedName = matchedActivity?.userName;
+    if (!extractedName && typeof matchedActivity?.description === 'string') {
+      const match = matchedActivity.description.match(/oleh\s+(.+)$/i);
+      if (match && match[1]) extractedName = match[1].trim();
+    }
+    const finalName = extractedName || '';
+
+    // 2. Filter semua aktivitas milik user ini (cocokkan nama atau userId)
     const userActivities = Array.isArray(backendActivities)
       ? backendActivities
-          .filter((b: any) => !userId || b.userId === userId)
+          .filter((b: any) => {
+            if (!userId) return true;
+            if (b.userId && b.userId === userId) return true;
+            if (b.relatedId && b.relatedId === userId) return true;
+            if (finalName && typeof b.description === 'string') {
+              const match = b.description.match(/oleh\s+(.+)$/i);
+              return match && match[1] && match[1].trim().toLowerCase() === finalName.toLowerCase();
+            }
+            return false;
+          })
           .map((b: any, index: number) => ({
             id: `uoa-${index}`,
             activityName: b.activityType || 'Activity',
@@ -90,17 +112,12 @@ export async function getUserOverview(userId?: string): Promise<UserOverviewData
           }))
       : [];
 
-    // Find the user info from activities or users endpoint
-    const matchedActivity = Array.isArray(backendActivities)
-      ? backendActivities.find((b: any) => b.userId === userId)
-      : null;
-
     return {
       user: {
         id: matchedActivity?.userId || userId || '',
-        fullName: matchedActivity?.userName || 'Unknown User',
-        email: matchedActivity?.userEmail || '',
-        role: matchedActivity?.role || 'Auditor Internal',
+        fullName: finalName || 'User',
+        email: matchedActivity?.userEmail || '-',
+        role: matchedActivity?.role || (matchedActivity?.activityType === 'CapaVerified' ? 'Quality Manager' : matchedActivity?.activityType === 'FindingReported' ? 'Auditor Internal' : 'Auditee'),
         photoUrl: matchedActivity?.userPhoto,
       },
       successRate: {
@@ -123,8 +140,8 @@ export async function getUserOverview(userId?: string): Promise<UserOverviewData
   return {
     user: {
       id: userId || '',
-      fullName: 'Unknown User',
-      email: '',
+      fullName: 'User',
+      email: '-',
       role: 'Auditor Internal',
     },
     successRate: { percentage: 0, achieved: 0, total: 0, target: 90 },

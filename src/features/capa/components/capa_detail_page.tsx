@@ -1,6 +1,8 @@
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Calendar, ClipboardList } from 'lucide-react';
 import { useCapaDetail } from '../hooks/use_capa_detail';
+import { useFetch } from '../../../shared/hooks/use_fetch';
+import { getCapaStatuses } from '../../system_configuration/api/system_config_api';
 import CapaStatusBadge from './capa_status_badge';
 import { parseUtcDate } from '../../../shared/utils/date_utils';
 
@@ -24,6 +26,7 @@ function initials(name?: string | null) {
 export default function CapaDetailPage() {
   const { id = '' } = useParams();
   const { capa, loading, error } = useCapaDetail(id);
+  const { data: statuses } = useFetch(getCapaStatuses);
 
   return (
     <div className="max-w-full m-0 text-left">
@@ -89,7 +92,11 @@ export default function CapaDetailPage() {
 
             <div className="flex flex-col gap-[8px]">
               <span className="block text-[11px] font-bold text-[#64748b] uppercase mb-[4px]">Status</span>
-              <CapaStatusBadge status={capa.status} />
+              <CapaStatusBadge
+                status={capa.statusName || capa.status}
+                statusId={capa.statusId}
+                availableStatuses={statuses || []}
+              />
             </div>
           </aside>
         </div>

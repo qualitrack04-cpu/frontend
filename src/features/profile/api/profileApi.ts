@@ -25,39 +25,58 @@ export interface RecentActivityItem {
 }
 
 export async function getProfileKpi(): Promise<ProfileKpi> {
-  const response = await axiosInstance.get('/profile/kpi'); // baseURL sudah termasuk /api
-  const data = response.data ?? {};
-  const totalAssigned = data.totalCapaAssigned ?? data.totalAssigned ?? 0;
-  const totalCompleted = data.totalCapaClosed ?? data.totalCompleted ?? 0;
-  const totalCompletedOnTime = data.totalCapaClosedOnTime ?? data.totalCompletedOnTime ?? 0;
-  const totalOverdue = data.totalOverdue ?? data.totalCapaOpenInProgress ?? 0;
+  try {
+    const response = await axiosInstance.get('/profile/kpi'); // baseURL sudah termasuk /api
+    const data = response.data ?? {};
+    const totalAssigned = data.totalCapaAssigned ?? data.totalAssigned ?? 0;
+    const totalCompleted = data.totalCapaClosed ?? data.totalCompleted ?? 0;
+    const totalCompletedOnTime = data.totalCapaClosedOnTime ?? data.totalCompletedOnTime ?? 0;
+    const totalOverdue = data.totalOverdue ?? data.totalCapaOpenInProgress ?? 0;
 
-  const qualityScore =
-    data.qualityScore != null
-      ? (data.qualityScore > 1 ? data.qualityScore : data.qualityScore * 100)
-      : data.onTimeRate != null
-      ? data.onTimeRate * 100
-      : data.onTimeCompletionRate != null
-      ? (data.onTimeCompletionRate > 1 ? data.onTimeCompletionRate : data.onTimeCompletionRate * 100)
-      : (totalCompleted > 0 ? (totalCompletedOnTime / totalCompleted) * 100 : 0);
+    const qualityScore =
+      data.qualityScore != null
+        ? (data.qualityScore > 1 ? data.qualityScore : data.qualityScore * 100)
+        : data.onTimeRate != null
+        ? data.onTimeRate * 100
+        : data.onTimeCompletionRate != null
+        ? (data.onTimeCompletionRate > 1 ? data.onTimeCompletionRate : data.onTimeCompletionRate * 100)
+        : (totalCompleted > 0 ? (totalCompletedOnTime / totalCompleted) * 100 : 0);
 
-  const successRate =
-    data.complianceScore != null
-      ? (data.complianceScore > 1 ? data.complianceScore : data.complianceScore * 100)
-      : data.successRate != null
-      ? (data.successRate > 1 ? data.successRate : data.successRate * 100)
-      : (totalAssigned > 0 ? (totalCompleted / totalAssigned) * 100 : 0);
+    const successRate =
+      data.complianceScore != null
+        ? (data.complianceScore > 1 ? data.complianceScore : data.complianceScore * 100)
+        : data.successRate != null
+        ? (data.successRate > 1 ? data.successRate : data.successRate * 100)
+        : (totalAssigned > 0 ? (totalCompleted / totalAssigned) * 100 : 0);
 
-  return {
-    ...data,
-    kpiBasis: data.kpiBasis ?? 'Audit',
-    totalAssigned,
-    totalCompleted,
-    totalCompletedOnTime,
-    totalOverdue,
-    qualityScore: Math.round(qualityScore * 10) / 10,
-    successRate: Math.round(successRate * 10) / 10,
-  };
+    return {
+      ...data,
+      kpiBasis: data.kpiBasis ?? 'Audit',
+      totalAssigned,
+      totalCompleted,
+      totalCompletedOnTime,
+      totalOverdue,
+      qualityScore: Math.round(qualityScore * 10) / 10,
+      successRate: Math.round(successRate * 10) / 10,
+    };
+  } catch {
+    // Role non-pelaksana audit (misal QualityManager) mengembalikan default 0
+    return {
+      totalCapaAssigned: 0,
+      totalCapaClosed: 0,
+      totalCapaOpenInProgress: 0,
+      totalCapaClosedOnTime: 0,
+      totalFindingsReported: 0,
+      onTimeCompletionRate: 0,
+      kpiBasis: 'Audit',
+      totalAssigned: 0,
+      totalCompleted: 0,
+      totalCompletedOnTime: 0,
+      totalOverdue: 0,
+      qualityScore: 0,
+      successRate: 0,
+    };
+  }
 }
 
 export async function getRecentActivity(limit = 10): Promise<RecentActivityItem[]> {

@@ -6,8 +6,6 @@ export default function ComplianceScore() {
   const { data, loading, error } = useFetch(getComplianceScore);
   const colorFor = useDepartmentColors();
 
-  console.log('compliance-score response', data);
-
   const departments = data?.data ?? [];
 
   return (

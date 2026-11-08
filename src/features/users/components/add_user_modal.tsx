@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { X, Eye, EyeOff, ChevronDown, AlertCircle } from 'lucide-react';
 import api from '../../../shared/api/axios_instance';
 import { getUsers, updateUserStatus } from '../api/users_api';
+import { isPasswordStrong } from '../../../shared/utils/password_policy';
 
 interface AddUserModalProps {
   onClose: () => void;
@@ -41,8 +42,8 @@ export default function AddUserModal({ onClose, onSuccess }: AddUserModalProps) 
       setError('Password is required');
       return;
     }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+    if (!isPasswordStrong(password)) {
+      setError('Password must be at least 8 characters and include uppercase, lowercase, number, and special character');
       return;
     }
     if (password !== verifyPassword) {

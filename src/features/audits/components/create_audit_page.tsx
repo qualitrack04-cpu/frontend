@@ -1,17 +1,8 @@
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CircleAlert, Save } from 'lucide-react';
+import { CircleAlert, Save, ChevronDown, Check } from 'lucide-react';
 import { useCreateAuditPlan } from '../hooks/use_create_audit_plan';
 import DatePicker from '../../../shared/components/date_picker';
-
-const STANDARD_DESCRIPTIONS: Record<string, string> = {
-  'ISO 9001': 'Quality Management Systems',
-  'ISO 14001': 'Environmental Management',
-  'ISO 45001': 'Occupational Health and Safety',
-  'ISO 22000': 'Food Safety Management',
-  'ISO 27001': 'Information Security Management',
-  'GMP': 'Good Manufacturing Practice',
-  'HACCP': 'Hazard Analysis Critical Control Point',
-};
 
 function toLocalisoDate(date: Date) {
   const y = date.getFullYear();
@@ -21,7 +12,8 @@ function toLocalisoDate(date: Date) {
 }
 
 const todayIso = toLocalisoDate(new Date());
-const maxDateIso = `${new Date().getFullYear() + 5}-12-31`;
+const minDateIso = '2020-01-01';
+const maxDateIso = '2030-12-31';
 export default function CreateAuditPlanPage() {
   const navigate = useNavigate();
   const { planId } = useParams<{ planId: string }>();
@@ -45,6 +37,26 @@ export default function CreateAuditPlanPage() {
     submitting,
     handleSubmit,
   } = useCreateAuditPlan(planId);
+
+  const [auditorOpen, setAuditorOpen] = useState(false);
+  const [deptOpen, setDeptOpen] = useState(false);
+  const auditorRef = useRef<HTMLDivElement>(null);
+  const deptRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (auditorRef.current && !auditorRef.current.contains(event.target as Node)) {
+        setAuditorOpen(false);
+      }
+      if (deptRef.current && !deptRef.current.contains(event.target as Node)) {
+        setDeptOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectedAuditor = auditors.find((a) => a.id === leadAuditorId);
 
   if (loadingPlan) {
     return <div className="max-w-full m-0 text-left"><p className="text-slate-500">Loading audit plan...</p></div>;
@@ -89,27 +101,132 @@ export default function CreateAuditPlanPage() {
           )}
         </div>
 
-        <div className="flex flex-col md:flex-row gap-[16px] mb-[20px]">
-          <div className="flex-1 min-w-0 flex flex-col gap-[8px]">
+        <div className="flex flex-col md:flex-row gap-[16px] mb-[20px] relative z-20">
+          <div className="flex-1 min-w-0 flex flex-col gap-[8px] relative z-20">
             <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Lead Auditor</label>
-            <select value={leadAuditorId} onChange={(e) => setLeadAuditorId(e.target.value)} className="truncate p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border font-inherit">
-              <option value=""disabled hidden>Select Auditor</option>
-              {auditors.map((a) => (
-                <option key={a.id} value={a.id}>{a.fullName}</option>
-              ))}
-            </select>
+            <div className="relative w-full" ref={auditorRef}>
+              <button
+                type="button"
+                className="w-full p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] font-inherit text-[14.5px] bg-white transition-all duration-200 flex items-center justify-between text-left cursor-pointer focus:outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)]"
+                onClick={() => {
+                  setAuditorOpen(!auditorOpen);
+                  setDeptOpen(false);
+                }}
+                aria-haspopup="listbox"
+                aria-expanded={auditorOpen}
+              >
+                <span className={`truncate flex-1 mr-2 ${selectedAuditor ? 'text-[#1e293b] font-medium' : 'text-[#94a3b8]'}`}>
+                  {selectedAuditor ? selectedAuditor.fullName : (loadingOptions ? 'Loading auditors...' : 'Select Auditor')}
+                </span>
+                <ChevronDown
+                  size={18}
+                  className={`text-[#64748b] shrink-0 transition-transform duration-200 ${auditorOpen ? 'rotate-180 text-[#0f2c52]' : ''}`}
+                />
+              </button>
+
+              {auditorOpen && (
+                <div
+                  className="absolute top-[calc(100%+6px)] left-0 w-full bg-white border border-[#e2e8f0] rounded-[10px] shadow-[0_12px_30px_rgba(15,44,82,0.12)] z-50 max-h-[260px] overflow-y-auto p-1.5"
+                  role="listbox"
+                >
+                  {auditors.length === 0 ? (
+                    <div className="p-3 text-[13.5px] text-[#94a3b8] text-center">
+                      No auditors available
+                    </div>
+                  ) : (
+                    auditors.map((a) => (
+                      <button
+                        key={a.id}
+                        type="button"
+                        className={`w-full text-left p-3 rounded-[6px] text-[14px] transition-all duration-150 flex items-start justify-between gap-2 cursor-pointer border-y-0 border-r-0 border-l-[3.5px] bg-white ${
+                          leadAuditorId === a.id
+                            ? 'border-l-[#006AFF] text-[#006AFF] font-semibold'
+                            : 'border-l-transparent text-[#334155] hover:border-l-[#006AFF] hover:text-[#006AFF]'
+                        }`}
+                        onClick={() => {
+                          setLeadAuditorId(a.id);
+                          setAuditorOpen(false);
+                        }}
+                        role="option"
+                        aria-selected={leadAuditorId === a.id}
+                      >
+                        <span className="break-words [overflow-wrap:anywhere] [word-break:break-word] whitespace-normal flex-1">
+                          {a.fullName}
+                        </span>
+                        {leadAuditorId === a.id && (
+                          <Check size={16} className="text-[#006AFF] shrink-0 mt-0.5" />
+                        )}
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
             {!loadingOptions && auditors.length === 0 && (
               <p className="text-slate-500 text-[12px] m-0">No auditors available.</p>
             )}
           </div>
-          <div className="flex-1 flex flex-col gap-[8px]">
+
+          <div className="flex-1 min-w-0 flex flex-col gap-[8px] relative z-20">
             <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Department</label>
-            <select value={department} onChange={(e) => setDepartment(e.target.value)} className="p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] text-[14.5px] text-[#1e293b] bg-white transition-all duration-200 outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)] w-full box-border font-inherit">
-              <option value="" disabled hidden>Select Department</option>
-              {departments.map((d) => (
-                <option key={d} value={d}>{d}</option>
-              ))}
-            </select>
+            <div className="relative w-full" ref={deptRef}>
+              <button
+                type="button"
+                className="w-full p-[12px_14px] border-[1.5px] border-[#e2e8f0] rounded-[8px] font-inherit text-[14.5px] bg-white transition-all duration-200 flex items-center justify-between text-left cursor-pointer focus:outline-none focus:border-[#0f2c52] focus:ring-[3px] focus:ring-[rgba(15,44,82,0.1)]"
+                onClick={() => {
+                  setDeptOpen(!deptOpen);
+                  setAuditorOpen(false);
+                }}
+                aria-haspopup="listbox"
+                aria-expanded={deptOpen}
+              >
+                <span className={`truncate flex-1 mr-2 ${department ? 'text-[#1e293b] font-medium' : 'text-[#94a3b8]'}`}>
+                  {department || (loadingOptions ? 'Loading departments...' : 'Select Department')}
+                </span>
+                <ChevronDown
+                  size={18}
+                  className={`text-[#64748b] shrink-0 transition-transform duration-200 ${deptOpen ? 'rotate-180 text-[#0f2c52]' : ''}`}
+                />
+              </button>
+
+              {deptOpen && (
+                <div
+                  className="absolute top-[calc(100%+6px)] left-0 w-full bg-white border border-[#e2e8f0] rounded-[10px] shadow-[0_12px_30px_rgba(15,44,82,0.12)] z-50 max-h-[260px] overflow-y-auto p-1.5"
+                  role="listbox"
+                >
+                  {departments.length === 0 ? (
+                    <div className="p-3 text-[13.5px] text-[#94a3b8] text-center">
+                      No departments available
+                    </div>
+                  ) : (
+                    departments.map((d) => (
+                      <button
+                        key={d}
+                        type="button"
+                        className={`w-full text-left p-3 rounded-[6px] text-[14px] transition-all duration-150 flex items-start justify-between gap-2 cursor-pointer border-y-0 border-r-0 border-l-[3.5px] bg-white ${
+                          department === d
+                            ? 'border-l-[#006AFF] text-[#006AFF] font-semibold'
+                            : 'border-l-transparent text-[#334155] hover:border-l-[#006AFF] hover:text-[#006AFF]'
+                        }`}
+                        onClick={() => {
+                          setDepartment(d);
+                          setDeptOpen(false);
+                        }}
+                        role="option"
+                        aria-selected={department === d}
+                      >
+                        <span className="break-words [overflow-wrap:anywhere] [word-break:break-word] whitespace-normal flex-1">
+                          {d}
+                        </span>
+                        {department === d && (
+                          <Check size={16} className="text-[#006AFF] shrink-0 mt-0.5" />
+                        )}
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -117,7 +234,7 @@ export default function CreateAuditPlanPage() {
           <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">Scheduled Date</label>
           <div className="relative flex items-center">
             <DatePicker
-              min={isEdit ? undefined : todayIso}
+              min={isEdit ? minDateIso : todayIso}
               max={maxDateIso}
               value={scheduledDate}
               onChange={setScheduledDate}
@@ -146,18 +263,22 @@ export default function CreateAuditPlanPage() {
           <label className="text-[13px] font-bold text-[#0f2c52] uppercase tracking-[0.5px]">ISO TEMPLATE</label>
 
           {loadingOptions && <p className="text-slate-500 m-0">Loading template...</p>}
-          {!loadingOptions && checklists.length === 0 && (
-            <p className="text-slate-500 text-[12px] m-0">No checklist/template available.</p>
+          {!loadingOptions && !department && (
+            <p className="text-slate-400 text-[13px] m-0 py-2">
+              Please select a Department first to view available ISO templates.
+            </p>
+          )}
+          {!loadingOptions && department && checklists.length === 0 && (
+            <p className="text-slate-500 text-[13px] m-0 py-2">
+              No checklist/template available for {department}.
+            </p>
           )}
 
           <div className="flex flex-col gap-[12px] mt-[8px]">
             {checklists.map((c) => {
               const isSelected = checklistId === c.id;
               const displayTitle = c.title;
-              const displaySubtitle =
-                STANDARD_DESCRIPTIONS[c.isoStandardName] ||
-                STANDARD_DESCRIPTIONS[c.title] ||
-                (c.isoStandardName !== c.title ? c.isoStandardName : '');
+              const displaySubtitle = [c.isoStandardName, c.departmentName].filter(Boolean).join(' · ');
 
               return (
                 <label

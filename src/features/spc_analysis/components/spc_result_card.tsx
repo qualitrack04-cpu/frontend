@@ -18,7 +18,9 @@ export default function SpcResultCard({ result }: Props) {
     );
   }
 
-  const chartData = result.data.map((value, i) => ({ sample: i + 1, value }));
+  const rawData = result.data || [];
+  const chartData = rawData.map((value, i) => ({ sample: i + 1, value }));
+  const hasOutOfControl = rawData.some((v) => v > result.ucl || v < result.lcl);
 
   return (
     <div className="bg-white border border-[#e2e8f0] rounded-[12px] p-[32px] flex flex-col gap-[32px] overflow-hidden min-w-0 max-w-full">
@@ -64,23 +66,59 @@ export default function SpcResultCard({ result }: Props) {
       </div>
 
       <div>
-        <h4 className="text-[16px] text-[#0f2c52] m-0 mb-[20px] font-bold">Control Chart</h4>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 25, left: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="sample" label={{ value: 'Sample', position: 'insideBottom', offset: -20 }} />
-            <YAxis domain={['dataMin - 0.5', 'dataMax + 0.5']} />
-            <Tooltip />
+        <div className="flex items-center justify-between mb-[20px] flex-wrap gap-2">
+          <h4 className="text-[16px] text-[#0f2c52] m-0 font-bold">Control Chart</h4>
+          {hasOutOfControl && (
+            <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#dc2626] bg-[#fee2e2] px-2.5 py-1 rounded-full">
+              <span className="w-2 h-2 rounded-full bg-[#dc2626]" />
+              Out of Control Points Detected
+            </span>
+          )}
+        </div>
 
-            <ReferenceLine y={result.ucl} stroke="#dc2626" strokeDasharray="4 4" label="UCL" />
-            <ReferenceLine y={result.mean} stroke="#16a34a" label="CL" />
-            <ReferenceLine y={result.lcl} stroke="#dc2626" strokeDasharray="4 4" label="LCL" />
-            <ReferenceLine y={result.usl} stroke="#f97316" strokeDasharray="2 4" label="USL" />
-            <ReferenceLine y={result.lsl} stroke="#f97316" strokeDasharray="2 4" label="LSL" />
+        {chartData.length === 0 ? (
+          <div className="p-8 text-center bg-[#f8fafc] rounded-lg border border-dashed border-[#cbd5e1] text-[#64748b] text-sm">
+            No chart data points available.
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 25, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="sample" label={{ value: 'Sample', position: 'insideBottom', offset: -20 }} />
+              <YAxis domain={['dataMin - 0.5', 'dataMax + 0.5']} />
+              <Tooltip />
 
-            <Line type="monotone" dataKey="value" stroke="#0f2c52" dot={{ r: 4 }} />
-          </LineChart>
-        </ResponsiveContainer>
+              <ReferenceLine y={result.ucl} stroke="#dc2626" strokeDasharray="4 4" label="UCL" />
+              <ReferenceLine y={result.mean} stroke="#16a34a" label="CL" />
+              <ReferenceLine y={result.lcl} stroke="#dc2626" strokeDasharray="4 4" label="LCL" />
+              <ReferenceLine y={result.usl} stroke="#f97316" strokeDasharray="2 4" label="USL" />
+              <ReferenceLine y={result.lsl} stroke="#f97316" strokeDasharray="2 4" label="LSL" />
+
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#0f2c52"
+                strokeWidth={2}
+                dot={(dotProps: any) => {
+                  const { cx, cy, payload } = dotProps;
+                  if (cx === undefined || cy === undefined || !payload) return null;
+                  const isOut = payload.value > result.ucl || payload.value < result.lcl;
+                  return (
+                    <circle
+                      key={`dot-${payload.sample}`}
+                      cx={cx}
+                      cy={cy}
+                      r={isOut ? 5.5 : 4}
+                      fill={isOut ? '#dc2626' : '#0f2c52'}
+                      stroke={isOut ? '#ffffff' : '#0f2c52'}
+                      strokeWidth={isOut ? 1.5 : 1}
+                    />
+                  );
+                }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        )}
       </div>
     </div>
   );

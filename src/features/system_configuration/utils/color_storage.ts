@@ -3,11 +3,11 @@
 // Default colors keyed by category name (lowercase)
 const DEFAULT_CATEGORY_COLORS: Record<string, string> = {
   'major nc': '#EF4444',
-  'minor nc': '#F59E0B',
+  'minor nc': '#4D80FF',
   ofi: '#3B82F6',
   observation: '#3B82F6',
   major: '#EF4444',
-  minor: '#F59E0B',
+  minor: '#4D80FF',
   conform: '#10B981',
   critical: '#DC2626',
 };
@@ -23,7 +23,7 @@ const DEFAULT_STATUS_COLORS: Record<string, string> = {
 
 // Seeded GUID → color mappings (from migration AddSystemConfigTables)
 const GUID_CATEGORY_COLORS: Record<string, string> = {
-  '11111111-1111-1111-1111-111111111111': '#F59E0B', // Minor NC
+  '11111111-1111-1111-1111-111111111111': '#4D80FF', // Minor NC
   '22222222-2222-2222-2222-222222222222': '#EF4444', // Major NC
   '33333333-3333-3333-3333-333333333333': '#3B82F6', // OFI / Observation
 };

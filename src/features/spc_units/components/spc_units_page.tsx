@@ -22,11 +22,9 @@ export default function SpcUnitsPage() {
 
 
 
-  const sortedUnits = [...units].sort((a, b) => {
-    if (a.symbol.toLowerCase() === 'ppm') return -1;
-    if (b.symbol.toLowerCase() === 'ppm') return 1;
-    return a.name.localeCompare(b.name);
-  });
+  const sortedUnits = [...units].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
 
   const totalResults = sortedUnits.length;
   const paginatedUnits = sortedUnits.slice(
@@ -83,7 +81,7 @@ export default function SpcUnitsPage() {
                   STATUS
                 </th>
                 <th className="px-6 py-4.5 text-[11px] font-bold text-slate-700 uppercase tracking-wider w-[140px]">
-                  UPDATED
+                  CREATED
                 </th>
                 <th className="px-6 py-4.5 text-center text-[11px] font-bold text-slate-700 uppercase tracking-wider w-[120px]">
                   ACTION
@@ -140,7 +138,7 @@ export default function SpcUnitsPage() {
                     </span>
                   </td>
 
-                  {/* UPDATED */}
+                  {/* CREATED */}
                   <td className="px-6 py-4 text-[12.5px] text-slate-400 font-normal">
                     {formatUpdatedDate(unit.updatedAt || unit.createdAt)}
                   </td>
@@ -159,7 +157,7 @@ export default function SpcUnitsPage() {
                       <button
                         type="button"
                         onClick={() => setDeletingUnit(unit)}
-                        title="Delete SPC Unit"
+                        title="Deactivate SPC Unit"
                         className="w-8 h-8 rounded-lg bg-[#FEF2F2] hover:bg-red-100 text-[#EF4444] flex items-center justify-center transition-colors cursor-pointer border-none"
                       >
                         <Trash2 size={15} strokeWidth={2} />
